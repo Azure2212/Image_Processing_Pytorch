@@ -379,7 +379,8 @@ class RAFDB_Segmentation_Trainer(Trainer):
       if self.wb == True and i <= len(self.train_ds):
             self.wandb.log(metric)
 
-      
+      if self.isDebug == -1: break
+
     i += 1
     self.train_loss_list.append(train_loss / i)
     self.train_acc_list.append(train_acc / i)
@@ -419,6 +420,7 @@ class RAFDB_Segmentation_Trainer(Trainer):
         val_acc += acc.item
         val_dice += dice_score
         val_iou += iou_score
+        if self.isDebug == -1: break
       i += 1
       self.val_loss_list.append(val_loss / i)
       self.val_acc_list.append(val_acc / i)
@@ -471,7 +473,8 @@ class RAFDB_Segmentation_Trainer(Trainer):
         test_dice += dice_score
         test_iou += iou_score
 
-        # print(i)
+        if self.isDebug == -1: break
+
       i += 1
       test_loss = (test_loss / i)
       test_acc = (test_acc / i)
@@ -520,6 +523,7 @@ class RAFDB_Segmentation_Trainer(Trainer):
             test_dice += dice_score
             test_iou += iou_score
 
+          if self.isDebug == -1: break
     # Average metrics
     test_acc /= total_batches
     test_dice /= total_batches
