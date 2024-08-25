@@ -73,7 +73,7 @@ class RafDataSet_Mask(Dataset):
         ])
         
         self.custom_transform = CustomTransform()
-
+        self.mediapipe_tool = mediapipe_tool()
     def __len__(self):
         return len(self.file_paths)
     
@@ -81,11 +81,11 @@ class RafDataSet_Mask(Dataset):
         return self.ttau
     
     def get_mask(self, image):    
-        eye_mask = draw_eyes_mask_segmentation(image.copy())
-        eyebrow_mask = draw_eyebrows_mask_segmentation(image.copy())
-        nose_mask = draw_nose_mask_segmentation(image.copy())
-        mouth_mask = draw_mouth_mask_segmentation(image.copy())
-        face_mask = draw_face_mask_segmentation(image.copy())
+        eye_mask = self.mediapipe_tool.draw_eyes_mask_segmentation(image.copy())
+        eyebrow_mask = self.mediapipe_tool.draw_eyebrows_mask_segmentation(image.copy())
+        nose_mask = self.mediapipe_tool.draw_nose_mask_segmentation(image.copy())
+        mouth_mask = self.mediapipe_tool.draw_mouth_mask_segmentation(image.copy())
+        face_mask = self.mediapipe_tool.draw_face_mask_segmentation(image.copy())
 
         H, W = eye_mask.shape
         combined_mask = np.zeros((H, W), dtype=np.uint8)
