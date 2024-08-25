@@ -21,10 +21,10 @@ np.random.seed(seed)
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
-from utils.datasets.rafdb_ds import RafDataSet_Mask
-from trainer.rafdb_segmentation_trainer import RAFDB_Segmentation_Trainer
+from sgu24project.utils.datasets.rafdb_ds import RafDataSet_Mask
+from sgu24project.trainer.rafdb_segmentation_trainer import RAFDB_Segmentation_Trainer
 
-from models.Unet import UNET
+from sgu24project.models.Unet import UNET
 
 
 #from sgu24project.models.resnet_cbam_v5 import resnet50_co_cbam
