@@ -587,7 +587,8 @@ class RAFDB_Segmentation_Trainer(Trainer):
   def stop_train(self):
     return (
         self.plateau_count > self.max_plateau_count or
-        self.current_epoch_num > self.max_epoch_num
+        self.current_epoch_num > self.max_epoch_num or
+        self.isDebug == -1
     )
   
   def update_state_training(self):
