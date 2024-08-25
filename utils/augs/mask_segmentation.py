@@ -3,6 +3,8 @@ import mediapipe as mp
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.colors as mcolors
+import warnings
+warnings.filterwarnings('ignore')
 #create mask for each face part
 class  mediapipe_tool():
     def __init__(self):

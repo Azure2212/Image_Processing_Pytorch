@@ -19,6 +19,8 @@ from torch.optim.lr_scheduler import MultiplicativeLR, StepLR, MultiStepLR, Cons
 
 from sgu24project.utils.metrics.metrics import accuracy, make_batch
 
+import warnings
+warnings.filterwarnings('ignore')
 def get_lr(optimizer):
     for param_group in optimizer.param_groups:
         return param_group['lr']
@@ -335,7 +337,7 @@ class RAFDB_Segmentation_Trainer(Trainer):
         loss = self.criterion(y_pred, masks)
       
        # Compute accuracy and dice score
-      acc, dice_score = compute_metrics(y_pred, masks, self.num_classes)
+      acc, dice_score = self.compute_metrics(y_pred, masks, self.num_classes)
       
 
       train_loss += loss.item()
@@ -387,7 +389,7 @@ class RAFDB_Segmentation_Trainer(Trainer):
           loss = self.criterion(y_pred, masks)
       
        # Compute accuracy and dice score
-        acc, dice_score = compute_metrics(y_pred, masks, self.num_classes)
+        acc, dice_score = self.compute_metrics(y_pred, masks, self.num_classes)
 
         val_loss += loss.item()
         val_acc += acc.item
@@ -431,7 +433,7 @@ class RAFDB_Segmentation_Trainer(Trainer):
           loss = self.criterion(y_pred, masks)
       
        # Compute accuracy and dice score
-        acc, dice_score = compute_metrics(y_pred, masks, self.num_classes)
+        acc, dice_score = self.compute_metrics(y_pred, masks, self.num_classes)
 
         test_loss += loss.item()
         test_acc += acc
@@ -477,7 +479,7 @@ class RAFDB_Segmentation_Trainer(Trainer):
             y_pred = torch.unsqueeze(y_pred, 0)
 
             # Compute accuracy and Dice score
-            acc, dice_score = compute_metrics(y_pred, masks, self.num_classes)
+            acc, dice_score = self.compute_metrics(y_pred, masks, self.num_classes)
 
             test_acc += acc
             test_dice += dice_score

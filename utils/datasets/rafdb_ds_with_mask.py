@@ -15,6 +15,9 @@ import numpy as np
 import matplotlib.colors as mcolors
 from sgu24project.utils.augs.augmenters import seg_raf , seg_raftest1, seg_raftest2, CustomTransform
 from sgu24project.utils.augs.mask_segmentation import mediapipe_tool
+
+import warnings
+warnings.filterwarnings('ignore')
 class RafDataSet_Mask(Dataset):
     def __init__(self, data_type, configs, ttau=False, len_tta=48, use_albumentation=True):
         self.use_albumentation = use_albumentation
