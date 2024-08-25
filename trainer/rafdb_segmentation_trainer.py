@@ -525,9 +525,10 @@ class RAFDB_Segmentation_Trainer(Trainer):
             test_acc += acc
             test_dice += dice_score
             test_iou += iou_score
-
-          if self.isDebug == -1: 
-            break
+          
+            if self.isDebug == -1:
+                break
+        
     # Average metrics
     test_acc /= total_batches
     test_dice /= total_batches
