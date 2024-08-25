@@ -284,7 +284,7 @@ class RAFDB_Segmentation_Trainer(Trainer):
       except:
           print("--------Can not import wandb-------")
 
-  def compute_metrics(preds, labels, num_classes):
+  def compute_metrics(self, preds, labels, num_classes):
     # Convert logits to probabilities
     preds = torch.softmax(preds, dim=1)
     
