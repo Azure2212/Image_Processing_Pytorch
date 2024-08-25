@@ -337,6 +337,9 @@ class RAFDB_Segmentation_Trainer(Trainer):
         loss = self.criterion(y_pred, masks)
       
        # Compute accuracy and dice score
+      print(f'num classes = {self.num_classes}')
+      print(f'num y_pred = {y_pred.shape}')
+      print(f'num masks = {masks.shape}')
       acc, dice_score = self.compute_metrics(y_pred, masks, self.num_classes)
       
 
