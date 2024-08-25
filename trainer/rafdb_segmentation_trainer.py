@@ -318,7 +318,7 @@ class RAFDB_Segmentation_Trainer(Trainer):
     train_acc = 0.0
     train_dice = 0.0
 
-    for i, (images, labels) in tqdm.tqdm(
+    for i, (images, masks, labels) in tqdm.tqdm(
         enumerate(self.train_ds), total = len(self.train_ds), leave = True, colour = "blue", desc = f"Epoch {self.current_epoch_num}",
         bar_format="{desc}: {percentage:3.0f}%|{bar:50}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]"
     ):
@@ -327,15 +327,15 @@ class RAFDB_Segmentation_Trainer(Trainer):
       self.model = self.model.cuda()
       
       images = images.to(device=self.device)
-      labels = labels.long().to(device=self.device)
+      masks = masks.long().to(device=self.device)
 
       # compute output, accuracy and get loss
       with torch.cuda.amp.autocast():
         y_pred = self.model(images)
-        loss = self.criterion(y_pred, labels)
+        loss = self.criterion(y_pred, masks)
       
        # Compute accuracy and dice score
-      acc, dice_score = compute_metrics(y_pred, labels, self.num_classes)
+      acc, dice_score = compute_metrics(y_pred, masks, self.num_classes)
       
 
       train_loss += loss.item()
@@ -374,20 +374,20 @@ class RAFDB_Segmentation_Trainer(Trainer):
     val_dice = 0.0
 
     with torch.no_grad():
-      for i, (images, labels) in tqdm.tqdm(
+      for i, (images, masks, labels) in tqdm.tqdm(
           enumerate(self.val_ds), total = len(self.val_ds), leave = True, colour = "green", desc = "        ",
           bar_format="{desc} {percentage:3.0f}%|{bar:30}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]"
       ):
         images = images.to(device=self.device)
-        labels = labels.long().to(device=self.device)
+        masks = masks.long().to(device=self.device)
 
         # compute output, accuracy and get loss
         with torch.cuda.amp.autocast():
           y_pred = self.model(images)
-          loss = self.criterion(y_pred, labels)
+          loss = self.criterion(y_pred, masks)
       
        # Compute accuracy and dice score
-        acc, dice_score = compute_metrics(y_pred, labels, self.num_classes)
+        acc, dice_score = compute_metrics(y_pred, masks, self.num_classes)
 
         val_loss += loss.item()
         val_acc += acc.item
@@ -418,20 +418,20 @@ class RAFDB_Segmentation_Trainer(Trainer):
     test_dice = 0.0
 
     with torch.no_grad():
-      for i, (images, labels) in tqdm.tqdm(
+      for i, (images, masks, labels) in tqdm.tqdm(
           enumerate(self.test_ds), total = len(self.test_ds), leave = True, colour = "green", desc = "        ",
           bar_format="{desc} {percentage:3.0f}%|{bar:30}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]"
       ):
         images = images.to(device=self.device)
-        labels = labels.long().to(device=self.device)
+        masks = masks.long().to(device=self.device)
 
         # compute output, accuracy and get loss
         with torch.cuda.amp.autocast():
           y_pred = self.model(images)
-          loss = self.criterion(y_pred, labels)
+          loss = self.criterion(y_pred, masks)
       
        # Compute accuracy and dice score
-        acc, dice_score = compute_metrics(y_pred, labels, self.num_classes)
+        acc, dice_score = compute_metrics(y_pred, masks, self.num_classes)
 
         test_loss += loss.item()
         test_acc += acc
@@ -464,8 +464,8 @@ class RAFDB_Segmentation_Trainer(Trainer):
             range(total_batches), total=total_batches, leave=False,
             desc="Evaluating"
         ):
-            images, labels = self.test_loader_ttau[idx]
-            labels = torch.LongTensor([labels]).cuda(non_blocking=True)
+            images, masks, labels = self.test_loader_ttau[idx]
+            masks = torch.LongTensor([masks]).cuda(non_blocking=True)
 
             images = make_batch(images)
             images = images.cuda(non_blocking=True)
@@ -477,7 +477,7 @@ class RAFDB_Segmentation_Trainer(Trainer):
             y_pred = torch.unsqueeze(y_pred, 0)
 
             # Compute accuracy and Dice score
-            acc, dice_score = compute_metrics(y_pred, labels, self.num_classes)
+            acc, dice_score = compute_metrics(y_pred, masks, self.num_classes)
 
             test_acc += acc
             test_dice += dice_score
