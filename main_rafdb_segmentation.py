@@ -53,6 +53,7 @@ configs["optimizer_chose"] = args.optimizer_chose
 configs["lr_scheduler"] = args.lr_scheduler
 configs["lr"] = args.lr_value
 configs["isDebug"] = args.isDebug
+configs["num_classes"] = args.num_classes
 configs["current_epoch_num"] = args.current_epoch_num
 configs["name_run_wandb"] = args.name_run_wandb
 if args.load_state_dir != '':
