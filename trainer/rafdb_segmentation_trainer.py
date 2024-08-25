@@ -74,15 +74,23 @@ class RAFDB_Segmentation_Trainer(Trainer):
     self.train_loss_list = []
     self.train_acc_list = []
     self.train_dice_list = []
+    self.train_iou_list = []
+
     self.val_loss_list = []
     self.val_acc_list = []
     self.val_dice_list = []
+    self.val_iou_list = []
+
     self.best_train_acc = 0.0
-    self.best_val_acc = 0.0
     self.best_train_loss = 0.0
-    self.best_val_loss = 0.0
     self.best_train_dice = 0.0
+    self.best_train_iou = 0.0
+
+    self.best_val_acc = 0.0
+    self.best_val_loss = 0.0
     self.best_val_dice = 0.0
+    self.best_val_iou = 0.0
+
     self.test_acc = 0.0
     self.test_acc_ttau = 0.0
     self.plateau_count = 0
@@ -297,6 +305,8 @@ class RAFDB_Segmentation_Trainer(Trainer):
     # Compute Dice score per class
     smooth = 1e-8
     dice_scores = []
+    iou_scores = []
+    
     for c in range(num_classes):
         # Compute Dice score for class c
         pred_c = (predicted == c).float()
@@ -305,11 +315,17 @@ class RAFDB_Segmentation_Trainer(Trainer):
         union = pred_c.sum() + label_c.sum()
         dice_score_c = (2. * intersection + smooth) / (union + smooth)
         dice_scores.append(dice_score_c)
+        
+        # Compute IoU for class c
+        union = (pred_c + label_c).sum() - intersection
+        iou_score_c = (intersection + smooth) / (union + smooth)
+        iou_scores.append(iou_score_c)
     
-    # Average Dice score across all classes
+    # Average Dice score and IoU across all classes
     dice_score = torch.mean(torch.tensor(dice_scores))
+    iou_score = torch.mean(torch.tensor(iou_scores))
     
-    return accuracy, dice_score
+    return accuracy, dice_score, iou_score
     # return wandb
   def step_per_train(self):
     # if self.wb == True:
@@ -319,6 +335,7 @@ class RAFDB_Segmentation_Trainer(Trainer):
     train_loss = 0.0
     train_acc = 0.0
     train_dice = 0.0
+    train_iou = 0.0
 
     for i, (images, masks, labels) in tqdm.tqdm(
         enumerate(self.train_ds), total = len(self.train_ds), leave = True, colour = "blue", desc = f"Epoch {self.current_epoch_num}",
@@ -337,15 +354,13 @@ class RAFDB_Segmentation_Trainer(Trainer):
         loss = self.criterion(y_pred, masks)
       
        # Compute accuracy and dice score
-      print(f'num classes = {self.num_classes}')
-      print(f'num y_pred = {y_pred.shape}')
-      print(f'num masks = {masks.shape}')
-      acc, dice_score = self.compute_metrics(y_pred, masks, self.num_classes)
+      acc, dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_classes)
       
 
       train_loss += loss.item()
       train_acc += acc
       train_dice += dice_score
+      train_iou += dice_score
 
       # compute gradient and do SGD step
       self.optimizer.zero_grad()
@@ -357,6 +372,7 @@ class RAFDB_Segmentation_Trainer(Trainer):
           " Loss" : train_loss / (i+1),
           " Accuracy" :train_acc / (i+1),
           " DiceScore" :train_dice / (i+1),
+          " IouScore" :train_iou / (i+1),
           " epochs" : self.current_epoch_num,
           " Learning_rate" : get_lr(self.optimizer)
       }
@@ -368,15 +384,20 @@ class RAFDB_Segmentation_Trainer(Trainer):
     self.train_loss_list.append(train_loss / i)
     self.train_acc_list.append(train_acc / i)
     self.train_dice_list.append(train_dice / i)
+    self.train_iou_list.append(train_iou / i)
 
 
-    print(" Loss: {:.4f}".format(self.train_loss_list[-1]), ", Accuracy: {:.2f}%".format(self.train_acc_list[-1]), ", Dice_score: {:.3f}%".format(self.train_dice_list[-1]))
+    print(" Loss: {:.4f}".format(self.train_loss_list[-1])
+          , ", Accuracy: {:.2f}%".format(self.train_acc_list[-1])
+          , ", Dice_score: {:.3f}%".format(self.train_dice_list[-1])
+          , ", Iou_score: {:.3f}%".format(self.train_iou_list[-1]))
 
   def step_per_val(self):
     self.model.eval()
     val_loss = 0.0
     val_acc = 0.0
     val_dice = 0.0
+    val_iou = 0.0
 
     with torch.no_grad():
       for i, (images, masks, labels) in tqdm.tqdm(
@@ -392,17 +413,22 @@ class RAFDB_Segmentation_Trainer(Trainer):
           loss = self.criterion(y_pred, masks)
       
        # Compute accuracy and dice score
-        acc, dice_score = self.compute_metrics(y_pred, masks, self.num_classes)
+        acc, dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_classes)
 
         val_loss += loss.item()
         val_acc += acc.item
         val_dice += dice_score
+        val_iou += iou_score
       i += 1
       self.val_loss_list.append(val_loss / i)
       self.val_acc_list.append(val_acc / i)
       self.val_dice_list.append(val_dice / i)
+      self.val_iou_list.append(val_dice / i)
 
-      print(" Val_Loss: {:.4f}".format(self.val_loss_list[-1]),", Val_Accuracy: {:.2f}%".format(self.val_acc_list[-1]), ", Val_Dice: {:.2f}%".format(self.val_dice_list[-1]))
+      print(" Val_Loss: {:.4f}".format(self.val_loss_list[-1])
+            ,", Val_Accuracy: {:.2f}%".format(self.val_acc_list[-1])
+            , ", Val_Dice: {:.2f}%".format(self.val_dice_list[-1])
+            , ", Val_Iou: {:.2f}%".format(self.val_iou_list[-1]))
 
       # write wandb
       if self.wb == True:
@@ -410,6 +436,7 @@ class RAFDB_Segmentation_Trainer(Trainer):
             " Val_Loss" : self.val_loss_list[-1],
             " Val_Accuracy" :self.val_acc_list[-1],
             " Val_DiceScore" :self.val_dice_list[-1],
+            " Val_IouScore" :self.val_iou_list[-1],
             # "Learning_rate" : self.learning_rate
         }
         self.wandb.log(metric)
@@ -421,6 +448,7 @@ class RAFDB_Segmentation_Trainer(Trainer):
     test_loss = 0.0
     test_acc = 0.0
     test_dice = 0.0
+    test_iou = 0.0
 
     with torch.no_grad():
       for i, (images, masks, labels) in tqdm.tqdm(
@@ -436,30 +464,34 @@ class RAFDB_Segmentation_Trainer(Trainer):
           loss = self.criterion(y_pred, masks)
       
        # Compute accuracy and dice score
-        acc, dice_score = self.compute_metrics(y_pred, masks, self.num_classes)
+        acc, dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_classes)
 
         test_loss += loss.item()
         test_acc += acc
         test_dice += dice_score
+        test_iou += iou_score
 
         # print(i)
       i += 1
       test_loss = (test_loss / i)
       test_acc = (test_acc / i)
       test_dice = (test_dice / i)
+      test_iou = (test_iou / i)
 
       print("Accuracy on Test_ds: {:.3f}".format(test_acc))
       if self.wb == True:
         self.wandb.log({
           "Test_accuracy": test_acc,
-          "Test_diceScore": test_dice
+          "Test_diceScore": test_dice,
+          "Test_iouScore": test_iou
           })
-      return test_acc, test_dice
+      return test_acc, test_dice, test_iou
 
   def acc_on_test_ttau(self):
     self.model.eval()
     test_acc = 0.0
     test_dice = 0.0
+    test_iou = 0.0
 
     # Create accumulators for metrics
     total_batches = len(self.test_loader_ttau)
@@ -482,26 +514,29 @@ class RAFDB_Segmentation_Trainer(Trainer):
             y_pred = torch.unsqueeze(y_pred, 0)
 
             # Compute accuracy and Dice score
-            acc, dice_score = self.compute_metrics(y_pred, masks, self.num_classes)
+            acc, dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_classes)
 
             test_acc += acc
             test_dice += dice_score
+            test_iou += iou_score
 
     # Average metrics
     test_acc /= total_batches
     test_dice /= total_batches
+    test_iou /= total_batches
 
     print(f"Accuracy on Test_ds with TTAU: {test_acc:.3f}")
     print(f"Dice Score on Test_ds with TTAU: {test_dice:.3f}")
-
+    print(f"IOU Score on Test_ds with TTAU: {test_iou:.3f}")
     # Log metrics to wandb
     if self.wb:
         self.wandb.log({
             "Testta_accuracy": test_acc,
-            "Testta_diceScore": test_dice
+            "Testta_diceScore": test_dice,
+            "Testta_iouScore": test_iou
         })
 
-    return test_acc, test_dice
+    return test_acc, test_dice, test_iou
 
   def Train_model(self):
     self.init_wandb()
@@ -529,8 +564,8 @@ class RAFDB_Segmentation_Trainer(Trainer):
       state = torch.load(self.checkpoint_path)
       self.model.load_state_dict(state["net"])
       print("----------------------Cal on Test-----------------------")
-      self.test_acc = self.acc_on_test()
-      self.test_acc_ttau = self.acc_on_test_ttau()
+      self.test_acc, self.test_dice, self.test_iou = self.acc_on_test()
+      self.test_acc_ttau, self.test_dice_ttau, self.test_iou_ttau = self.acc_on_test_ttau()
       self.save_weights()
 
     except Exception as e:
@@ -542,8 +577,8 @@ class RAFDB_Segmentation_Trainer(Trainer):
     print(" After {} epochs and {} plateau count, consume {}".format((self.current_epoch_num), (self.plateau_count),consume_time[:-7]))
     print(" Best Accuracy on Train: {:.3f} ".format(self.best_train_acc))
     print(" Best Accuracy on Val: {:.3f} ".format(self.best_val_acc))
-    print(" Best Accuracy on Test: {:.3f} ".format(self.test_acc))
-    print(" Best Accuracy on Test with tta: {:.3f} ".format(self.test_acc_ttau))
+    print(" Best Accuracy, Dice_score, Iou_score on Test: {:.3f} ||  {:.3f} ||  {:.3f}".format((self.test_acc), (self.test_dice), (self.test_iou)))
+    print(" Best Accuracy, Dice_score, Iou_score on Test with tta: {:.3f} || {:.3f}|| {:.3f}".format((self.test_acc_ttau), (self.test_dice_ttau), (self.test_iou_ttau)))
 
   #set up for training (update epoch, stopping training, write logging)
   def update_epoch_num(self):
@@ -561,10 +596,14 @@ class RAFDB_Segmentation_Trainer(Trainer):
       self.plateau_count = 0
       self.best_val_acc = self.val_acc_list[-1]
       self.best_val_loss = self.val_loss_list[-1]
+      self.best_val_dice = self.val_dice_list[-1]
+      self.best_val_iou = self.val_iou_list[-1]
+
       self.best_train_acc = self.train_acc_list[-1]
       self.best_train_loss = self.train_loss_list[-1]
       self.best_train_dice = self.train_dice_list[-1]
-      self.best_train_dice = self.val_dice_list[-1]
+      self.best_train_iou = self.train_iou_list[-1]
+      
     else:
       self.plateau_count += 1
 # 100 - self.best_val_acc
@@ -583,17 +622,20 @@ class RAFDB_Segmentation_Trainer(Trainer):
     state = {
         **self.configs,
         "net": state_dict,
-        "best_val_loss": self.best_val_loss,
-        "best_val_acc": self.best_val_acc,
         "best_train_loss": self.best_train_loss,
         "best_train_acc": self.best_train_acc,
         "train_loss_list": self.train_loss_list,
-        "val_loss_list": self.val_loss_list,
         "train_acc_list": self.train_acc_list,
+        "best_train_dice": self.best_train_dice,
+        "best_train_iou": self.best_train_iou,
+
+        "best_val_loss": self.best_val_loss,
+        "best_val_acc": self.best_val_acc,
+        "val_loss_list": self.val_loss_list,
         "val_acc_list": self.val_acc_list,
         "test_acc": self.test_acc,
-        "best_train_dice": self.best_train_dice,
         "best_val_dice": self.best_val_dice,
+        "best_val_iou": self.best_val_iou,
         "optimizer": self.optimizer.state_dict(),
     }
 

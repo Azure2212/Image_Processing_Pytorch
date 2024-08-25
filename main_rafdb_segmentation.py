@@ -37,7 +37,7 @@ parser.add_argument('--lr-value', default= 1e-3, type=float, help='learning rate
 parser.add_argument('--use-wandb', default= 1, type=int, help='use wandb = 1, not use = 0')
 parser.add_argument('--load-state-dir', default= '', type=str, help='weight2load')
 parser.add_argument('--isDebug', default= 0, type=int, help='debug = 1')
-parser.add_argument('--num-classes', default= 7, type=int, help='num-classes')
+parser.add_argument('--num-classes', default= 6, type=int, help='num-classes')
 parser.add_argument('--use-pretrained', default= 1, type=int, help='use pre-trained = 1')
 parser.add_argument('--current-epoch-num', default= 0, type=int, help='epoch start')
 parser.add_argument('--name-run-wandb', default= 'Resnet50', type=str, help='name to save in wandb')
