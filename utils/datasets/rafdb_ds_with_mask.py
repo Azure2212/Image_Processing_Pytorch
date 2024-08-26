@@ -63,7 +63,7 @@ class RafDataSet_Mask(Dataset):
             ToTensorV2(),
         ])
 
-        ToTensorV2_transform = A.Compose([
+        self.ToTensorV2_transform = A.Compose([
             ToTensorV2()
         ])
         
