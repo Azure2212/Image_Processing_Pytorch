@@ -351,8 +351,6 @@ class RAFDB_Segmentation_Trainer(Trainer):
       # compute output, accuracy and get loss
       with torch.cuda.amp.autocast():
         y_pred = self.model(images)
-        print(f'shape of y_pred:{y_pred.shape}')
-        print(f'shape of masks:{masks.shape}')
         loss = self.criterion(y_pred, masks)
       
        # Compute accuracy and dice score
