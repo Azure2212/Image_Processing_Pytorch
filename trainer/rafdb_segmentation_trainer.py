@@ -509,8 +509,10 @@ class RAFDB_Segmentation_Trainer(Trainer):
             #masks = torch.LongTensor([masks]).cuda(non_blocking=True)
             masks = [torch.tensor(mask, dtype=torch.long).cuda(non_blocking=True) for mask in masks]
             images = make_batch(images)
+            print(len(images))
             images = images.cuda(non_blocking=True)
-
+            print(len(images))
+            print(images.shape)
             y_pred = self.model(images)
             y_pred = F.softmax(y_pred, dim=1)
 
