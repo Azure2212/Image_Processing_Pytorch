@@ -9,12 +9,12 @@ import torch
 import os 
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
-import mediapipe as mp
+#import mediapipe as mp
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.colors as mcolors
 from sgu24project.utils.augs.augmenters import seg_raf , seg_raftest1, seg_raftest2, CustomTransform
-from sgu24project.utils.augs.mask_segmentation import mediapipe_tool
+#from sgu24project.utils.augs.mask_segmentation import mediapipe_tool
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -76,7 +76,6 @@ class RafDataSet_Mask(Dataset):
         ])
         
         self.custom_transform = CustomTransform()
-        self.mediapipe_tool = mediapipe_tool()
     def __len__(self):
         return len(self.file_paths)
     
