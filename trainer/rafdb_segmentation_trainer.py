@@ -504,7 +504,7 @@ class RAFDB_Segmentation_Trainer(Trainer):
 
     with torch.no_grad():
         for idx, (images, masks, labels) in enumerate(tqdm.tqdm(
-        test_loader_ttau_loader, total=len(test_loader_ttau_loader), leave=False, desc="Evaluating")):
+        test_loader_ttau, total=len(test_loader_ttau), leave=False, desc="Evaluating")):
 
             #images, masks, labels = self.test_loader_ttau[idx]
             #masks = torch.LongTensor([masks]).cuda(non_blocking=True)
