@@ -62,6 +62,10 @@ class RafDataSet_Mask(Dataset):
             A.ShiftScaleRotate(scale_limit=0.05, rotate_limit=0, shift_limit=0, p=0.5),
             ToTensorV2(),
         ])
+
+        ToTensorV2_transform = A.Compose([
+            A.ToTensorV2()
+        ])
         
         self.seg_raftest2 = A.Compose([
             # No direct equivalent for RemoveSaturation, so it is skipped
@@ -138,14 +142,16 @@ class RafDataSet_Mask(Dataset):
             return images, masks, label
 
         if self.data_type == "train":
+            image = image.permute(1, 2, 0).numpy()  # Change from (C, H, W) to (H, W, C)
+            mask = mask.squeeze(0).numpy()
             if self.use_albumentation:
-                image = image.permute(1, 2, 0).numpy()  # Change from (C, H, W) to (H, W, C)
-                #mask = mask.permute(0,1).numpy()
-                mask = mask.squeeze(0).numpy()
                 augmented = self.train_augmentation(image=image, mask=mask)
-                image = augmented['image']
-                mask = augmented['mask']
-                
+            else:
+                augmented = self.ToTensorV2_transform(image=image, mask=mask)
+            image = augmented['image']
+            mask = augmented['mask']
+            else:
+   
         if self.data_type == 'test':
             mask = mask.squeeze(0)
     
