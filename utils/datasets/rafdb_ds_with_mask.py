@@ -104,22 +104,28 @@ class RafDataSet_Mask(Dataset):
         image = cv2.imread(path)
         mask = self.get_mask(masks_dir = path.replace('/Image/aligned/', '/Image/masks/').split('.')[0]) 
         image = image[:, :, ::-1]  # Convert BGR to RGB
+        
+        
+        label = self.labels[idx]
+        transformed = self.custom_transform(image=image, mask=mask)
+        image = transformed['image']
+        mask = transformed.get('mask', None)
           # Assuming this function is defined elsewhere
         if self.data_type == "test" and self.ttau:
-            image_copy = image.copy()
-            mask_copy = mask.copy()
+            image_copy = image.clone().permute(1, 2, 0).numpy()
+            mask_copy = mask.clone().squeeze(0).numpy()
 
             # Apply seg_raftest1 to the copied image and mask
-            transformed1 = seg_raftest1(image=image_copy, mask=mask_copy)
+            transformed1 = self.seg_raftest1(image=image_copy, mask=mask_copy)
             image1 = transformed1['image']
             mask1 = transformed1['mask']
             
             # Make copies of the original image and mask for seg_raftest2
-            image_copy2 = image.copy()
-            mask_copy2 = mask.copy()
+            image_copy2 = image.clone().permute(1, 2, 0).numpy()
+            mask_copy2 = mask.clone().squeeze(0).numpy()
 
             # Apply seg_raftest2 to the copied image and mask
-            transformed2 = seg_raftest2(image=image_copy2, mask=mask_copy2)
+            transformed2 = self.seg_raftest2(image=image_copy2, mask=mask_copy2)
             image2 = transformed2['image']
             mask2 = transformed2['mask']
             # Combine the transformed images and masks
@@ -131,11 +137,8 @@ class RafDataSet_Mask(Dataset):
 
             return images, masks, label
         
-        label = self.labels[idx]
-        transformed = self.custom_transform(image=image, mask=mask)
-        image = transformed['image']
-        mask = transformed.get('mask', None)
-    
+        print(image.shape)
+        print(mask.shape)
         if self.data_type == "train":
             if self.use_albumentation:
                 image = image.permute(1, 2, 0).numpy()  # Change from (C, H, W) to (H, W, C)
@@ -144,10 +147,10 @@ class RafDataSet_Mask(Dataset):
                 augmented = self.train_augmentation(image=image, mask=mask)
                 image = augmented['image']
                 mask = augmented['mask']
-
+                
         if self.data_type == 'test':
             mask = mask.squeeze(0)
-            
+    
         return image, mask, label
 
 
