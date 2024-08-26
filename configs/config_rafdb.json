@@ -1,7 +1,7 @@
 {
-    "raf_path": "/kaggle/input/rafdb-basic",
-    "image_path": "rafdb_basic/Image/aligned/",
-    "label_path": "rafdb_basic/EmoLabel/list_patition_label.txt",
+    "raf_path": "/kaggle/input/rafdb-mask-basic-15k3",
+    "image_path": "rafdb_basic_with_mask/Image/aligned/",
+    "label_path": "rafdb_basic_with_mask/EmoLabel/list_patition_label.txt",
     "image_size": 224,
     "n_channels": 3,
     "n_classes": 7,

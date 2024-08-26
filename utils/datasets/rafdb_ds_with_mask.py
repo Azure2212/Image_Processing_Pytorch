@@ -83,30 +83,27 @@ class RafDataSet_Mask(Dataset):
     def is_ttau(self):
         return self.ttau
     
-    def get_mask(self, image):    
-        eye_mask = self.mediapipe_tool.draw_eyes_mask_segmentation(image.copy())
-        eyebrow_mask = self.mediapipe_tool.draw_eyebrows_mask_segmentation(image.copy())
-        nose_mask = self.mediapipe_tool.draw_nose_mask_segmentation(image.copy())
-        mouth_mask = self.mediapipe_tool.draw_mouth_mask_segmentation(image.copy())
-        face_mask = self.mediapipe_tool.draw_face_mask_segmentation(image.copy())
+     def get_mask(self, masks_dir):      
+        print(f'masks_dir:{masks_dir}')
+        eyebrows_mask = cv2.imread(f'{masks_dir}/eyebrows_mask.jpg', cv2.IMREAD_GRAYSCALE)
+        eyes_mask = cv2.imread(f'{masks_dir}/eyes_mask.jpg', cv2.IMREAD_GRAYSCALE)
+        nose_mask = cv2.imread(f'{masks_dir}/nose_mask.jpg', cv2.IMREAD_GRAYSCALE)
+        mouth_mask = cv2.imread(f'{masks_dir}/mouth_mask.jpg', cv2.IMREAD_GRAYSCALE)
+        face_mask = cv2.imread(f'{masks_dir}/face_mask.jpg', cv2.IMREAD_GRAYSCALE)
 
-        H, W = eye_mask.shape
+        H, W = eyes_mask.shape
         combined_mask = np.zeros((H, W), dtype=np.uint8)
-
         combined_mask[face_mask == 255] = 5
-
-        combined_mask[eye_mask == 255] = 1
-
-        combined_mask[eyebrow_mask == 255] = 2
-
+        combined_mask[eyes_mask == 255] = 1
+        combined_mask[eyebrows_mask == 255] = 2
         combined_mask[nose_mask == 255] = 3
-
         combined_mask[mouth_mask == 255] = 4
+
         return combined_mask
     def __getitem__(self, idx):
         path = self.file_paths[idx]
         image = cv2.imread(path)
-        mask = self.get_mask(cv2.imread(path)) 
+         mask = self.get_mask(masks_dir = path.replace('/Image/aligned/', '/Image/masks/').split('.')[0]) 
         image = image[:, :, ::-1]  # Convert BGR to RGB
           # Assuming this function is defined elsewhere
         if self.data_type == "test" and self.ttau:
