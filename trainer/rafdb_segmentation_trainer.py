@@ -559,12 +559,14 @@ class RAFDB_Segmentation_Trainer(Trainer):
         self.optimizer.load_state_dict(my_checkpoint_path['optimizer'])
         print("loaded old weight successful")
       while not self.stop_train():
+        print('bat dau train')
         self.update_epoch_num()
         self.step_per_train()
         self.step_per_val()
 
         self.update_state_training()
         if self.isDebug == -1:
+          print('break train')
           break
 
     except KeyboardInterrupt:
