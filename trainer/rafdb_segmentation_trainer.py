@@ -351,6 +351,8 @@ class RAFDB_Segmentation_Trainer(Trainer):
       # compute output, accuracy and get loss
       with torch.cuda.amp.autocast():
         y_pred = self.model(images)
+        print(f'shape of y_pred:{y_pred.shape}')
+        print(f'shape of masks:{masks.shape}')
         loss = self.criterion(y_pred, masks)
       
        # Compute accuracy and dice score
@@ -378,9 +380,7 @@ class RAFDB_Segmentation_Trainer(Trainer):
       }
       if self.wb == True and i <= len(self.train_ds):
             self.wandb.log(metric)
-      print(f'debug r ma')
       if self.isDebug == -1: 
-        print(f'debug r vo roi ne break r')
         break
 
     i += 1
@@ -558,16 +558,13 @@ class RAFDB_Segmentation_Trainer(Trainer):
         self.model.load_state_dict(my_checkpoint_path['net'])
         self.optimizer.load_state_dict(my_checkpoint_path['optimizer'])
         print("loaded old weight successful")
-      print('ready?')
       while not self.stop_train():
-        print('bat dau train')
         self.update_epoch_num()
         self.step_per_train()
         self.step_per_val()
 
         self.update_state_training()
         if self.isDebug == -1:
-          print('break train')
           break
 
     except KeyboardInterrupt:
