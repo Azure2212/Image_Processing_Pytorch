@@ -484,7 +484,7 @@ class RAFDB_Segmentation_Trainer(Trainer):
       test_dice = (test_dice / i)
       test_iou = (test_iou / i)
 
-      print("Accuracy on Test_ds: {:.3f}".format(test_acc))
+      print("Test_Accuracy: {:.3f}, Test_Dice_score: {:.3f}, Test_IOU_score:{:.3f} ".format(test_acc, test_dice, test_iou))
       if self.wb == True:
         self.wandb.log({
           "Test_accuracy": test_acc,
@@ -518,6 +518,9 @@ class RAFDB_Segmentation_Trainer(Trainer):
             y_pred = torch.unsqueeze(y_pred, 0)
 
             # Compute accuracy and Dice score
+            print(y_pred.shape)
+            print("--------------")
+            print(masks.shape)
             acc, dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_classes)
 
             test_acc += acc
@@ -532,9 +535,7 @@ class RAFDB_Segmentation_Trainer(Trainer):
     test_dice /= total_batches
     test_iou /= total_batches
 
-    print(f"Accuracy on Test_ds with TTAU: {test_acc:.3f}")
-    print(f"Dice Score on Test_ds with TTAU: {test_dice:.3f}")
-    print(f"IOU Score on Test_ds with TTAU: {test_iou:.3f}")
+    print("Test_with_TTAU_Accuracy: {:.3f}, Test_with_TTAU_Dice_score: {:.3f}, Test_with_TTAU_IOU_score:{:.3f} ".format(test_acc, test_dice, test_iou))
     # Log metrics to wandb
     if self.wb:
         self.wandb.log({
