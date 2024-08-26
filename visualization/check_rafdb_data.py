@@ -1,10 +1,17 @@
 import tqdm 
+import matplotlib.colors as mcolors
 import cv2
 from PIL import Image
 import matplotlib.pyplot as plt
 import numpy as np
 from torch.utils.data import DataLoader
 from sgu24project.utils.datasets.rafdb_ds_with_mask import RafDataSet_Mask
+
+import argparse 
+parser = argparse.ArgumentParser()
+parser.add_argument('type-data', default= "train", type=str, help='type data')
+parser.add_argument('batch-size', default= 42, type=int, help='batch_size')
+args, unknown = parser.parse_known_args()
 configs = {
           "raf_path": "/kaggle/input/rafdb-mask-basic-15k3",
     "image_path": "rafdb_mask_basic/Image/aligned/",
@@ -13,12 +20,10 @@ configs = {
           }
 
 train_loader = RafDataSet_Mask( "train", configs, use_albumentation = True)
-train_loader = RafDataSet_Mask("test", configs, ttau = False, len_tta = 48) 
 total_image = len(train_loader)
-batch_size = 42
 train_ds = DataLoader(
                 train_loader,
-                batch_size=batch_size,
+                batch_size=args.batch_size,
                 pin_memory=True,
                 shuffle=False,
                 worker_init_fn=lambda x: np.random.seed(x),
