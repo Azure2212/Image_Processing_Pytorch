@@ -558,6 +558,7 @@ class RAFDB_Segmentation_Trainer(Trainer):
         self.model.load_state_dict(my_checkpoint_path['net'])
         self.optimizer.load_state_dict(my_checkpoint_path['optimizer'])
         print("loaded old weight successful")
+      print('ready?')
       while not self.stop_train():
         print('bat dau train')
         self.update_epoch_num()
