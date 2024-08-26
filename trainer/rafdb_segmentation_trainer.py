@@ -521,6 +521,7 @@ class RAFDB_Segmentation_Trainer(Trainer):
             print(y_pred.shape)
             print("--------------")
             print(len(masks))
+            print(masks)
             acc, dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_classes)
 
             test_acc += acc
