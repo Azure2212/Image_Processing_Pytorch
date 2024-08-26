@@ -419,7 +419,7 @@ class RAFDB_Segmentation_Trainer(Trainer):
         acc, dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_classes)
 
         val_loss += loss.item()
-        val_acc += acc.item
+        val_acc += acc
         val_dice += dice_score
         val_iou += iou_score
         if self.isDebug == -1: 
