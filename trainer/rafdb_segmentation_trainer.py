@@ -378,8 +378,9 @@ class RAFDB_Segmentation_Trainer(Trainer):
       }
       if self.wb == True and i <= len(self.train_ds):
             self.wandb.log(metric)
-
+      print(f'debug r ma')
       if self.isDebug == -1: 
+        print(f'debug r vo roi ne break r')
         break
 
     i += 1
