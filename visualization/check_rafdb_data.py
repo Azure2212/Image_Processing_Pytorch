@@ -21,7 +21,7 @@ configs = {
     "image_size": 224,
           }
 
-train_loader = RafDataSet_Mask( "train", configs, use_albumentation = True if args.albumentation == 1 else False)
+train_loader = RafDataSet_Mask( "train", configs, use_albumentation = True if args.use_albumentation == 1 else False)
 total_image = len(train_loader)
 train_ds = DataLoader(
                 train_loader,
