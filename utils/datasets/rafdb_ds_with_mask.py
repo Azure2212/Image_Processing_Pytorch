@@ -83,8 +83,8 @@ class RafDataSet_Mask(Dataset):
     def is_ttau(self):
         return self.ttau
     
-     def get_mask(self, masks_dir):      
-        print(f'masks_dir:{masks_dir}')
+    def get_mask(self, masks_dir):      
+        
         eyebrows_mask = cv2.imread(f'{masks_dir}/eyebrows_mask.jpg', cv2.IMREAD_GRAYSCALE)
         eyes_mask = cv2.imread(f'{masks_dir}/eyes_mask.jpg', cv2.IMREAD_GRAYSCALE)
         nose_mask = cv2.imread(f'{masks_dir}/nose_mask.jpg', cv2.IMREAD_GRAYSCALE)
