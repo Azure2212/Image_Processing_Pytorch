@@ -26,7 +26,7 @@ train_ds = DataLoader(
                 train_loader,
                 batch_size=args.batch_size,
                 pin_memory=True,
-                shuffle=True if arg.use_shuffle == 1 else False,
+                shuffle=True if args.use_shuffle == 1 else False,
                 worker_init_fn=lambda x: np.random.seed(x),
             )
 print(len(train_ds))
