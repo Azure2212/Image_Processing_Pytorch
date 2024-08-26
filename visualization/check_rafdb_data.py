@@ -1,8 +1,12 @@
 import tqdm 
+import cv2
+from PIL import Image
+import matplotlib.pyplot as plt
+import numpy as np
 from torch.utils.data import DataLoader
 from sgu24project.utils.datasets.rafdb_ds_with_mask import RafDataSet_Mask
-configs = {"batch_size":1, 
-          "raf_path": "/kaggle/input/rafdb-mask-basic-15k3",
+configs = {
+          "raf_path": "/kaggle/input/rafdb-mask-basic-15k3"
     "image_path": "rafdb_mask_basic/Image/aligned/",
     "label_path": "rafdb_mask_basic/EmoLabel/list_patition_label.txt",
     "image_size": 224,
@@ -11,7 +15,7 @@ configs = {"batch_size":1,
 train_loader = RafDataSet_Mask( "train", configs, use_albumentation = True)
 train_loader = RafDataSet_Mask("test", configs, ttau = False, len_tta = 48) 
 total_image = len(train_loader)
-batch_size = 100
+batch_size = 42
 train_ds = DataLoader(
                 train_loader,
                 batch_size=batch_size,
