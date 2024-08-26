@@ -150,7 +150,6 @@ class RafDataSet_Mask(Dataset):
                 augmented = self.ToTensorV2_transform(image=image, mask=mask)
             image = augmented['image']
             mask = augmented['mask']
-            else:
    
         if self.data_type == 'test':
             mask = mask.squeeze(0)
