@@ -11,6 +11,7 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--type-data', default= "train", type=str, help='type data')
 parser.add_argument('--batch-size', default= 42, type=int, help='batch_size')
+parser.add_argument('--use-shuffle', default= 1, type=int, help='1 is use, 0 is not')
 args, unknown = parser.parse_known_args()
 configs = {
           "raf_path": "/kaggle/input/rafdb-mask-basic-15k3",
@@ -25,7 +26,7 @@ train_ds = DataLoader(
                 train_loader,
                 batch_size=args.batch_size,
                 pin_memory=True,
-                shuffle=False,
+                shuffle=True if arg.use_shuffle == 1 else False,
                 worker_init_fn=lambda x: np.random.seed(x),
             )
 print(len(train_ds))
