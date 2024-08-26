@@ -64,7 +64,7 @@ class RafDataSet_Mask(Dataset):
         ])
 
         ToTensorV2_transform = A.Compose([
-            A.ToTensorV2()
+            ToTensorV2()
         ])
         
         self.seg_raftest2 = A.Compose([
