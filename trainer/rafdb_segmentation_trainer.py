@@ -500,11 +500,10 @@ class RAFDB_Segmentation_Trainer(Trainer):
     test_iou = 0.0
 
     # Create accumulators for metrics
-    total_batches = len(self.test_loader_ttau)
 
     with torch.no_grad():
         for idx, (images, masks, labels) in enumerate(tqdm.tqdm(
-        test_loader_ttau, total=len(test_loader_ttau), leave=False, desc="Evaluating")):
+        self.test_loader_ttau, total=len(self.test_loader_ttau), leave=False, desc="Evaluating")):
 
             #images, masks, labels = self.test_loader_ttau[idx]
             #masks = torch.LongTensor([masks]).cuda(non_blocking=True)
