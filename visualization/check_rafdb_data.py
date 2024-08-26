@@ -37,7 +37,7 @@ for i, (images, masks, labels) in tqdm.tqdm(
     ):
     batch_size = len(images)  # or len(labels), assuming they have the same length
     # Optionally, you can ccperform your training steps here
-    fig, ax = plt.subplots(batch_size,2,figsize=(6,6))
+    fig, ax = plt.subplots(batch_size,2,figsize=(60,60))
     # Example: print batch size
     print(f"list all distinct value in all masks = {masks.view(-1).unique()}")
 
@@ -49,6 +49,5 @@ for i, (images, masks, labels) in tqdm.tqdm(
         ax[idx, 1].imshow(masks[idx], cmap = mcolors.ListedColormap(['#440154', 'blue', 'green', 'red', 'yellow', 'orange']))
         ax[idx, 1].set_title('one-hot-mask')
         ax[idx, 1].axis('off')
-        print(masks[0].max().item())
         #print(masks[0].tolist())
     break
