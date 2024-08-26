@@ -509,9 +509,9 @@ class RAFDB_Segmentation_Trainer(Trainer):
     consume_time = str(datetime.datetime.now() - self.start_time)
     print("----------------------SUMMARY-----------------------")
     print(" After {} epochs and {} plateau count, consume {}".format((self.current_epoch_num), (self.plateau_count),consume_time[:-7]))
-    print(" Best Accuracy on Train: {:.3f} ".format(self.best_train_acc))
-    print(" Best Accuracy on Val: {:.3f} ".format(self.best_val_acc))
-    print(" Best Accuracy, Dice_score, Iou_score on Test: {:.3f} ||  {:.3f} ||  {:.3f}".format((self.test_acc), (self.test_dice), (self.test_iou)))
+    print(" Best Train Accuracy: {:.3f}, Best Train Dice Score: {:.3f}, Best Train IOU Score:{:.3f} ".format(self.best_train_acc, self.best_train_dice, self.best_train_iou))
+    print(" Best Val Accuracy: {:.3f}, Best Val Dice Score: {:.3f}, Best Val IOU Score:{:.3f} ".format(self.best_val_acc, self.best_val_dice, self.best_val_iou))
+    print(" Test Accuracy: {:.3f}, Test Dice Score: {:.3f}, Test IOU Score:{:.3f} ".format((self.test_acc), (self.test_dice), (self.test_iou)))
 
   #set up for training (update epoch, stopping training, write logging)
   def update_epoch_num(self):
