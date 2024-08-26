@@ -6,7 +6,7 @@ import numpy as np
 from torch.utils.data import DataLoader
 from sgu24project.utils.datasets.rafdb_ds_with_mask import RafDataSet_Mask
 configs = {
-          "raf_path": "/kaggle/input/rafdb-mask-basic-15k3"
+          "raf_path": "/kaggle/input/rafdb-mask-basic-15k3",
     "image_path": "rafdb_mask_basic/Image/aligned/",
     "label_path": "rafdb_mask_basic/EmoLabel/list_patition_label.txt",
     "image_size": 224,
