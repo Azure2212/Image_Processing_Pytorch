@@ -368,9 +368,9 @@ class RAFDB_Segmentation_Trainer(Trainer):
 
 
     print(" Loss: {:.4f}".format(self.train_loss_list[-1])
-          , ", Accuracy: {:.2f}%".format(self.train_acc_list[-1])
-          , ", Dice_score: {:.3f}%".format(self.train_dice_list[-1])
-          , ", Iou_score: {:.3f}%".format(self.train_iou_list[-1]))
+          , ", Accuracy: {:.4f}%".format(self.train_acc_list[-1])
+          , ", Dice_score: {:.4f}%".format(self.train_dice_list[-1])
+          , ", Iou_score: {:.4f}%".format(self.train_iou_list[-1]))
 
   def step_per_val(self):
     self.model.eval()
@@ -408,9 +408,9 @@ class RAFDB_Segmentation_Trainer(Trainer):
       self.val_iou_list.append(val_dice / i)
 
       print(" Val_Loss: {:.4f}".format(self.val_loss_list[-1])
-            ,", Val_Accuracy: {:.2f}%".format(self.val_acc_list[-1])
-            , ", Val_Dice: {:.2f}%".format(self.val_dice_list[-1])
-            , ", Val_Iou: {:.2f}%".format(self.val_iou_list[-1]))
+            ,", Val_Accuracy: {:.4f}%".format(self.val_acc_list[-1])
+            , ", Val_Dice: {:.4f}%".format(self.val_dice_list[-1])
+            , ", Val_Iou: {:.4f}%".format(self.val_iou_list[-1]))
 
       # write wandb
       if self.wb == True:
@@ -462,7 +462,7 @@ class RAFDB_Segmentation_Trainer(Trainer):
       test_dice = (test_dice / i)
       test_iou = (test_iou / i)
 
-      print("Test_Accuracy: {:.3f}, Test_Dice_score: {:.3f}, Test_IOU_score:{:.3f} ".format(test_acc, test_dice, test_iou))
+      print("Test_Accuracy: {:.4f}, Test_Dice_score: {:.4f}, Test_IOU_score:{:.4f} ".format(test_acc, test_dice, test_iou))
       if self.wb == True:
         self.wandb.log({
           "Test_accuracy": test_acc,
@@ -509,9 +509,9 @@ class RAFDB_Segmentation_Trainer(Trainer):
     consume_time = str(datetime.datetime.now() - self.start_time)
     print("----------------------SUMMARY-----------------------")
     print(" After {} epochs and {} plateau count, consume {}".format((self.current_epoch_num), (self.plateau_count),consume_time[:-7]))
-    print(" Best Train Accuracy: {:.3f}, Best Train Dice Score: {:.3f}, Best Train IOU Score:{:.3f} ".format(self.best_train_acc, self.best_train_dice, self.best_train_iou))
-    print(" Best Val Accuracy: {:.3f}, Best Val Dice Score: {:.3f}, Best Val IOU Score:{:.3f} ".format(self.best_val_acc, self.best_val_dice, self.best_val_iou))
-    print(" Test Accuracy: {:.3f}, Test Dice Score: {:.3f}, Test IOU Score:{:.3f} ".format((self.test_acc), (self.test_dice), (self.test_iou)))
+    print(" Best Train Accuracy: {:.4f}, Best Train Dice Score: {:.4f}, Best Train IOU Score:{:.4f} ".format(self.best_train_acc, self.best_train_dice, self.best_train_iou))
+    print(" Best Val Accuracy: {:.4f}, Best Val Dice Score: {:.4f}, Best Val IOU Score:{:.4f} ".format(self.best_val_acc, self.best_val_dice, self.best_val_iou))
+    print(" Test Accuracy: {:.4f}, Test Dice Score: {:.4f}, Test IOU Score:{:.4f} ".format((self.test_acc), (self.test_dice), (self.test_iou)))
 
   #set up for training (update epoch, stopping training, write logging)
   def update_epoch_num(self):
