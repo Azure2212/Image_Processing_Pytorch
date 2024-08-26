@@ -98,7 +98,7 @@ class RafDataSet_Mask(Dataset):
         combined_mask[nose_mask == 255] = 3
         combined_mask[mouth_mask == 255] = 4
 
-        return combined_mask
+        return combined_mask # background:0, eyes:1, eyebrows_mask:2, nose_mask:3, mouth_mask:4, face_mask:5
     def __getitem__(self, idx):
         path = self.file_paths[idx]
         image = cv2.imread(path)
