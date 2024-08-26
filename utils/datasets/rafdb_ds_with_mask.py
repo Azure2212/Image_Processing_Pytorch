@@ -136,9 +136,7 @@ class RafDataSet_Mask(Dataset):
             label = self.labels[idx]
 
             return images, masks, label
-        
-        print(image.shape)
-        print(mask.shape)
+
         if self.data_type == "train":
             if self.use_albumentation:
                 image = image.permute(1, 2, 0).numpy()  # Change from (C, H, W) to (H, W, C)
