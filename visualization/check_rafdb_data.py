@@ -9,8 +9,8 @@ from sgu24project.utils.datasets.rafdb_ds_with_mask import RafDataSet_Mask
 
 import argparse 
 parser = argparse.ArgumentParser()
-parser.add_argument('type-data', default= "train", type=str, help='type data')
-parser.add_argument('batch-size', default= 42, type=int, help='batch_size')
+parser.add_argument('--type-data', default= "train", type=str, help='type data')
+parser.add_argument('--batch-size', default= 42, type=int, help='batch_size')
 args, unknown = parser.parse_known_args()
 configs = {
           "raf_path": "/kaggle/input/rafdb-mask-basic-15k3",
