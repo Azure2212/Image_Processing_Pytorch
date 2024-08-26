@@ -563,6 +563,8 @@ class RAFDB_Segmentation_Trainer(Trainer):
         self.step_per_val()
 
         self.update_state_training()
+        if self.isDebug == -1:
+          break
 
     except KeyboardInterrupt:
       traceback.print_exc()
@@ -596,8 +598,7 @@ class RAFDB_Segmentation_Trainer(Trainer):
   def stop_train(self):
     return (
         self.plateau_count > self.max_plateau_count or
-        self.current_epoch_num > self.max_epoch_num or
-        self.isDebug == -1
+        self.current_epoch_num > self.max_epoch_num 
     )
   
   def update_state_training(self):
