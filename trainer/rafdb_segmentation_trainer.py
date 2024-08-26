@@ -34,13 +34,11 @@ class Trainer(object):
 
 
 class RAFDB_Segmentation_Trainer(Trainer):
-  def __init__(self, model, train_loader, val_loader, test_loader,test_loader_ttau, configs, wb = True):
+  def __init__(self, model, train_loader, val_loader, test_loader, configs, wb = True):
 
     self.train_loader = train_loader
     self.val_loader = val_loader
     self.test_loader = test_loader
-    self.test_loader_ttau = test_loader_ttau
-
 
     self.configs = configs
 
@@ -108,26 +106,6 @@ class RAFDB_Segmentation_Trainer(Trainer):
 
     self.checkpoint_path = os.path.join(self.checkpoint_dir,"ResnetDuck_Cbam_cuaTuan")
     # load dataset
-    if self.isDebug == 1:
-      print("Debug mode activated")
-
-      self.max_epoch_num = 60
-
-      n_train_debug = 100 if len(train_loader)> 100 else len(train_loader)
-      self.train_loader.label = train_loader.label[: n_train_debug]
-      self.train_loader.file_paths = train_loader.file_paths[: n_train_debug]
-
-      n_val_debug = 100 if len(val_loader)> 100 else len(val_loader)
-      self.val_loader.label = val_loader.label[: n_val_debug]
-      self.val_loader.file_paths = val_loader.file_paths[: n_val_debug]
-
-      n_test_debug = 100 if len(test_loader)> 100 else len(test_loader)
-      self.test_loader.label = test_loader.label[: n_test_debug]
-      self.test_loader.file_paths = test_loader.file_paths[: n_test_debug]
-
-      n_test_ttau_debug = 100 if len(test_loader_ttau)> 100 else len(test_loader_ttau)
-      self.test_loader_ttau.label = test_loader_ttau.label[: n_test_ttau_debug]
-      self.test_loader_ttau.file_paths = test_loader_ttau.file_paths[: n_test_ttau_debug]
 
     if self.distributed == 1:
             torch.distributed.init_process_group(backend="nccl")
@@ -379,7 +357,7 @@ class RAFDB_Segmentation_Trainer(Trainer):
       }
       if self.wb == True and i <= len(self.train_ds):
             self.wandb.log(metric)
-      if self.isDebug == -1: 
+      if self.isDebug == 1: 
         break
 
     i += 1
@@ -421,7 +399,7 @@ class RAFDB_Segmentation_Trainer(Trainer):
         val_acc += acc
         val_dice += dice_score
         val_iou += iou_score
-        if self.isDebug == -1: 
+        if self.isDebug == 1: 
           break
       i += 1
       self.val_loss_list.append(val_loss / i)
@@ -475,7 +453,7 @@ class RAFDB_Segmentation_Trainer(Trainer):
         test_dice += dice_score
         test_iou += iou_score
 
-        if self.isDebug == -1: 
+        if self.isDebug == 1: 
           break
 
       i += 1
@@ -493,61 +471,6 @@ class RAFDB_Segmentation_Trainer(Trainer):
           })
       return test_acc, test_dice, test_iou
 
-  def acc_on_test_ttau(self):
-    self.model.eval()
-    test_acc = 0.0
-    test_dice = 0.0
-    test_iou = 0.0
-
-    # Create accumulators for metrics
-
-    with torch.no_grad():
-        for idx, (images, masks, labels) in enumerate(tqdm.tqdm(
-        self.test_loader_ttau, total=len(self.test_loader_ttau), leave=False, desc="Evaluating")):
-
-            #images, masks, labels = self.test_loader_ttau[idx]
-            #masks = torch.LongTensor([masks]).cuda(non_blocking=True)
-            masks = [torch.tensor(mask, dtype=torch.long).cuda(non_blocking=True) for mask in masks]
-            images = make_batch(images)
-            images = images.cuda(non_blocking=True)
-            y_pred = self.model(images)
-            print(len(y_pred.shape))
-            y_pred = F.softmax(y_pred, dim=1)
-            print(len(y_pred.shape))
-            y_pred = torch.sum(y_pred, dim=0)
-            print(len(y_pred.shape))
-            y_pred = torch.unsqueeze(y_pred, 0)
-            print(len(y_pred.shape))
-            # Compute accuracy and Dice score
-            print(y_pred.shape)
-            print("--------------")
-            print(len(masks))
-            print(masks)
-            acc, dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_classes)
-
-            test_acc += acc
-            test_dice += dice_score
-            test_iou += iou_score
-          
-            if self.isDebug == -1:
-                break
-        
-    # Average metrics
-    test_acc /= total_batches
-    test_dice /= total_batches
-    test_iou /= total_batches
-
-    print("Test_with_TTAU_Accuracy: {:.3f}, Test_with_TTAU_Dice_score: {:.3f}, Test_with_TTAU_IOU_score:{:.3f} ".format(test_acc, test_dice, test_iou))
-    # Log metrics to wandb
-    if self.wb:
-        self.wandb.log({
-            "Testta_accuracy": test_acc,
-            "Testta_diceScore": test_dice,
-            "Testta_iouScore": test_iou
-        })
-
-    return test_acc, test_dice, test_iou
-
   def Train_model(self):
     self.init_wandb()
     #self.scheduler.step(100 - self.best_val_acc)
@@ -564,7 +487,7 @@ class RAFDB_Segmentation_Trainer(Trainer):
         self.step_per_val()
 
         self.update_state_training()
-        if self.isDebug == -1:
+        if self.isDebug == 1:
           break
 
     except KeyboardInterrupt:
@@ -577,7 +500,6 @@ class RAFDB_Segmentation_Trainer(Trainer):
       self.model.load_state_dict(state["net"])
       print("----------------------Cal on Test-----------------------")
       self.test_acc, self.test_dice, self.test_iou = self.acc_on_test()
-      self.test_acc_ttau, self.test_dice_ttau, self.test_iou_ttau = self.acc_on_test_ttau()
       self.save_weights()
 
     except Exception as e:
@@ -590,7 +512,6 @@ class RAFDB_Segmentation_Trainer(Trainer):
     print(" Best Accuracy on Train: {:.3f} ".format(self.best_train_acc))
     print(" Best Accuracy on Val: {:.3f} ".format(self.best_val_acc))
     print(" Best Accuracy, Dice_score, Iou_score on Test: {:.3f} ||  {:.3f} ||  {:.3f}".format((self.test_acc), (self.test_dice), (self.test_iou)))
-    print(" Best Accuracy, Dice_score, Iou_score on Test with tta: {:.3f} || {:.3f}|| {:.3f}".format((self.test_acc_ttau), (self.test_dice_ttau), (self.test_iou_ttau)))
 
   #set up for training (update epoch, stopping training, write logging)
   def update_epoch_num(self):

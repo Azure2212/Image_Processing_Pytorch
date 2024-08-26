@@ -60,7 +60,6 @@ if args.load_state_dir != '':
     configs["load_state_dir"] = args.load_state_dir
 
 train_loader = RafDataSet_Mask( "train", configs)
-test_loader_ttau = RafDataSet_Mask("test", configs, ttau = True, len_tta = 10) 
 test_loader = RafDataSet_Mask("test", configs, ttau = False, len_tta = 48) 
 print(f'number of classes = {args.num_classes}')
 model = UNET(in_channels=3, classes=args.num_classes)
@@ -72,7 +71,6 @@ trainer = RAFDB_Segmentation_Trainer(model = model,
                                     train_loader = train_loader, 
                                     val_loader = test_loader, 
                                     test_loader = test_loader, 
-                                    test_loader_ttau = test_loader_ttau, 
                                     configs = configs, 
                                     wb = use_wb)
 
