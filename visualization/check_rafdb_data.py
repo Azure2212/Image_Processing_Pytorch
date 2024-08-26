@@ -38,7 +38,7 @@ for i, (images, masks, labels) in tqdm.tqdm(
     ):
     batch_size = len(images)  # or len(labels), assuming they have the same length
     # Optionally, you can ccperform your training steps here
-    fig, ax = plt.subplots(batch_size,2,figsize=(60,60))
+    fig, ax = plt.subplots(batch_size,2,figsize=(10, batch_size * 2))
     # Example: print batch size
     print(f"list all distinct value in all masks = {masks.view(-1).unique()}")
 
