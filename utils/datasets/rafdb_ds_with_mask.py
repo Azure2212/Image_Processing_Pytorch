@@ -103,7 +103,7 @@ class RafDataSet_Mask(Dataset):
     def __getitem__(self, idx):
         path = self.file_paths[idx]
         image = cv2.imread(path)
-         mask = self.get_mask(masks_dir = path.replace('/Image/aligned/', '/Image/masks/').split('.')[0]) 
+        mask = self.get_mask(masks_dir = path.replace('/Image/aligned/', '/Image/masks/').split('.')[0]) 
         image = image[:, :, ::-1]  # Convert BGR to RGB
           # Assuming this function is defined elsewhere
         if self.data_type == "test" and self.ttau:
