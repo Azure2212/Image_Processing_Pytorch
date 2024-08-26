@@ -12,6 +12,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--type-data', default= "train", type=str, help='type data')
 parser.add_argument('--batch-size', default= 42, type=int, help='batch_size')
 parser.add_argument('--use-shuffle', default= 1, type=int, help='1 is use, 0 is not')
+parser.add_argument('--use-albumentation', default= 1, type=int, help='1 is use, 0 is not')
 args, unknown = parser.parse_known_args()
 configs = {
           "raf_path": "/kaggle/input/rafdb-mask-basic-15k3",
@@ -20,7 +21,7 @@ configs = {
     "image_size": 224,
           }
 
-train_loader = RafDataSet_Mask( "train", configs, use_albumentation = True)
+train_loader = RafDataSet_Mask( "train", configs, use_albumentation = True if args.albumentation == 1 else False)
 total_image = len(train_loader)
 train_ds = DataLoader(
                 train_loader,
