@@ -68,6 +68,12 @@ print(f"the number of parameter: {sum(p.numel() for p in model.parameters())}")
 
 
 use_wb = True if args.use_wandb == 1 else False
-trainer = RAFDB_Segmentation_Trainer(model, train_loader, test_loader, test_loader, test_loader_ttau, configs , wb = use_wb)
+trainer = RAFDB_Segmentation_Trainer(model = model, 
+                                    train_loader = train_loader, 
+                                    val_loader = test_loader, 
+                                    test_loader = test_loader, 
+                                    test_loader_ttau = test_loader_ttau, 
+                                    configs = configs, 
+                                    wb = use_wb)
 
 trainer.Train_model()
