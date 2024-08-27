@@ -72,7 +72,7 @@ else:
     model = smp.Unet(
         encoder_name="resnet34",        # Choose an encoder (backbone)
         encoder_weights="imagenet",      # Use pretrained weights for the encoder
-        classes=num_classes,             # Number of output classes
+        classes=args.num_classes,             # Number of output classes
         activation=None                  # Choose activation function
     )
 print(f"the number of parameter: {sum(p.numel() for p in model.parameters())}")
