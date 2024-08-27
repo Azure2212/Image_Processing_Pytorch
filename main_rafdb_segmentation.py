@@ -41,7 +41,6 @@ parser.add_argument('--num-classes', default= 6, type=int, help='num-classes')
 parser.add_argument('--use-pretrained', default= 1, type=int, help='use pre-trained = 1')
 parser.add_argument('--current-epoch-num', default= 0, type=int, help='epoch start')
 parser.add_argument('--name-run-wandb', default= 'Resnet50', type=str, help='name to save in wandb')
-parser.add_argument('--unet-library', default= 1, type=int, help='use unet in library')
 args, unknown = parser.parse_known_args()
 
 print(torch.__version__)
