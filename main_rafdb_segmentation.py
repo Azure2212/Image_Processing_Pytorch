@@ -2,7 +2,7 @@ import os
 import json
 import random
 import warnings
-
+import segmentation_models_pytorch as smp
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
 import imgaug
@@ -41,6 +41,7 @@ parser.add_argument('--num-classes', default= 6, type=int, help='num-classes')
 parser.add_argument('--use-pretrained', default= 1, type=int, help='use pre-trained = 1')
 parser.add_argument('--current-epoch-num', default= 0, type=int, help='epoch start')
 parser.add_argument('--name-run-wandb', default= 'Resnet50', type=str, help='name to save in wandb')
+parser.add_argument('--unet-library', default= 1, type=int, help='use unet in library')
 args, unknown = parser.parse_known_args()
 
 print(torch.__version__)
@@ -62,7 +63,18 @@ if args.load_state_dir != '':
 train_loader = RafDataSet_Mask( "train", configs)
 test_loader = RafDataSet_Mask("test", configs, ttau = False, len_tta = 48) 
 print(f'number of classes = {args.num_classes}')
-model = UNET(in_channels=3, classes=args.num_classes)
+import segmentation_models_pytorch as smp
+
+if args.unet_library != 1:
+    model = UNET(in_channels=3, classes=args.num_classes)
+else:
+# Create a U-Net model with a pretrained encoder
+    model = smp.Unet(
+        encoder_name="resnet34",        # Choose an encoder (backbone)
+        encoder_weights="imagenet",      # Use pretrained weights for the encoder
+        classes=num_classes,             # Number of output classes
+        activation=None                  # Choose activation function
+    )
 print(f"the number of parameter: {sum(p.numel() for p in model.parameters())}")
 
 
