@@ -25,7 +25,6 @@ class UNET(nn.Module):
             self.__double_conv(128, 64)
         ])
         
-        self.max_pool_2x2 = nn.MaxPool2d(kernel_size=2, stride=2)
         self.final_conv = nn.Conv2d(64, classes, kernel_size=1)
 
     def __double_conv(self, in_channels, out_channels):
@@ -46,13 +45,13 @@ class UNET(nn.Module):
         enc5 = self.encoder_conv5(enc4)
 
         x = self.up_trans[0](enc5)
-        x = self.__double_conv(512, 256)(torch.cat([x, enc4], dim=1))
+        x = self.double_conv_ups[0](torch.cat([x, enc4], dim=1))
 
         x = self.up_trans[1](x)
-        x = self.__double_conv(256, 128)(torch.cat([x, enc3], dim=1))
+        x = self.double_conv_ups[1](torch.cat([x, enc3], dim=1))
 
         x = self.up_trans[2](x)
-        x = self.__double_conv(128, 64)(torch.cat([x, enc2], dim=1))
+        x = self.double_conv_ups[2](torch.cat([x, enc2], dim=1))
 
         x = self.final_conv(x)
         return x
