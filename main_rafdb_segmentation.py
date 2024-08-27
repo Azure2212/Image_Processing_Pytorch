@@ -72,7 +72,7 @@ else:
 # Create a U-Net model with a pretrained encoder
     print('unet in library segmentation_models_pytorch')
     model = smp.Unet(
-        encoder_name="resnet34",        # Choose an encoder (backbone)
+        encoder_name="resnet50",        # Choose an encoder (backbone)
         encoder_weights="imagenet",      # Use pretrained weights for the encoder
         classes=args.num_classes,             # Number of output classes
         activation=None                  # Choose activation function
