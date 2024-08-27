@@ -1,29 +1,26 @@
-import torchvision.models as models
-import torch.nn as nn
 import torch
+import torch.nn as nn
+import torchvision.models as models
+import torch.nn.functional as F
 
 class UNET(nn.Module):
+    
     def __init__(self, in_channels, classes):
         super(UNET, self).__init__()
-        self.encoder = models.resnet34(pretrained=True)
-        self.encoder_layers = list(self.encoder.children())
-        self.encoder_conv1 = nn.Sequential(*self.encoder_layers[:4])
-        self.encoder_conv2 = self.encoder_layers[4]
-        self.encoder_conv3 = self.encoder_layers[5]
-        self.encoder_conv4 = self.encoder_layers[6]
-        self.encoder_conv5 = self.encoder_layers[7]
         
-        self.up_trans = nn.ModuleList([
-            nn.ConvTranspose2d(512, 256, kernel_size=2, stride=2),
-            nn.ConvTranspose2d(256, 128, kernel_size=2, stride=2),
-            nn.ConvTranspose2d(128, 64, kernel_size=2, stride=2)
-        ])
+        # Load a pretrained ResNet model
+        resnet = models.resnet34(pretrained=True)
+        self.encoder = nn.Sequential(*list(resnet.children())[:-2])  # Remove the final fully connected layers
         
-        self.double_conv_ups = nn.ModuleList([
-            self.__double_conv(512, 256),
-            self.__double_conv(256, 128),
-            self.__double_conv(128, 64)
-        ])
+        # Define decoder layers
+        self.up_trans1 = nn.ConvTranspose2d(512, 256, kernel_size=2, stride=2)
+        self.up_conv1 = self.__double_conv(512, 256)
+        
+        self.up_trans2 = nn.ConvTranspose2d(256, 128, kernel_size=2, stride=2)
+        self.up_conv2 = self.__double_conv(256, 128)
+        
+        self.up_trans3 = nn.ConvTranspose2d(128, 64, kernel_size=2, stride=2)
+        self.up_conv3 = self.__double_conv(128, 64)
         
         self.final_conv = nn.Conv2d(64, classes, kernel_size=1)
 
@@ -38,20 +35,29 @@ class UNET(nn.Module):
         return conv
 
     def forward(self, x):
-        enc1 = self.encoder_conv1(x)
-        enc2 = self.encoder_conv2(enc1)
-        enc3 = self.encoder_conv3(enc2)
-        enc4 = self.encoder_conv4(enc3)
-        enc5 = self.encoder_conv5(enc4)
-
-        x = self.up_trans[0](enc5)
-        x = self.double_conv_ups[0](torch.cat([x, enc4], dim=1))
-
-        x = self.up_trans[1](x)
-        x = self.double_conv_ups[1](torch.cat([x, enc3], dim=1))
-
-        x = self.up_trans[2](x)
-        x = self.double_conv_ups[2](torch.cat([x, enc2], dim=1))
-
+        # Encoder
+        x1 = self.encoder[0:4](x)  # Conv1_x
+        x2 = self.encoder[4:6](x1)  # MaxPool2d and Conv2_x
+        x3 = self.encoder[6:8](x2)  # MaxPool2d and Conv3_x
+        x4 = self.encoder[8:10](x3)  # MaxPool2d and Conv4_x
+        x5 = self.encoder[10:12](x4)  # MaxPool2d and Conv5_x
+        
+        # Decoder
+        x = self.up_trans1(x5)
+        x = F.interpolate(x, size=x4.size()[2:], mode='bilinear', align_corners=False)
+        x = torch.cat([x4, x], dim=1)
+        x = self.up_conv1(x)
+        
+        x = self.up_trans2(x)
+        x = F.interpolate(x, size=x3.size()[2:], mode='bilinear', align_corners=False)
+        x = torch.cat([x3, x], dim=1)
+        x = self.up_conv2(x)
+        
+        x = self.up_trans3(x)
+        x = F.interpolate(x, size=x2.size()[2:], mode='bilinear', align_corners=False)
+        x = torch.cat([x2, x], dim=1)
+        x = self.up_conv3(x)
+        
         x = self.final_conv(x)
+        
         return x
