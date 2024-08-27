@@ -1,5 +1,6 @@
 import torchvision.models as models
 import torch.nn as nn
+import torch
 
 class UNET(nn.Module):
     def __init__(self, in_channels, classes):
