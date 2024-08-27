@@ -66,9 +66,11 @@ print(f'number of classes = {args.num_classes}')
 import segmentation_models_pytorch as smp
 
 if args.unet_library != 1:
+    print('unet Tuan code')
     model = UNET(in_channels=3, classes=args.num_classes)
 else:
 # Create a U-Net model with a pretrained encoder
+    print('unet in library segmentation_models_pytorch')
     model = smp.Unet(
         encoder_name="resnet34",        # Choose an encoder (backbone)
         encoder_weights="imagenet",      # Use pretrained weights for the encoder
