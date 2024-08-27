@@ -65,9 +65,17 @@ test_loader = RafDataSet_Mask("test", configs, ttau = False, len_tta = 48)
 print(f'number of classes = {args.num_classes}')
 import segmentation_models_pytorch as smp
 
-if args.unet_library != 1:
+if args.model_name == 'UNET':
     print('unet Tuan code')
     model = UNET(in_channels=3, classes=args.num_classes)
+elif args.model_name =='UNET_resnet50_imagenet':
+    print('smp.unet resnet50 on imagenet in library segmentation_models_pytorch')
+    model = smp.Unet(
+        encoder_name="resnet50",        # Choose an encoder (backbone)
+        encoder_weights="imagenet",      # Use pretrained weights for the encoder
+        classes=args.num_classes,             # Number of output classes
+        activation=None                  # Choose activation function
+    )
 else:
 # Create a U-Net model with a pretrained encoder
     print('unet in library segmentation_models_pytorch')
