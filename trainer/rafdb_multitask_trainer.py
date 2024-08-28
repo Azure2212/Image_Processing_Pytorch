@@ -651,7 +651,7 @@ class RAFDB_Multitask_Trainer(Trainer):
         "best_val_dice": self.best_val_dice,
         "best_val_iou": self.best_val_iou,
 
-        "seg_test_acc": self.test_acc['segmentation']
+        "seg_test_acc": self.test_acc['segmentation'],
         "cls_test_acc": self.test_acc['classification'],
         "optimizer": self.optimizer.state_dict(),
     }
