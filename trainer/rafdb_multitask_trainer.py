@@ -578,11 +578,8 @@ class RAFDB_Multitask_Trainer(Trainer):
     consume_time = str(datetime.datetime.now() - self.start_time)
     print("----------------------SUMMARY-----------------------")
     print(" After {} epochs and {} plateau count, consume {}".format((self.current_epoch_num), (self.plateau_count),consume_time[:-7]))
-    print(self.best_train_acc)
-    print(self.best_train_dice)
-    print(self.best_train_iou)
-    print(" Best Train Seg Accuracy: {:.4f}, Best Train Cls Dice Score: {:.4f}, Best Train IOU Score:{:.4f} ".format(self.best_train_acc['segmentation'], self.best_train_acc['classification'], self.best_train_dice, self.best_train_iou))
-    print(" Best Val Seg Accuracy: {:.4f}, Best Val Cls Dice Score: {:.4f}, Best Val IOU Score:{:.4f} ".format(self.best_val_acc['segmentation'], self.best_val_acc['classification'], self.best_val_dice, self.best_val_iou))
+    print(" Best Train Seg Accuracy: {:.4f}, Best Train Cls {:.4f}, Dice Score: {:.4f}, Best Train IOU Score:{:.4f} ".format(self.best_train_acc['segmentation'], self.best_train_acc['classification'], self.best_train_dice, self.best_train_iou))
+    print(" Best Val Seg Accuracy: {:.4f}, Best Val Cls {:.4f}, Dice Score: {:.4f}, Best Val IOU Score:{:.4f} ".format(self.best_val_acc['segmentation'], self.best_val_acc['classification'], self.best_val_dice, self.best_val_iou))
     print(" Seg Test Accuracy: {:.4f}, Cls Test Accuracy: {:.4f}, Test Dice Score: {:.4f}, Test IOU Score:{:.4f} ".format((self.test_acc['segmentation']), (self.test_acc['classification']), (self.test_dice), (self.test_iou)))
 
   #set up for training (update epoch, stopping training, write logging)
