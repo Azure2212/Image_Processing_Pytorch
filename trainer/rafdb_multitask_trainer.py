@@ -392,8 +392,8 @@ class RAFDB_Multitask_Trainer(Trainer):
 
     print(" Seg_Loss: {:.4f}".format(self.train_loss_list[0][-1])
           , ", Seg_Accuracy: {:.4f}%".format(self.train_acc_list[0][-1])
-          , ", Dice_score: {:.4f}%".format(self.train_dice_list[-1])
-          , ", Iou_score: {:.4f}%".format(self.train_iou_list[-1])
+          , ", Dice_score: {:.4f}".format(self.train_dice_list[-1])
+          , ", Iou_score: {:.4f}".format(self.train_iou_list[-1])
           , ", Cls_Loss: {:.4f}%".format(self.train_loss_list[1][-1])
           , ", Cls_Accuracy: {:.4f}%".format(self.train_acc_list[1][-1])
           , ", Train_total_loss: {:.4f}".format(self.train_total_loss_list[-1]))
@@ -455,8 +455,8 @@ class RAFDB_Multitask_Trainer(Trainer):
             ,", Seg_Val_Accuracy: {:.4f}%".format(self.val_acc_list[0][-1])
             ,", Cls_Val_Loss: {:.4f}%".format(self.val_loss_list[1][-1])
             ,", Cls_Val_Accuracy: {:.4f}%".format(self.val_acc_list[1][-1])
-            , ", Seg_Val_Dice: {:.4f}%".format(self.val_dice_list[-1])
-            , ", Seg_Val_Iou: {:.4f}%".format(self.val_iou_list[-1])
+            , ", Seg_Val_Dice: {:.4f}".format(self.val_dice_list[-1])
+            , ", Seg_Val_Iou: {:.4f}".format(self.val_iou_list[-1])
             , ", Val_total_loss: {:.4f}".format(self.val_total_loss_list[-1]))
 
       # write wandb
