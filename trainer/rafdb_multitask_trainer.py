@@ -387,7 +387,6 @@ class RAFDB_Multitask_Trainer(Trainer):
 
     self.train_loss_list[1].append(cls_train_loss / i)
     self.train_acc_list[1].append(cls_train_acc / i)
-    print(self.train_acc_list[1])
     self.train_total_loss_list.append(train_total_loss / i)
 
 
@@ -396,7 +395,7 @@ class RAFDB_Multitask_Trainer(Trainer):
           , ", Dice_score: {:.4f}%".format(self.train_dice_list[-1])
           , ", Iou_score: {:.4f}%".format(self.train_iou_list[-1])
           , ", Cls_Loss: {:.4f}%".format(self.train_loss_list[1][-1])
-          , ", Cls_Accuracy: {:.4f}%".format(self.train_loss_list[1][-1])
+          , ", Cls_Accuracy: {:.4f}%".format(self.train_acc_list[1][-1])
           , ", Train_total_loss: {:.4f}".format(self.train_total_loss_list[-1]))
 
   def step_per_val(self):
