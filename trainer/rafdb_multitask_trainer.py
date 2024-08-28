@@ -387,7 +387,7 @@ class RAFDB_Multitask_Trainer(Trainer):
 
     self.train_loss_list[1].append(cls_train_loss / i)
     self.train_acc_list[1].append(cls_train_acc / i)
-    print(train_acc_list[1])
+    print(self.train_acc_list[1])
     self.train_total_loss_list.append(train_total_loss / i)
 
 
