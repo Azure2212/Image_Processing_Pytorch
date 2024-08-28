@@ -77,6 +77,10 @@ elif args.model_name == 'resnet50_vggface2':
 elif args.model_name == 'resnet50_imagenet':
     print('resnet50 with pre-train on imagenet was chose !')
     model = resnet50()
+elif args.model_name == 'resnet_in_unet':
+    from sgu24project.models.resnet_in_unet import Resnet50InUnet
+    print('resnet50 in unet')
+    model = Resnet50InUnet()
 else:
     print('because of missing model chosen, resnet in pytorch library activated !')
     model = resnet50(pretrained = True if args.use_pretrained == 1 else False)

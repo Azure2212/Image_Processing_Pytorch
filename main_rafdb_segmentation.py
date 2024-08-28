@@ -41,6 +41,7 @@ parser.add_argument('--isDebug', default= 0, type=int, help='debug = 1')
 parser.add_argument('--num-classes', default= 6, type=int, help='num-classes')
 parser.add_argument('--use-pretrained', default= 1, type=int, help='use pre-trained = 1')
 parser.add_argument('--current-epoch-num', default= 0, type=int, help='epoch start')
+parser.add_argument('--epoch-num', default= 1, type=int, help='total epoch')
 parser.add_argument('--name-run-wandb', default= 'Resnet50', type=str, help='name to save in wandb')
 args, unknown = parser.parse_known_args()
 
@@ -59,7 +60,8 @@ configs["current_epoch_num"] = args.current_epoch_num
 configs["name_run_wandb"] = args.name_run_wandb
 if args.load_state_dir != '':
     configs["load_state_dir"] = args.load_state_dir
-
+if args.epoch_num != 1:
+    configs["max_epoch_num"] = args.epoch_num
 train_loader = RafDataSet_Mask( "train", configs)
 test_loader = RafDataSet_Mask("test", configs, ttau = False, len_tta = 48) 
 print(f'number of classes = {args.num_classes}')
