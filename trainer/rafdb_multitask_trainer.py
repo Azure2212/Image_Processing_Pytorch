@@ -341,7 +341,7 @@ class RAFDB_Multitask_Trainer(Trainer):
       seg_loss = self.criterion(y_seg_pred, masks)
       cls_loss = self.criterion(y_cls_pred, labels)
 
-      total_loss = 0.4 * seg_loss + 0.6 * cls_loss
+      #total_loss = 0.4 * seg_loss + 0.6 * cls_loss
        # Compute accuracy and dice score
       acc, dice_score, iou_score = self.compute_metrics(y_seg_pred, masks, self.num_classes)
       cls_acc = accuracy(y_cls_pred, labels)[0]
@@ -354,11 +354,11 @@ class RAFDB_Multitask_Trainer(Trainer):
       cls_train_acc += cls_acc.item()
       cls_train_loss += cls_loss.item()
 
-      train_total_loss += total_loss.item()
+      train_total_loss += cls_loss.item()
 
       # compute gradient and do SGD step
       self.optimizer.zero_grad()
-      total_loss.backward()
+      cls_loss.backward()
       self.optimizer.step()
 
       # write wandb
