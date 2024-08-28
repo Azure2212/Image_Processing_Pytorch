@@ -397,7 +397,7 @@ class RAFDB_Multitask_Trainer(Trainer):
           , ", Iou_score: {:.4f}%".format(self.train_iou_list[-1])
           , ", Cls_Loss: {:.4f}%".format(self.train_loss_list[1][-1])
           , ", Cls_Accuracy: {:.4f}%".format(self.train_loss_list[1][-1])
-          , ", Train_total_loss: {:.4f}%".format(self.train_total_loss_list[-1]))
+          , ", Train_total_loss: {:.4f}".format(self.train_total_loss_list[-1]))
 
   def step_per_val(self):
     self.model.eval()
@@ -459,7 +459,7 @@ class RAFDB_Multitask_Trainer(Trainer):
             ,", Cls_Val_Accuracy: {:.4f}%".format(self.val_acc_list[1][-1])
             , ", Seg_Val_Dice: {:.4f}%".format(self.val_dice_list[-1])
             , ", Seg_Val_Iou: {:.4f}%".format(self.val_iou_list[-1])
-            , ", Val_total_loss: {:.4f}%".format(self.val_total_loss_list[-1]))
+            , ", Val_total_loss: {:.4f}".format(self.val_total_loss_list[-1]))
 
       # write wandb
       if self.wb == True:
@@ -516,7 +516,7 @@ class RAFDB_Multitask_Trainer(Trainer):
         cls_test_acc += cls_acc
         cls_test_loss += cls_loss.item()
 
-        test_total_loss += total_loss
+        test_total_loss += total_loss.item()
         if self.isDebug == 1: 
           break
 
@@ -591,7 +591,7 @@ class RAFDB_Multitask_Trainer(Trainer):
         self.current_epoch_num > self.max_epoch_num 
     )
   def update_state_training(self):
-    if self.val_acc_list[-1] > self.best_val_acc:
+    if self.val_acc_list[0][-1] > self.best_val_acc['segmentation'] and self.val_acc_list[1][-1] > self.best_val_acc['classification']:
       self.save_weights()
       self.plateau_count = 0
       self.best_val_acc['segmentation'] = self.val_acc_list[0][-1]
