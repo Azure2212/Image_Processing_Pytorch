@@ -28,7 +28,7 @@ import torch
 
 class Resnet50UnetMultitask(nn.Module):
     def __init__(self, encoder_name="resnet50", encoder_weights="imagenet", num_seg_classes=6, num_cls_classes=7):
-        super().__init__()
+        super().__init__(num_seg_classes=6, num_cls_classes=7, activation=None)
         
         # Define the encoder
         self.encoder = smp.encoders.get_encoder(encoder_name, encoder_weights=encoder_weights)
