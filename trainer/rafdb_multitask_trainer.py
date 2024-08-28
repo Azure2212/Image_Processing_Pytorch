@@ -567,7 +567,7 @@ class RAFDB_Multitask_Trainer(Trainer):
       state = torch.load(self.checkpoint_path)
       self.model.load_state_dict(state["net"])
       print("----------------------Cal on Test-----------------------")
-      self.seg_test_acc, self.cls_test_acc, self.test_dice, self.test_iou = self.acc_on_test()
+      self.test_acc['segmentation'], self.test_acc['classification'], self.test_dice, self.test_iou = self.acc_on_test()
       self.save_weights()
 
     except Exception as e:
@@ -579,7 +579,7 @@ class RAFDB_Multitask_Trainer(Trainer):
     print(" After {} epochs and {} plateau count, consume {}".format((self.current_epoch_num), (self.plateau_count),consume_time[:-7]))
     print(" Best Train Accuracy: {:.4f}, Best Train Dice Score: {:.4f}, Best Train IOU Score:{:.4f} ".format(self.best_train_acc, self.best_train_dice, self.best_train_iou))
     print(" Best Val Accuracy: {:.4f}, Best Val Dice Score: {:.4f}, Best Val IOU Score:{:.4f} ".format(self.best_val_acc, self.best_val_dice, self.best_val_iou))
-    print(" Seg Test Accuracy: {:.4f}, Cls Test Accuracy: {:.4f}, Test Dice Score: {:.4f}, Test IOU Score:{:.4f} ".format((self.seg_test_acc), (self.cls_test_acc), (self.test_dice), (self.test_iou)))
+    print(" Seg Test Accuracy: {:.4f}, Cls Test Accuracy: {:.4f}, Test Dice Score: {:.4f}, Test IOU Score:{:.4f} ".format((self.test_acc['segmentation']), (self.test_acc['classification']), (self.test_dice), (self.test_iou)))
 
   #set up for training (update epoch, stopping training, write logging)
   def update_epoch_num(self):
@@ -651,8 +651,8 @@ class RAFDB_Multitask_Trainer(Trainer):
         "best_val_dice": self.best_val_dice,
         "best_val_iou": self.best_val_iou,
 
-        "seg_test_acc": self.seg_test_acc,
-        "cls_test_acc": self.cls_test_acc,
+        "seg_test_acc": self.self.test_acc['segmentation']
+        "cls_test_acc": self.self.test_acc['classification'],
         "optimizer": self.optimizer.state_dict(),
     }
 
