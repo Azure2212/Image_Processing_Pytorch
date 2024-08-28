@@ -496,7 +496,7 @@ class RAFDB_Multitask_Trainer(Trainer):
         images = images.cuda(non_blocking = True)
         labels = labels.cuda(non_blocking = True)
         masks = masks.long().to(device=self.device)
-
+        print('vo day')
         # compute output, accuracy and get loss
         with torch.cuda.amp.autocast():
           y_seg_pred, y_cls_pred = self.model(images)
@@ -507,7 +507,7 @@ class RAFDB_Multitask_Trainer(Trainer):
        # Compute accuracy and dice score
         acc, dice_score, iou_score = self.compute_metrics(y_seg_pred, masks, self.num_classes)
         cls_acc = accuracy(y_cls_pred, labels)[0]
-
+        print('vo day')
         seg_test_loss += seg_loss.item()
         seg_test_acc += acc
         seg_test_dice += dice_score
@@ -515,11 +515,11 @@ class RAFDB_Multitask_Trainer(Trainer):
         
         cls_test_acc += cls_acc
         cls_test_loss += cls_loss.item()
-
+        print('vo day')
         test_total_loss += total_loss.item()
         if self.isDebug == 1: 
           break
-
+      print('vo day')
       i += 1
       seg_test_loss = (seg_test_loss / i)
       seg_test_acc = (seg_test_acc / i)
