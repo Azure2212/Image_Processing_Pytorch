@@ -346,7 +346,6 @@ class RAFDB_Multitask_Trainer(Trainer):
        # Compute accuracy and dice score
       acc, dice_score, iou_score = self.compute_metrics(y_seg_pred, masks, self.num_classes)
       cls_acc = accuracy(y_cls_pred, labels)[0]
-      print(f'cls_acc = {cls_acc}')
 
       seg_train_loss += seg_loss.item()
       seg_train_acc += acc
@@ -388,7 +387,6 @@ class RAFDB_Multitask_Trainer(Trainer):
 
     self.train_loss_list[1].append(cls_train_loss / i)
     self.train_acc_list[1].append(cls_train_acc / i)
-    print(f'train_acc_list[1] ={self.train_acc_list[1]}')
     self.train_total_loss_list.append(train_total_loss / i)
 
 
@@ -431,7 +429,6 @@ class RAFDB_Multitask_Trainer(Trainer):
        # Compute accuracy and dice score
         acc, dice_score, iou_score = self.compute_metrics(y_seg_pred, masks, self.num_classes)
         cls_acc = accuracy(y_cls_pred, labels)[0]
-        print(f'val_acc = {cls_acc}')
         seg_val_loss += seg_loss.item()
         seg_val_acc += acc
         seg_val_dice += dice_score
