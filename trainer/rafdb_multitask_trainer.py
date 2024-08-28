@@ -536,7 +536,7 @@ class RAFDB_Multitask_Trainer(Trainer):
       print(f'cls_test_acc = {cls_test_acc}')
       print(f'cls_test_loss = {cls_test_loss}')
 
-      print("Seg_Test_Accuracy: {:.4f}, Seg_Test_Accuracy: {:.4f}, Test_Dice_score: {:.4f}, Test_IOU_score:{:.4f} ".format(seg_test_acc, cls_test_acc, test_dice, test_iou))
+      print("Seg_Test_Accuracy: {:.4f}, Seg_Test_Accuracy: {:.4f}, Test_Dice_score: {:.4f}, Test_IOU_score:{:.4f} ".format(seg_test_acc, cls_test_acc, seg_test_dice, seg_test_iou))
       if self.wb == True:
         self.wandb.log({
           "Seg_Test_accuracy": seg_test_acc,
