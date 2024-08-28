@@ -444,8 +444,8 @@ class RAFDB_Multitask_Trainer(Trainer):
       self.val_dice_list.append(seg_val_dice / i)
       self.val_iou_list.append(seg_val_iou / i)
 
-      self.val_loss_list[1].append(cls_val_acc / i)
-      self.val_acc_list[1].append(cls_val_loss / i)
+      self.val_loss_list[1].append(cls_val_loss / i)
+      self.val_acc_list[1].append(cls_val_acc / i)
 
       self.val_total_loss_list.append(val_total_loss / i)
 
