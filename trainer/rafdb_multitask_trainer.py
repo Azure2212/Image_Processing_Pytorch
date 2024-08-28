@@ -84,8 +84,8 @@ class RAFDB_Multitask_Trainer(Trainer):
 
     self.best_train_acc = {'segmentation':0.0, 'classification':0.0}
     self.best_train_loss = {'segmentation':0.0, 'classification':0.0}
-    self.best_train_dice = {'segmentation':0.0, 'classification':0.0}
-    self.best_train_iou = {'segmentation':0.0, 'classification':0.0}
+    self.best_train_dice = []
+    self.best_train_iou = []
 
     self.best_val_acc = {'segmentation':0.0, 'classification':0.0}
     self.best_val_loss = {'segmentation':0.0, 'classification':0.0}
@@ -581,8 +581,8 @@ class RAFDB_Multitask_Trainer(Trainer):
     print(self.best_train_acc)
     print(self.best_train_dice)
     print(self.best_train_iou)
-    print(" Best Train Accuracy: {:.4f}, Best Train Dice Score: {:.4f}, Best Train IOU Score:{:.4f} ".format(self.best_train_acc, self.best_train_dice, self.best_train_iou))
-    print(" Best Val Accuracy: {:.4f}, Best Val Dice Score: {:.4f}, Best Val IOU Score:{:.4f} ".format(self.best_val_acc, self.best_val_dice, self.best_val_iou))
+    print(" Best Train Seg Accuracy: {:.4f}, Best Train Cls Dice Score: {:.4f}, Best Train IOU Score:{:.4f} ".format(self.best_train_acc['segmentation'], self.best_train_acc['classification'], self.best_train_dice, self.best_train_iou))
+    print(" Best Val Seg Accuracy: {:.4f}, Best Val Cls Dice Score: {:.4f}, Best Val IOU Score:{:.4f} ".format(self.best_val_acc['segmentation'], self.best_val_acc['classification'], self.best_val_dice, self.best_val_iou))
     print(" Seg Test Accuracy: {:.4f}, Cls Test Accuracy: {:.4f}, Test Dice Score: {:.4f}, Test IOU Score:{:.4f} ".format((self.test_acc['segmentation']), (self.test_acc['classification']), (self.test_dice), (self.test_iou)))
 
   #set up for training (update epoch, stopping training, write logging)
