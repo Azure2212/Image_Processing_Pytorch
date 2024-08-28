@@ -505,6 +505,7 @@ class RAFDB_Multitask_Trainer(Trainer):
        # Compute accuracy and dice score
         acc, dice_score, iou_score = self.compute_metrics(y_seg_pred, masks, self.num_classes)
         cls_acc = accuracy(y_cls_pred, labels)[0]
+        print(f'cls_acc_test ={cls_acc}')
        
         seg_test_loss += seg_loss.item()
         seg_test_acc += acc
