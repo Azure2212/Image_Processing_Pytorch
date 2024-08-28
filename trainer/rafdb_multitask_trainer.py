@@ -613,7 +613,7 @@ class RAFDB_Multitask_Trainer(Trainer):
       self.plateau_count += 1
 # 100 - self.best_val_acc
     if self.lr_scheduler_chose == "ReduceLROnPlateau":
-      last_val_seg_acc = self.val_seg_dice_list[0][-1]
+      last_val_seg_acc = self.val_acc_list[0][-1]
       last_val_cls_acc = self.val_acc_list[1][-1]
       combined_score = 0.6 * (100 - last_val_cls_acc) + 0.4 * (100 - last_val_seg_acc)
       self.scheduler.step(combined_score)
