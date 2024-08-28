@@ -355,7 +355,7 @@ class RAFDB_Multitask_Trainer(Trainer):
       cls_train_loss += cls_loss.item()
 
       train_total_loss += total_loss.item()
-      print(f'train_cls_acc : {cls_acc}')
+      
       # compute gradient and do SGD step
       self.optimizer.zero_grad()
       total_loss.backward()
@@ -379,6 +379,7 @@ class RAFDB_Multitask_Trainer(Trainer):
         break
 
     i += 1
+    print(f'train_cls_acc : {cls_train_acc / i}')
     self.train_loss_list[0].append(seg_train_loss / i)
     self.train_acc_list[0].append(seg_train_acc / i)
     self.train_dice_list.append(seg_train_dice / i)
