@@ -470,7 +470,7 @@ class RAFDB_Multitask_Trainer(Trainer):
             " Val_IouScore" :self.val_iou_list[-1],
             " Val_Cls_Loss" : self.val_loss_list[1][-1],
             " Val_Cls_Accuracy" :self.val_acc_list[1][-1],
-            " Val_total_loss: {:.4f}%".format(self.val_total_loss_list[-1])
+            " Val_total_loss": self.val_total_loss_list[-1])
             # "Learning_rate" : self.learning_rate
         }
         self.wandb.log(metric)
