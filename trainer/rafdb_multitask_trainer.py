@@ -354,7 +354,7 @@ class RAFDB_Multitask_Trainer(Trainer):
       cls_train_acc += cls_acc
       cls_train_loss += cls_loss.item()
 
-      train_total_loss += total_loss
+      train_total_loss += total_loss.item()
       print(f'train_total_loss: {train_total_loss}')
 
       # compute gradient and do SGD step
@@ -439,7 +439,7 @@ class RAFDB_Multitask_Trainer(Trainer):
         cls_val_acc += cls_acc
         cls_val_loss += cls_loss.item()
 
-        val_total_loss += total_loss
+        val_total_loss += total_loss.item()
         if self.isDebug == 1: 
           break
       i += 1
@@ -470,7 +470,7 @@ class RAFDB_Multitask_Trainer(Trainer):
             " Val_IouScore" :self.val_iou_list[-1],
             " Val_Cls_Loss" : self.val_loss_list[1][-1],
             " Val_Cls_Accuracy" :self.val_acc_list[1][-1],
-            " Val_total_loss": self.val_total_loss_list[-1])
+            " Val_total_loss": self.val_total_loss_list[-1]
             # "Learning_rate" : self.learning_rate
         }
         self.wandb.log(metric)
