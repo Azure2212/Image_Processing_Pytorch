@@ -148,7 +148,6 @@ class RAFDB_Multitask_Trainer(Trainer):
     
     
     self.criterion = nn.CrossEntropyLoss().to(self.device)
-    self.criterion2 = nn.CrossEntropyLoss().to(self.device)
     if self.optimizer_chose == "RAdam":
       print("The selected optimizer is RAdam")
       self.optimizer = torch.optim.RAdam(
@@ -337,7 +336,9 @@ class RAFDB_Multitask_Trainer(Trainer):
         print(y_seg_pred.shape)
         print(y_cls_pred.shape)
         seg_loss = self.criterion(y_seg_pred, masks)
-        cls_loss = self.criterion2(y_cls_pred, labels)
+        cls_loss = self.criterion(y_cls_pred, labels)
+
+        total_loss = 0.4 * seg_loss + 0.6 * cls_loss
        # Compute accuracy and dice score
       acc, dice_score, iou_score = self.compute_metrics(y_seg_pred, masks, self.num_classes)
       cls_acc = accuracy(y_cls_pred, labels)[0]
@@ -353,8 +354,7 @@ class RAFDB_Multitask_Trainer(Trainer):
 
       # compute gradient and do SGD step
       self.optimizer.zero_grad()
-      seg_loss.backward()
-      cls_loss.backward()
+      total_loss.backward()
       self.optimizer.step()
 
       # write wandb
@@ -414,6 +414,7 @@ class RAFDB_Multitask_Trainer(Trainer):
           y_seg_pred, y_cls_pred = self.model(images)
           seg_loss = self.criterion(y_seg_pred, masks)
           cls_loss = self.criterion(y_cls_pred, labels)
+          total_loss = 0.4 * seg_loss + 0.6 * cls_loss
       
        # Compute accuracy and dice score
         acc, dice_score, iou_score = self.compute_metrics(y_seg_pred, masks, self.num_classes)
