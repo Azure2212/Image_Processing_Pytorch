@@ -74,11 +74,13 @@ class RAFDB_Multitask_Trainer(Trainer):
     self.train_acc_list = [[],[]]
     self.train_dice_list = []
     self.train_iou_list = []
+    self.train_total_loss_list = []
 
     self.val_loss_list = [[],[]]
     self.val_acc_list = [[],[]]
     self.val_dice_list = []
     self.val_iou_list = []
+    self.val_total_loss_list = []
 
     self.best_train_acc = {'segmentation':0.0, 'classification':0.0}
     self.best_train_loss = {'segmentation':0.0, 'classification':0.0}
@@ -318,6 +320,8 @@ class RAFDB_Multitask_Trainer(Trainer):
     cls_train_acc = 0.0
     cls_train_loss = 0.0
 
+    train_total_loss = 0.0
+
     for i, (images, masks, labels) in tqdm.tqdm(
         enumerate(self.train_ds), total = len(self.train_ds), leave = True, colour = "blue", desc = f"Epoch {self.current_epoch_num}",
         bar_format="{desc}: {percentage:3.0f}%|{bar:50}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]"
@@ -333,8 +337,6 @@ class RAFDB_Multitask_Trainer(Trainer):
       # compute output, accuracy and get loss
       with torch.cuda.amp.autocast():
         y_seg_pred, y_cls_pred = self.model(images)
-        print(y_seg_pred.shape)
-        print(y_cls_pred.shape)
         seg_loss = self.criterion(y_seg_pred, masks)
         cls_loss = self.criterion(y_cls_pred, labels)
 
@@ -352,6 +354,9 @@ class RAFDB_Multitask_Trainer(Trainer):
       cls_train_acc += cls_acc
       cls_train_loss += cls_loss.item()
 
+      train_total_loss += total_loss
+      print(f'train_total_loss: {train_total_loss}')
+
       # compute gradient and do SGD step
       self.optimizer.zero_grad()
       total_loss.backward()
@@ -365,6 +370,7 @@ class RAFDB_Multitask_Trainer(Trainer):
           " Cls_Accuracy" :cls_train_acc / (i+1),
           " Seg_DiceScore" :seg_train_dice / (i+1),
           " Seg_IouScore" :seg_train_iou / (i+1),
+          " Total_Loss" : train_total_loss / (i+1),
           " epochs" : self.current_epoch_num,
           " Learning_rate" : get_lr(self.optimizer)
       }
@@ -382,13 +388,16 @@ class RAFDB_Multitask_Trainer(Trainer):
     self.train_loss_list[1].append(cls_train_loss / i)
     self.train_acc_list[1].append(cls_train_acc / i)
 
+    self.train_total_loss_list.append(train_total_loss / i)
+
 
     print(" Seg_Loss: {:.4f}".format(self.train_loss_list[0][-1])
           , ", Seg_Accuracy: {:.4f}%".format(self.train_acc_list[0][-1])
           , ", Dice_score: {:.4f}%".format(self.train_dice_list[-1])
           , ", Iou_score: {:.4f}%".format(self.train_iou_list[-1])
           , ", Cls_Loss: {:.4f}%".format(self.train_loss_list[1][-1])
-          , ", Cls_Accuracy: {:.4f}%".format(self.train_loss_list[1][-1]))
+          , ", Cls_Accuracy: {:.4f}%".format(self.train_loss_list[1][-1])
+          , ", Train_total_loss: {:.4f}%".format(self.train_total_loss_list[-1]))
 
   def step_per_val(self):
     self.model.eval()
@@ -399,6 +408,8 @@ class RAFDB_Multitask_Trainer(Trainer):
 
     cls_val_acc = 0.0
     cls_val_loss = 0.0
+
+    val_total_loss = 0.0
 
     with torch.no_grad():
       for i, (images, masks, labels) in tqdm.tqdm(
@@ -427,6 +438,8 @@ class RAFDB_Multitask_Trainer(Trainer):
 
         cls_val_acc += cls_acc
         cls_val_loss += cls_loss.item()
+
+        val_total_loss += total_loss
         if self.isDebug == 1: 
           break
       i += 1
@@ -438,12 +451,15 @@ class RAFDB_Multitask_Trainer(Trainer):
       self.val_loss_list[1].append(cls_val_acc / i)
       self.val_acc_list[1].append(cls_val_loss / i)
 
+      self.val_total_loss_list.append(val_total_loss / i)
+
       print(" Seg_Val_Loss: {:.4f}".format(self.val_loss_list[0][-1])
             ,", Seg_Val_Accuracy: {:.4f}%".format(self.val_acc_list[0][-1])
             ,", Cls_Val_Loss: {:.4f}%".format(self.val_loss_list[1][-1])
             ,", Cls_Val_Accuracy: {:.4f}%".format(self.val_acc_list[1][-1])
             , ", Seg_Val_Dice: {:.4f}%".format(self.val_dice_list[-1])
-            , ", Seg_Val_Iou: {:.4f}%".format(self.val_iou_list[-1]))
+            , ", Seg_Val_Iou: {:.4f}%".format(self.val_iou_list[-1])
+            , ", Val_total_loss: {:.4f}%".format(self.val_total_loss_list[-1]))
 
       # write wandb
       if self.wb == True:
@@ -454,6 +470,7 @@ class RAFDB_Multitask_Trainer(Trainer):
             " Val_IouScore" :self.val_iou_list[-1],
             " Val_Cls_Loss" : self.val_loss_list[1][-1],
             " Val_Cls_Accuracy" :self.val_acc_list[1][-1],
+            " Val_total_loss: {:.4f}%".format(self.val_total_loss_list[-1])
             # "Learning_rate" : self.learning_rate
         }
         self.wandb.log(metric)
@@ -470,6 +487,7 @@ class RAFDB_Multitask_Trainer(Trainer):
     cls_test_loss = 0.0
     cls_test_acc = 0.0
 
+    test_total_loss = 0.0
     with torch.no_grad():
       for i, (images, masks, labels) in tqdm.tqdm(
           enumerate(self.test_ds), total = len(self.test_ds), leave = True, colour = "green", desc = "        ",
@@ -484,6 +502,7 @@ class RAFDB_Multitask_Trainer(Trainer):
           y_seg_pred, y_cls_pred = self.model(images)
           seg_loss = self.criterion(y_seg_pred, masks)
           cls_loss = self.criterion(y_cls_pred, labels)
+          total_loss = 0.4 * seg_loss + 0.6 * cls_loss
       
        # Compute accuracy and dice score
         acc, dice_score, iou_score = self.compute_metrics(y_seg_pred, masks, self.num_classes)
@@ -496,6 +515,8 @@ class RAFDB_Multitask_Trainer(Trainer):
         
         cls_test_acc += cls_acc
         cls_test_loss += cls_loss.item()
+
+        test_total_loss += total_loss
         if self.isDebug == 1: 
           break
 
