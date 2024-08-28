@@ -2,26 +2,53 @@ import segmentation_models_pytorch as smp
 import torch.nn as nn
 import torch
 
-class Resnet50UnetMultitask(smp.Unet):
-    def __init__(self, encoder_name="resnet50", encoder_weights="imagenet", num_seg_classes=6, num_cls_classes=7, activation=None):
-        # Initialize the parent class (smp.Unet)
-        super().__init__(encoder_name=encoder_name, encoder_weights=encoder_weights, activation=None, classes=num_seg_classes)
+# class Resnet50UnetMultitask(smp.Unet):
+#     def __init__(self, encoder_name="resnet50", encoder_weights="imagenet", num_seg_classes=6, num_cls_classes=7, activation=None):
+#         # Initialize the parent class (smp.Unet)
+#         super().__init__(encoder_name=encoder_name, encoder_weights=encoder_weights, activation=None, classes=num_seg_classes)
         
+#         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+#         self.fc = nn.Linear(512 * 4, num_cls_classes)
+#     def forward(self, x):
+#         #Phase 1: Encoder
+#         encoder_features = self.encoder(x) 
+        
+#         #make classification Task
+#         stage4_resnet50 = encoder_features[5]
+#         avg = self.avgpool(stage4_resnet50)
+#         flat = torch.flatten(avg, 1)
+#         cls_output = self.fc(flat)
+        
+#         # Phase 2: Decoder
+#         #seg_output = self.decoder(*encoder_features) 
+#         #seg_output = self.segmentation_head(seg_output) 
+        
+#         seg_output = torch.randn(42, 6, 224, 224)
+#         return seg_output, cls_output
+
+class Resnet50UnetMultitask(nn.Module):
+    def __init__(self, encoder_name="resnet50", encoder_weights="imagenet", num_seg_classes=6, num_cls_classes=7):
+        super().__init__()
+        
+        # Define the encoder
+        self.encoder = smp.encoders.get_encoder(encoder_name, encoder_weights=encoder_weights)
+        
+        # Define the classification head
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc = nn.Linear(512 * 4, num_cls_classes)
+
     def forward(self, x):
-        #Phase 1: Encoder
+        # Phase 1: Encoder
         encoder_features = self.encoder(x) 
         
-        #make classification Task
+        # Extract the feature map for classification
         stage4_resnet50 = encoder_features[5]
         avg = self.avgpool(stage4_resnet50)
         flat = torch.flatten(avg, 1)
         cls_output = self.fc(flat)
         
-        # Phase 2: Decoder
-        seg_output = self.decoder(*encoder_features) 
-        seg_output = self.segmentation_head(seg_output) 
+        # Dummy segmentation output
+        seg_output = torch.randn(x.size(0), 6, 224, 224)  # Adjust shape according to batch size
         
         return seg_output, cls_output
 
