@@ -8,7 +8,7 @@ class Resnet50UnetMultitask(smp.Unet):
         super().__init__(encoder_name=encoder_name, encoder_weights=encoder_weights, activation=None, classes=num_seg_classes)
         
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-        self.fc = nn.Linear(512 * 4, num_cls_classes)
+        self.fc = nn.Linear(512 * 4, 7)
     def forward(self, x):
         #Phase 1: Encoder
         encoder_features = self.encoder(x) 
@@ -20,10 +20,10 @@ class Resnet50UnetMultitask(smp.Unet):
         cls_output = self.fc(flat)
         
         # Phase 2: Decoder
-        #seg_output = self.decoder(*encoder_features) 
-        #seg_output = self.segmentation_head(seg_output) 
+        seg_output = self.decoder(*encoder_features) 
+        seg_output = self.segmentation_head(seg_output) 
         
-        seg_output = torch.randn(42, 6, 224, 224)
+        #seg_output = torch.randn(42, 6, 224, 224)
         return seg_output, cls_output
 
 # # Example usage
