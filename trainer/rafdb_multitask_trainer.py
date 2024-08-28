@@ -334,6 +334,8 @@ class RAFDB_Multitask_Trainer(Trainer):
       # compute output, accuracy and get loss
       with torch.cuda.amp.autocast():
         y_seg_pred, y_cls_pred = self.model(images)
+        print(y_seg_pred.shape)
+        print(y_cls_pred.shape)
         seg_loss = self.criterion(y_seg_pred, masks)
         cls_loss = self.criterion(y_cls_pred, labels)
        # Compute accuracy and dice score
