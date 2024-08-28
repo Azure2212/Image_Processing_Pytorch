@@ -1,7 +1,7 @@
 import segmentation_models_pytorch as smp
 import torch.nn as nn
 
-class CustomUNet(smp.Unet):
+class Resnet50UnetMultitask(smp.Unet):
     def __init__(self, encoder_name="resnet50", encoder_weights="imagenet", num_seg_classes=6, num_cls_classes=7, activation=None):
         # Initialize the parent class (smp.Unet)
         super().__init__(encoder_name=encoder_name, encoder_weights=encoder_weights, activation=None, classes=num_seg_classes)
@@ -25,7 +25,7 @@ class CustomUNet(smp.Unet):
         return seg_output, cls_output
 
 # # Example usage
-# model = CustomUNet(num_seg_classes=8, num_cls_classes=7, activation=None)
+# model = Resnet50UnetMultitask(num_seg_classes=8, num_cls_classes=7, activation=None)
 # #print(model)
 # input_tensor = torch.randn(16, 3, 224, 224)  # Batch of 1 image, 3 channels (RGB), 256x256 size
 # seg_output, cls_output = model(input_tensor)

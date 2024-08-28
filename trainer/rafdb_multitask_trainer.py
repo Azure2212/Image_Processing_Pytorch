@@ -33,7 +33,7 @@ class Trainer(object):
         pass
 
 
-class RAFDB_Segmentation_Trainer(Trainer):
+class RAFDB_Multitask_Trainer(Trainer):
   def __init__(self, model, train_loader, val_loader, test_loader, configs, wb = True):
 
     self.train_loader = train_loader
@@ -328,7 +328,7 @@ class RAFDB_Segmentation_Trainer(Trainer):
       self.model = self.model.cuda()
       
       images = images.to(device=self.device)
-      labels = labels.cuda(non_blocking = True)
+      labels = labels.to(device=self.device)
       masks = masks.to(device=self.device)
 
       # compute output, accuracy and get loss
@@ -445,12 +445,12 @@ class RAFDB_Segmentation_Trainer(Trainer):
       # write wandb
       if self.wb == True:
         metric = {
-            " Val_Loss" : self.val_loss_list[-1],
-            " Val_Accuracy" :self.val_acc_list[-1],
+            " Seg_Val_Loss" : self.val_loss_list[0][-1],
+            " Seg_Val_Accuracy" :self.val_acc_list[0][-1],
             " Val_DiceScore" :self.val_dice_list[-1],
             " Val_IouScore" :self.val_iou_list[-1],
-            " Val_Cls_Loss" : cls_val_loss / (i+1),
-            " Val_Cls_Accuracy" :cls_val_acc / (i+1),
+            " Val_Cls_Loss" : self.val_loss_list[1][-1],
+            " Val_Cls_Accuracy" :self.val_acc_list[1][-1],
             # "Learning_rate" : self.learning_rate
         }
         self.wandb.log(metric)

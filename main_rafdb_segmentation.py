@@ -23,9 +23,10 @@ torch.backends.cudnn.benchmark = False
 
 from sgu24project.utils.datasets.rafdb_ds_with_mask import RafDataSet_Mask
 from sgu24project.trainer.rafdb_segmentation_trainer import RAFDB_Segmentation_Trainer
+from sgu24project.trainer.rafdb_multitask_trainer import RAFDB_Multitask_Trainer
 
 from sgu24project.models.Unet import UNET
-
+from sgu24project.models.multi_task_resunet import Resnet50UnetMultitask
 
 #from sgu24project.models.resnet_cbam_v5 import resnet50_co_cbam
 import argparse 
@@ -67,6 +68,9 @@ import segmentation_models_pytorch as smp
 if args.model_name == 'UNET':
     print('unet Tuan code')
     model = UNET(in_channels=3, classes=args.num_classes)
+elif args.model_name == 'Resnet50UnetMultitask':
+    print('multi task Unet Resnet Tuan code')
+    model = Resnet50UnetMultitask(num_seg_classes=6, num_cls_classes=7, activation=None)
 elif args.model_name =='UNET_resnet50_imagenet':
     print('smp.unet resnet50 on imagenet in library segmentation_models_pytorch')
     model = smp.Unet(
@@ -88,7 +92,17 @@ print(f"the number of parameter: {sum(p.numel() for p in model.parameters())}")
 
 
 use_wb = True if args.use_wandb == 1 else False
-trainer = RAFDB_Segmentation_Trainer(model = model, 
+
+
+if args.model_name == 'Resnet50UnetMultitask':    
+    trainer = RAFDB_Multitask_Trainer(model = model, 
+                                    train_loader = train_loader, 
+                                    val_loader = test_loader, 
+                                    test_loader = test_loader, 
+                                    configs = configs, 
+                                    wb = use_wb)
+else:
+    trainer = RAFDB_Segmentation_Trainer(model = model, 
                                     train_loader = train_loader, 
                                     val_loader = test_loader, 
                                     test_loader = test_loader, 
