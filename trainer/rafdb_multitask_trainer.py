@@ -329,7 +329,7 @@ class RAFDB_Multitask_Trainer(Trainer):
       
       images = images.to(device=self.device)
       labels = labels.to(device=self.device)
-      masks = masks.to(device=self.device)
+      masks = masks.long().to(device=self.device)
 
       # compute output, accuracy and get loss
       with torch.cuda.amp.autocast():
