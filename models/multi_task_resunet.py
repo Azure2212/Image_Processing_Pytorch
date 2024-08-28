@@ -1,5 +1,6 @@
 import segmentation_models_pytorch as smp
 import torch.nn as nn
+import torch
 
 class Resnet50UnetMultitask(smp.Unet):
     def __init__(self, encoder_name="resnet50", encoder_weights="imagenet", num_seg_classes=6, num_cls_classes=7, activation=None):
