@@ -337,12 +337,11 @@ class RAFDB_Multitask_Trainer(Trainer):
       masks = masks.long().to(device=self.device)
 
       # compute output, accuracy and get loss
-      with torch.cuda.amp.autocast():
-        y_seg_pred, y_cls_pred = self.model(images)
-        seg_loss = self.criterion(y_seg_pred, masks)
-        cls_loss = self.criterion(y_cls_pred, labels)
+      y_seg_pred, y_cls_pred = self.model(images)
+      seg_loss = self.criterion(y_seg_pred, masks)
+      cls_loss = self.criterion(y_cls_pred, labels)
 
-        total_loss = 0.4 * seg_loss + 0.6 * cls_loss
+      total_loss = 0.4 * seg_loss + 0.6 * cls_loss
        # Compute accuracy and dice score
       acc, dice_score, iou_score = self.compute_metrics(y_seg_pred, masks, self.num_classes)
       cls_acc = accuracy(y_cls_pred, labels)[0]
@@ -352,7 +351,7 @@ class RAFDB_Multitask_Trainer(Trainer):
       seg_train_dice += dice_score
       seg_train_iou += iou_score
 
-      cls_train_acc += cls_acc
+      cls_train_acc += cls_acc.item()
       cls_train_loss += cls_loss.item()
 
       train_total_loss += total_loss.item()
@@ -434,7 +433,7 @@ class RAFDB_Multitask_Trainer(Trainer):
         seg_val_dice += dice_score
         seg_val_iou += iou_score
 
-        cls_val_acc += cls_acc
+        cls_val_acc += cls_acc.item()
         cls_val_loss += cls_loss.item()
 
         val_total_loss += total_loss.item()
