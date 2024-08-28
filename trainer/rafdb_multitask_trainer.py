@@ -327,8 +327,8 @@ class RAFDB_Multitask_Trainer(Trainer):
       # Move images to GPU before feeding them to the model, to fix error happen : Input type (torch.cuda.FloatTensor) and weight type (torch.FloatTensor) should be the same
       self.model = self.model.cuda()
       
-      images = images.to(device=self.device)
-      labels = labels.to(device=self.device)
+      images = images.cuda(non_blocking = True)
+      labels = labels.cuda(non_blocking = True)
       masks = masks.long().to(device=self.device)
 
       # compute output, accuracy and get loss
@@ -405,8 +405,8 @@ class RAFDB_Multitask_Trainer(Trainer):
           enumerate(self.val_ds), total = len(self.val_ds), leave = True, colour = "green", desc = "        ",
           bar_format="{desc} {percentage:3.0f}%|{bar:30}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]"
       ):
-        images = images.to(device=self.device)
-        labels = labels.to(device=self.device)
+        images = images.cuda(non_blocking = True)
+        labels = labels.cuda(non_blocking = True)
         masks = masks.long().to(device=self.device)
 
         # compute output, accuracy and get loss
@@ -474,8 +474,8 @@ class RAFDB_Multitask_Trainer(Trainer):
           enumerate(self.test_ds), total = len(self.test_ds), leave = True, colour = "green", desc = "        ",
           bar_format="{desc} {percentage:3.0f}%|{bar:30}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]"
       ):
-        images = images.to(device=self.device)
-        labels = labels.to(device=self.device)
+        images = images.cuda(non_blocking = True)
+        labels = labels.cuda(non_blocking = True)
         masks = masks.long().to(device=self.device)
 
         # compute output, accuracy and get loss
