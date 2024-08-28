@@ -538,7 +538,7 @@ class RAFDB_Multitask_Trainer(Trainer):
           "Test_diceScore": test_dice,
           "Test_iouScore": test_iou
           })
-      return seg_test_acc, cls_test_acc, test_dice, test_iou
+      return seg_test_acc, cls_test_acc, seg_test_dice, seg_test_iou
 
   def Train_model(self):
     self.init_wandb()
