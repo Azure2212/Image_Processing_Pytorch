@@ -355,7 +355,6 @@ class RAFDB_Multitask_Trainer(Trainer):
       cls_train_loss += cls_loss.item()
 
       train_total_loss += total_loss.item()
-      print(f'train_total_loss: {train_total_loss}')
 
       # compute gradient and do SGD step
       self.optimizer.zero_grad()
@@ -519,16 +518,24 @@ class RAFDB_Multitask_Trainer(Trainer):
         test_total_loss += total_loss.item()
         if self.isDebug == 1: 
           break
-      print('vo day')
+ 
       i += 1
       seg_test_loss = (seg_test_loss / i)
       seg_test_acc = (seg_test_acc / i)
       seg_test_dice = (seg_test_dice / i)
       seg_test_iou = (seg_test_iou / i)
-      print('vo day')
+      
       cls_test_acc = cls_test_acc / i
       cls_test_loss = cls_test_loss / i 
-      print('vo day')
+      
+      print(f'seg_test_loss = {seg_test_loss}')
+      print(f'seg_test_acc = {seg_test_acc}')
+      print(f'seg_test_dice = {seg_test_dice}')
+      print(f'seg_test_iou = {seg_test_iou}')
+
+      print(f'cls_test_acc = {cls_test_acc}')
+      print(f'cls_test_loss = {cls_test_loss}')
+
       print("Seg_Test_Accuracy: {:.4f}, Seg_Test_Accuracy: {:.4f}, Test_Dice_score: {:.4f}, Test_IOU_score:{:.4f} ".format(seg_test_acc, cls_test_acc, test_dice, test_iou))
       if self.wb == True:
         self.wandb.log({
