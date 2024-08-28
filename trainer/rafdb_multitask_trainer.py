@@ -282,7 +282,7 @@ class RAFDB_Multitask_Trainer(Trainer):
     _, predicted = torch.max(preds, 1)
     correct = (predicted == labels).sum().item()
     total = labels.numel()
-    accuracy = correct / total
+    accuracy = (correct / total) * 100.0
     
     # Compute Dice score per class
     smooth = 1e-8
@@ -388,6 +388,8 @@ class RAFDB_Multitask_Trainer(Trainer):
     self.train_acc_list[1].append(cls_train_acc / i)
     self.train_total_loss_list.append(train_total_loss / i)
 
+    print(seg_train_acc / i)
+    print(cls_train_acc / i)
 
     print(" Seg_Loss: {:.4f}".format(self.train_loss_list[0][-1])
           , ", Seg_Accuracy: {:.4f}%".format(self.train_acc_list[0][-1])
@@ -448,6 +450,11 @@ class RAFDB_Multitask_Trainer(Trainer):
       self.val_acc_list[1].append(cls_val_acc / i)
 
       self.val_total_loss_list.append(val_total_loss / i)
+
+
+      print(seg_val_acc / i)
+      print(cls_val_acc / i)
+
 
       print(" Seg_Val_Loss: {:.4f}".format(self.val_loss_list[0][-1])
             ,", Seg_Val_Accuracy: {:.4f}%".format(self.val_acc_list[0][-1])
