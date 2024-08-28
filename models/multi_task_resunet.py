@@ -48,7 +48,8 @@ class Resnet50UnetMultitask(nn.Module):
         cls_output = self.fc(flat)
         
         # Dummy segmentation output
-        seg_output = torch.randn(x.size(0), 6, 224, 224)  # Adjust shape according to batch size
+        print(x.shape[0])
+        seg_output = torch.randn(x.shape[0], 6, 224, 224)  # Adjust shape according to batch size
         
         return seg_output, cls_output
 
