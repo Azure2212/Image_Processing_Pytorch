@@ -94,6 +94,8 @@ class RAFDB_Multitask_Trainer(Trainer):
 
     self.test_acc = {'segmentation':0.0, 'classification':0.0}
     self.test_acc_ttau = {'segmentation':0.0, 'classification':0.0}
+    self.test_dice =0.0
+    self.test_iou = 0.0
     self.plateau_count = 0
     #self.current_epoch_num = 0
     self.current_epoch_num = configs["current_epoch_num"]
