@@ -305,6 +305,8 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
 
         pred_mask_flat = torch.flatten(pred_mask)
         true_mask_flat = torch.flatten(true_mask)
+        print(pred_mask_flat.shape)
+        print(true_mask_flat.shape)
         # Compute Dice score for the i-th class
         intersection = torch.sum(pred_mask_flat * true_mask_flat)
         pred_true = torch.sum(pred_mask_flat) + torch.sum(true_mask_flat)
