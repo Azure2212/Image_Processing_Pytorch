@@ -294,7 +294,9 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
     """
     epsilon = 1e-6
     # Convert predictions to class indices
+    print(y_pred.shape)
     y_pred = torch.argmax(y_pred, dim=1)  # Shape: (batch_size, height, width)
+    print(y_pred.shape)
     dice_scores = []
     iou_scores = []
     
