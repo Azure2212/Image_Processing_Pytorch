@@ -9,7 +9,7 @@ import torchvision
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
-
+import segmentation_models_pytorch as smp
 # from utils.radam import RAdam
 
 import tqdm
@@ -33,7 +33,7 @@ class Trainer(object):
         pass
 
 
-class RAFDB_Segmentation_Trainer(Trainer):
+class RAFDB_Segmentation_Trainer_v2(Trainer):
   def __init__(self, model, train_loader, val_loader, test_loader, configs, wb = True):
 
     self.train_loader = train_loader
@@ -59,8 +59,8 @@ class RAFDB_Segmentation_Trainer(Trainer):
     self.isDebug = configs["isDebug"]
     self.name_run_wandb = configs["name_run_wandb"]
     self.wb = wb
-    self.num_classes = configs["num_classes"]
-    print(f'self.num_classes ={self.num_classes}')
+    self.num_cls_classes = configs["num_seg_classes"]
+    print(f'self.num_seg_classes ={self.num_seg_classes}')
     #self.model = model.to(self.device)'cpu'
     self.model = model.to(self.device)
 
@@ -147,7 +147,8 @@ class RAFDB_Segmentation_Trainer(Trainer):
                       pin_memory=True, shuffle=False)
     
     
-    self.criterion = nn.CrossEntropyLoss().to(self.device)
+    self.cls_criterion = nn.CrossEntropyLoss().to(self.device)
+    self.seg_criterion = smp.losses.DiceLoss(smp.losses.MULTICLASS_MODE, from_logits=True)
 
     if self.optimizer_chose == "RAdam":
       print("The selected optimizer is RAdam")
@@ -271,40 +272,13 @@ class RAFDB_Segmentation_Trainer(Trainer):
       except:
           print("--------Can not import wandb-------")
 
-  def compute_metrics(self, preds, labels, num_classes):
-    # Convert logits to probabilities
-    preds = torch.softmax(preds, dim=1)
+  def compute_metrics(pred_mask, mask, num_classes):
+    tp, fp, fn, tn = smp.metrics.get_stats(pred_mask.long(), mask.long(), mode="multiclass", num_classes=num_classes)
+    per_image_iou = smp.metrics.iou_score(tp, fp, fn, tn, reduction="micro-imagewise")
+    dataset_iou = smp.metrics.iou_score(tp, fp, fn, tn, reduction="micro")
+    return per_image_iou, dataset_iou
+
     
-    # Compute accuracy
-    _, predicted = torch.max(preds, 1)
-    correct = (predicted == labels).sum().item()
-    total = labels.numel()
-    accuracy = correct / total
-    
-    # Compute Dice score per class
-    smooth = 1e-8
-    dice_scores = []
-    iou_scores = []
-    
-    for c in range(num_classes):
-        # Compute Dice score for class c
-        pred_c = (predicted == c).float()
-        label_c = (labels == c).float()
-        intersection = (pred_c * label_c).sum()
-        union = pred_c.sum() + label_c.sum()
-        dice_score_c = (2. * intersection + smooth) / (union + smooth)
-        dice_scores.append(dice_score_c)
-        
-        # Compute IoU for class c
-        union = (pred_c + label_c).sum() - intersection
-        iou_score_c = (intersection + smooth) / (union + smooth)
-        iou_scores.append(iou_score_c)
-    
-    # Average Dice score and IoU across all classes
-    dice_score = torch.mean(torch.tensor(dice_scores))
-    iou_score = torch.mean(torch.tensor(iou_scores))
-    
-    return accuracy, dice_score, iou_score
     # return wandb
   def step_per_train(self):
     # if self.wb == True:
@@ -312,7 +286,6 @@ class RAFDB_Segmentation_Trainer(Trainer):
 
     self.model.train()
     train_loss = 0.0
-    train_acc = 0.0
     train_dice = 0.0
     train_iou = 0.0
 
@@ -333,11 +306,10 @@ class RAFDB_Segmentation_Trainer(Trainer):
         loss = self.criterion(y_pred, masks)
       
        # Compute accuracy and dice score
-      acc, dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_classes)
+      dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_classes)
       
 
       train_loss += loss.item()
-      train_acc += acc
       train_dice += dice_score
       train_iou += iou_score
 
@@ -349,7 +321,6 @@ class RAFDB_Segmentation_Trainer(Trainer):
       # write wandb
       metric = {
           " Loss" : train_loss / (i+1),
-          " Accuracy" :train_acc / (i+1),
           " DiceScore" :train_dice / (i+1),
           " IouScore" :train_iou / (i+1),
           " epochs" : self.current_epoch_num,
@@ -362,20 +333,17 @@ class RAFDB_Segmentation_Trainer(Trainer):
 
     i += 1
     self.train_loss_list.append(train_loss / i)
-    self.train_acc_list.append(train_acc / i)
     self.train_dice_list.append(train_dice / i)
     self.train_iou_list.append(train_iou / i)
 
 
     print(" Loss: {:.4f}".format(self.train_loss_list[-1])
-          , ", Accuracy: {:.4f}%".format(self.train_acc_list[-1])
           , ", Dice_score: {:.4f}%".format(self.train_dice_list[-1])
           , ", Iou_score: {:.4f}%".format(self.train_iou_list[-1]))
 
   def step_per_val(self):
     self.model.eval()
     val_loss = 0.0
-    val_acc = 0.0
     val_dice = 0.0
     val_iou = 0.0
 
@@ -393,22 +361,19 @@ class RAFDB_Segmentation_Trainer(Trainer):
           loss = self.criterion(y_pred, masks)
       
        # Compute accuracy and dice score
-        acc, dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_classes)
+        dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_classes)
 
         val_loss += loss.item()
-        val_acc += acc
         val_dice += dice_score
         val_iou += iou_score
         if self.isDebug == 1: 
           break
       i += 1
       self.val_loss_list.append(val_loss / i)
-      self.val_acc_list.append(val_acc / i)
       self.val_dice_list.append(val_dice / i)
       self.val_iou_list.append(iou_score / i)
 
       print(" Val_Loss: {:.4f}".format(self.val_loss_list[-1])
-            ,", Val_Accuracy: {:.4f}%".format(self.val_acc_list[-1])
             , ", Val_Dice: {:.4f}%".format(self.val_dice_list[-1])
             , ", Val_Iou: {:.4f}%".format(self.val_iou_list[-1]))
 
@@ -416,10 +381,8 @@ class RAFDB_Segmentation_Trainer(Trainer):
       if self.wb == True:
         metric = {
             " Val_Loss" : self.val_loss_list[-1],
-            " Val_Accuracy" :self.val_acc_list[-1],
             " Val_DiceScore" :self.val_dice_list[-1],
             " Val_IouScore" :self.val_iou_list[-1],
-            # "Learning_rate" : self.learning_rate
         }
         self.wandb.log(metric)
 
@@ -428,7 +391,6 @@ class RAFDB_Segmentation_Trainer(Trainer):
   def acc_on_test(self):
     self.model.eval()
     test_loss = 0.0
-    test_acc = 0.0
     test_dice = 0.0
     test_iou = 0.0
 
@@ -446,10 +408,9 @@ class RAFDB_Segmentation_Trainer(Trainer):
           loss = self.criterion(y_pred, masks)
       
        # Compute accuracy and dice score
-        acc, dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_classes)
+        dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_classes)
 
         test_loss += loss.item()
-        test_acc += acc
         test_dice += dice_score
         test_iou += iou_score
 
@@ -458,18 +419,16 @@ class RAFDB_Segmentation_Trainer(Trainer):
 
       i += 1
       test_loss = (test_loss / i)
-      test_acc = (test_acc / i)
       test_dice = (test_dice / i)
       test_iou = (test_iou / i)
 
-      print("Test_Accuracy: {:.4f}, Test_Dice_score: {:.4f}, Test_IOU_score:{:.4f} ".format(test_acc, test_dice, test_iou))
+      print("Test_Loss: {:.4f}, Test_Dice_score: {:.4f}, Test_IOU_score:{:.4f} ".format(test_loss, test_dice, test_iou))
       if self.wb == True:
         self.wandb.log({
-          "Test_accuracy": test_acc,
           "Test_diceScore": test_dice,
           "Test_iouScore": test_iou
           })
-      return test_acc, test_dice, test_iou
+      return test_loss, test_dice, test_iou
 
   def Train_model(self):
     self.init_wandb()
@@ -499,7 +458,7 @@ class RAFDB_Segmentation_Trainer(Trainer):
       state = torch.load(self.checkpoint_path)
       self.model.load_state_dict(state["net"])
       print("----------------------Cal on Test-----------------------")
-      self.test_acc, self.test_dice, self.test_iou = self.acc_on_test()
+      self.test_loss, self.test_dice, self.test_iou = self.acc_on_test()
       self.save_weights()
 
     except Exception as e:
@@ -509,9 +468,9 @@ class RAFDB_Segmentation_Trainer(Trainer):
     consume_time = str(datetime.datetime.now() - self.start_time)
     print("----------------------SUMMARY-----------------------")
     print(" After {} epochs and {} plateau count, consume {}".format((self.current_epoch_num), (self.plateau_count),consume_time[:-7]))
-    print(" Best Train Accuracy: {:.4f}, Best Train Dice Score: {:.4f}, Best Train IOU Score:{:.4f} ".format(self.best_train_acc, self.best_train_dice, self.best_train_iou))
-    print(" Best Val Accuracy: {:.4f}, Best Val Dice Score: {:.4f}, Best Val IOU Score:{:.4f} ".format(self.best_val_acc, self.best_val_dice, self.best_val_iou))
-    print(" Test Accuracy: {:.4f}, Test Dice Score: {:.4f}, Test IOU Score:{:.4f} ".format((self.test_acc), (self.test_dice), (self.test_iou)))
+    print(" Best Train Loss: {:.4f}, Best Train Dice Score: {:.4f}, Best Train IOU Score:{:.4f} ".format(self.best_train_loss, self.best_train_dice, self.best_train_iou))
+    print(" Best Val Loss: {:.4f}, Best Val Dice Score: {:.4f}, Best Val IOU Score:{:.4f} ".format(self.best_val_loss, self.best_val_dice, self.best_val_iou))
+    print(" Test Loss: {:.4f}, Test Dice Score: {:.4f}, Test IOU Score:{:.4f} ".format((self.test_loss), (self.test_dice), (self.test_iou)))
 
   #set up for training (update epoch, stopping training, write logging)
   def update_epoch_num(self):
@@ -527,12 +486,11 @@ class RAFDB_Segmentation_Trainer(Trainer):
     if self.val_acc_list[-1] > self.best_val_acc:
       self.save_weights()
       self.plateau_count = 0
-      self.best_val_acc = self.val_acc_list[-1]
+
       self.best_val_loss = self.val_loss_list[-1]
       self.best_val_dice = self.val_dice_list[-1]
       self.best_val_iou = self.val_iou_list[-1]
 
-      self.best_train_acc = self.train_acc_list[-1]
       self.best_train_loss = self.train_loss_list[-1]
       self.best_train_dice = self.train_dice_list[-1]
       self.best_train_iou = self.train_iou_list[-1]
@@ -541,7 +499,7 @@ class RAFDB_Segmentation_Trainer(Trainer):
       self.plateau_count += 1
 # 100 - self.best_val_acc
     if self.lr_scheduler_chose == "ReduceLROnPlateau":
-      self.scheduler.step(100 - self.val_acc_list[-1])
+      self.scheduler.step(100 - self.val_iou_list[-1])
     else:
       self.scheduler.step()
 
@@ -556,17 +514,14 @@ class RAFDB_Segmentation_Trainer(Trainer):
         **self.configs,
         "net": state_dict,
         "best_train_loss": self.best_train_loss,
-        "best_train_acc": self.best_train_acc,
         "train_loss_list": self.train_loss_list,
         "train_acc_list": self.train_acc_list,
         "best_train_dice": self.best_train_dice,
         "best_train_iou": self.best_train_iou,
 
         "best_val_loss": self.best_val_loss,
-        "best_val_acc": self.best_val_acc,
         "val_loss_list": self.val_loss_list,
         "val_acc_list": self.val_acc_list,
-        "test_acc": self.test_acc,
         "best_val_dice": self.best_val_dice,
         "best_val_iou": self.best_val_iou,
         "optimizer": self.optimizer.state_dict(),
