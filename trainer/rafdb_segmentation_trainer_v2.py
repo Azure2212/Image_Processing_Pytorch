@@ -147,7 +147,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
                       pin_memory=True, shuffle=False)
     
     
-    self.cls_criterion = smp.losses.DiceLoss(smp.losses.MULTICLASS_MODE, from_logits=True)
+    self.criterion = smp.losses.DiceLoss(smp.losses.MULTICLASS_MODE, from_logits=True)
 
     if self.optimizer_chose == "RAdam":
       print("The selected optimizer is RAdam")
