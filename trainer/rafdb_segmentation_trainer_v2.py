@@ -280,18 +280,6 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
 
 
   def compute_metrics(self, y_pred, masks, num_classes, average='macro'):
-        """
-    Compute Dice score and IoU score for a batch of images using segmentation-models-pytorch.
-
-    Args:
-        y_pred (torch.Tensor): The predicted output from the model, with shape (batch_size, num_classes, height, width).
-        masks (torch.Tensor): The ground truth masks, with shape (batch_size, height, width).
-        num_classes (int): The number of segmentation classes.
-
-    Returns:
-        dice_score (float): The Dice score.
-        iou_score (float): The IoU score.
-    """
 
     # Convert predictions to class indices
     y_pred = torch.argmax(y_pred, dim=1)  # Shape: (batch_size, height, width)
