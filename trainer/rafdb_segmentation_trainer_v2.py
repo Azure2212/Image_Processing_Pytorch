@@ -298,11 +298,6 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
   
     dice_scores = []
     iou_scores = []
-    print(f'channel 1: {torch.unique(y_true[:,0])}')
-    print(f'channel 2: {torch.unique(y_true[:,1])}')
-    print(f'channel 3: {torch.unique(y_true[:,2])}')
-    print(f'channel 4: {torch.unique(y_true[:,3])}')
-    print(f'all: {torch.unique(y_true)}')
     for i in range(num_classes):
         # Create binary masks for the i-th class
         pred_mask = (y_pred == i).float()
@@ -360,8 +355,8 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
       
 
       train_loss += loss.item()
-      train_dice += dice_score
-      train_iou += iou_score
+      train_dice += dice_score.item()
+      train_iou += iou_score.item()
 
       # compute gradient and do SGD step
       self.optimizer.zero_grad()
@@ -415,8 +410,8 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
         dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_seg_classes)
 
         val_loss += loss.item()
-        val_dice += dice_score
-        val_iou += iou_score
+        val_dice += dice_score.item()
+        val_iou += iou_score.item()
         if self.isDebug == 1: 
           break
       i += 1
@@ -462,8 +457,8 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
         dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_seg_classes)
 
         test_loss += loss.item()
-        test_dice += dice_score
-        test_iou += iou_score
+        test_dice += dice_score.item()
+        test_iou += iou_score.item()
 
         if self.isDebug == 1: 
           break
