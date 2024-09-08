@@ -147,8 +147,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
                       pin_memory=True, shuffle=False)
     
     
-    self.cls_criterion = nn.CrossEntropyLoss().to(self.device)
-    self.seg_criterion = smp.losses.DiceLoss(smp.losses.MULTICLASS_MODE, from_logits=True)
+    self.cls_criterion = smp.losses.DiceLoss(smp.losses.MULTICLASS_MODE, from_logits=True)
 
     if self.optimizer_chose == "RAdam":
       print("The selected optimizer is RAdam")
@@ -356,9 +355,9 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
         masks = masks.long().to(device=self.device)
 
         # compute output, accuracy and get loss
-        with torch.cuda.amp.autocast():
-          y_pred = self.model(images)
-          loss = self.criterion(y_pred, masks)
+    
+        y_pred = self.model(images)
+        loss = self.criterion(y_pred, masks)
       
        # Compute accuracy and dice score
         dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_classes)
@@ -400,12 +399,11 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
           bar_format="{desc} {percentage:3.0f}%|{bar:30}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]"
       ):
         images = images.to(device=self.device)
-        masks = masks.long().to(device=self.device)
+        masks = masks.to(device=self.device)
 
-        # compute output, accuracy and get loss
-        with torch.cuda.amp.autocast():
-          y_pred = self.model(images)
-          loss = self.criterion(y_pred, masks)
+       
+        y_pred = self.model(images)
+        loss = self.criterion(y_pred, masks)
       
        # Compute accuracy and dice score
         dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_classes)
