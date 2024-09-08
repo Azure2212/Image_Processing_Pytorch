@@ -280,36 +280,35 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
 
 
   def compute_metrics(self, y_pred, masks, num_classes, average='macro'):
-    """
-    Compute the Dice score and IoU score for a batch of images.
+        """
+    Compute Dice score and IoU score for a batch of images using segmentation-models-pytorch.
 
     Args:
         y_pred (torch.Tensor): The predicted output from the model, with shape (batch_size, num_classes, height, width).
         masks (torch.Tensor): The ground truth masks, with shape (batch_size, height, width).
         num_classes (int): The number of segmentation classes.
-        average (str): The averaging method for metrics. Can be 'macro', 'micro', or 'none'.
 
     Returns:
         dice_score (float): The Dice score.
         iou_score (float): The IoU score.
     """
-    
+
     # Convert predictions to class indices
     y_pred = torch.argmax(y_pred, dim=1)  # Shape: (batch_size, height, width)
-    
-    # Initialize metrics
-    dice_metric = torchmetrics.Dice(num_classes=num_classes, average=average)
-    iou_metric = torchmetrics.IOU(num_classes=num_classes, average=average)
+
+    # Create metric instances
+    dice_metric = smp.metrics.IoU(num_classes=num_classes)
+    iou_metric = smp.metrics.Dice(num_classes=num_classes)
 
     # Update metrics
     dice_metric.update(y_pred, masks)
     iou_metric.update(y_pred, masks)
 
     # Compute metrics
-    dice_score = dice_metric.compute().item() * 100.0
-    iou_score = iou_metric.compute().item() * 100.0
+    dice_score = dice_metric.compute().item()
+    iou_score = iou_metric.compute().item()
 
-    # Reset metrics
+    # Reset metrics for next computation
     dice_metric.reset()
     iou_metric.reset()
 
