@@ -22,7 +22,7 @@ torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
 from sgu24project.utils.datasets.rafdb_ds_with_mask import RafDataSet_Mask
-from sgu24project.utils.datasets.smp_dataloader import get_training_augmentation, get_validation_augmentation
+from sgu24project.utils.datasets.smp_dataloader import get_training_augmentation, get_validation_augmentation, Dataset
 from sgu24project.trainer.rafdb_segmentation_trainer_v2 import RAFDB_Segmentation_Trainer_v2
 from sgu24project.trainer.rafdb_multitask_trainer import RAFDB_Multitask_Trainer
 
