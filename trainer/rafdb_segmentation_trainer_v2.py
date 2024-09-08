@@ -540,7 +540,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
       self.best_train_dice = self.train_dice_list[-1]
       self.best_train_iou = self.train_iou_list[-1]
       
-      self.best_val_acc = self.best_val_iou[-1]
+      self.best_val_acc = self.val_iou_list[-1]
     else:
       self.plateau_count += 1
 # 100 - self.best_val_acc
