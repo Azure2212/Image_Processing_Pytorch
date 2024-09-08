@@ -301,7 +301,8 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
       # compute output, accuracy and get loss
       
       y_pred = self.model(images)
-      loss = self.criterion(y_pred, masks)
+      after_argmax = torch.argmax(masks, dim=1)
+      loss = self.criterion(y_pred, after_argmax)
       
        # Compute accuracy and dice score
       dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_classes)
@@ -356,7 +357,8 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
         # compute output, accuracy and get loss
     
         y_pred = self.model(images)
-        loss = self.criterion(y_pred, masks)
+        after_argmax = torch.argmax(masks, dim=1)
+        loss = self.criterion(y_pred, after_argmax)
       
        # Compute accuracy and dice score
         dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_classes)
@@ -402,7 +404,8 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
         masks = masks.to(dtype=torch.float).cuda()
     
         y_pred = self.model(images)
-        loss = self.criterion(y_pred, masks)
+        after_argmax = torch.argmax(masks, dim=1)
+        loss = self.criterion(y_pred, after_argmax)
       
        # Compute accuracy and dice score
         dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_classes)
