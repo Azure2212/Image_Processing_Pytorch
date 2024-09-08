@@ -271,11 +271,49 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
       except:
           print("--------Can not import wandb-------")
 
-  def compute_metrics(self, pred_mask, mask, num_classes):
-    tp, fp, fn, tn = smp.metrics.get_stats(pred_mask.long(), mask.long(), mode="multiclass", num_classes=num_classes)
-    per_image_iou = smp.metrics.iou_score(tp, fp, fn, tn, reduction="micro-imagewise")
-    dataset_iou = smp.metrics.iou_score(tp, fp, fn, tn, reduction="micro")
-    return per_image_iou, dataset_iou
+  # def compute_metrics(self, pred_mask, mask, num_classes):
+  #   tp, fp, fn, tn = smp.metrics.get_stats(pred_mask.long(), mask.long(), mode="multiclass", num_classes=num_classes)
+  #   per_image_iou = smp.metrics.iou_score(tp, fp, fn, tn, reduction="micro-imagewise")
+  #   dataset_iou = smp.metrics.iou_score(tp, fp, fn, tn, reduction="micro")
+  #   return per_image_iou, dataset_iou
+
+  import torchmetrics
+
+  def compute_metrics(self, y_pred, masks, num_classes, average='macro'):
+    """
+    Compute the Dice score and IoU score for a batch of images.
+
+    Args:
+        y_pred (torch.Tensor): The predicted output from the model, with shape (batch_size, num_classes, height, width).
+        masks (torch.Tensor): The ground truth masks, with shape (batch_size, height, width).
+        num_classes (int): The number of segmentation classes.
+        average (str): The averaging method for metrics. Can be 'macro', 'micro', or 'none'.
+
+    Returns:
+        dice_score (float): The Dice score.
+        iou_score (float): The IoU score.
+    """
+    
+    # Convert predictions to class indices
+    y_pred = torch.argmax(y_pred, dim=1)  # Shape: (batch_size, height, width)
+    
+    # Initialize metrics
+    dice_metric = torchmetrics.Dice(num_classes=num_classes, average=average)
+    iou_metric = torchmetrics.IOU(num_classes=num_classes, average=average)
+
+    # Update metrics
+    dice_metric.update(y_pred, masks)
+    iou_metric.update(y_pred, masks)
+
+    # Compute metrics
+    dice_score = dice_metric.compute().item() * 100.0
+    iou_score = iou_metric.compute().item() * 100.0
+
+    # Reset metrics
+    dice_metric.reset()
+    iou_metric.reset()
+
+    return dice_score, iou_score
 
     
     # return wandb
@@ -483,7 +521,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
     )
   
   def update_state_training(self):
-    if self.val_acc_list[-1] > self.best_val_acc:
+    if self.best_val_iou[-1] > self.best_val_acc:
       self.save_weights()
       self.plateau_count = 0
 
@@ -495,6 +533,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
       self.best_train_dice = self.train_dice_list[-1]
       self.best_train_iou = self.train_iou_list[-1]
       
+      self.best_val_acc = self.best_val_iou[-1]
     else:
       self.plateau_count += 1
 # 100 - self.best_val_acc
