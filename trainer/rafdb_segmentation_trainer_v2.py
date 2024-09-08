@@ -305,7 +305,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
       loss = self.criterion(y_pred, after_argmax)
       
        # Compute accuracy and dice score
-      dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_classes)
+      dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_seg_classes)
       
 
       train_loss += loss.item()
@@ -361,7 +361,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
         loss = self.criterion(y_pred, after_argmax)
       
        # Compute accuracy and dice score
-        dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_classes)
+        dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_seg_classes)
 
         val_loss += loss.item()
         val_dice += dice_score
@@ -408,7 +408,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
         loss = self.criterion(y_pred, after_argmax)
       
        # Compute accuracy and dice score
-        dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_classes)
+        dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_seg_classes)
 
         test_loss += loss.item()
         test_dice += dice_score
