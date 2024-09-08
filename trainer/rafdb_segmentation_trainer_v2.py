@@ -321,7 +321,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
     dice_score = torch.mean(torch.tensor(dice_scores)) * 100.0
     iou_score = torch.mean(torch.tensor(iou_scores)) * 100.0
     
-    return dice_scores, iou_scores
+    return dice_score, iou_score
 
     
     # return wandb
