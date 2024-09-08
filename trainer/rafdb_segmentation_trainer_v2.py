@@ -293,8 +293,6 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
         iou_scores (list of floats): The IoU score for each class.
     """
     epsilon = 1e-6
-    print(y_pred.shape)
-    print(y_true.shape)
     # Convert predictions to class indices
     y_pred = torch.argmax(y_pred, dim=1)  # Shape: (batch_size, height, width)
     dice_scores = []
@@ -308,7 +306,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
         pred_mask_flat = torch.flatten(pred_mask)
         true_mask_flat = torch.flatten(true_mask)
         # Compute Dice score for the i-th class
-        intersection = torch.sum(pred_mask * true_mask)
+        intersection = torch.sum(pred_mask_flat * true_mask_flat)
         pred_true = torch.sum(pred_mask_flat) + torch.sum(true_mask_flat)
         dice_score = (2. * intersection) / (union + epsilon)
 
