@@ -298,7 +298,11 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
   
     dice_scores = []
     iou_scores = []
-    
+    print(f'channel 1: {torch.unique(y_true[:,0])}')
+    print(f'channel 2: {torch.unique(y_true[:,1])}')
+    print(f'channel 3: {torch.unique(y_true[:,2])}')
+    print(f'channel 4: {torch.unique(y_true[:,3])}')
+    print(f'all: {torch.unique(y_true)}')
     for i in range(num_classes):
         # Create binary masks for the i-th class
         pred_mask = (y_pred == i).float()
@@ -309,8 +313,8 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
         
         # Compute Dice score for the i-th class
         intersection = torch.sum(pred_mask_flat * true_mask_flat)
-        pred_true = torch.sum(pred_mask_flat) + torch.sum(true_mask_flat)
-        dice_score = (2. * intersection) / (union + epsilon)
+        pred_and_true = torch.sum(pred_mask_flat) + torch.sum(true_mask_flat)
+        dice_score = (2. * intersection) / (pred_and_true + epsilon)
 
         # Compute IoU score for the i-th class
         union = torch.sum(pred_mask_flat + true_mask_flat) - intersection
