@@ -21,7 +21,7 @@
     "plateau_patience": 2,
     "steplr": 50,
     "optimizer_chose":"RAdam",
-    "lr_scheduler":"ReduceLROnPlateau",
+    "lr_scheduler":"CosineAnnealingLR",
     "project_name": "residual_cbam_resnet2024",
     "wandb_api_key": "2726d5302fbdd5616f25f28d6b1597d5875a9c14",
     "debug":0,
