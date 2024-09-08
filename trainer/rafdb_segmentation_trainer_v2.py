@@ -300,6 +300,8 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
     
     for i in range(num_classes):
         # Create binary masks for the i-th class
+        print(pred_mask.shape)
+        print(true_mask.shape)
         pred_mask = (y_pred == i).float()
         true_mask = (y_true == i).float()
 
