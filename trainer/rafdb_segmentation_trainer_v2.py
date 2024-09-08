@@ -528,7 +528,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
     )
   
   def update_state_training(self):
-    if self.best_val_iou[-1] > self.best_val_acc:
+    if self.val_iou_list[-1] > self.best_val_acc:
       self.save_weights()
       self.plateau_count = 0
 
