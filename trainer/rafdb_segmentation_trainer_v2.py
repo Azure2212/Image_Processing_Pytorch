@@ -297,7 +297,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
       self.model = self.model.cuda()
       
       images = images.to(device=self.device)
-      masks = masks.long().to(device=self.device)
+      masks = masks.to(device=self.device)
 
       # compute output, accuracy and get loss
       with torch.cuda.amp.autocast():
@@ -352,7 +352,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
           bar_format="{desc} {percentage:3.0f}%|{bar:30}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]"
       ):
         images = images.to(device=self.device)
-        masks = masks.long().to(device=self.device)
+        masks = masks.to(device=self.device)
 
         # compute output, accuracy and get loss
     
