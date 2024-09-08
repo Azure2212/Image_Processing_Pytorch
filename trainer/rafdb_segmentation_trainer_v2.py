@@ -294,23 +294,19 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
     """
     epsilon = 1e-6
     # Convert predictions to class indices
-    print(y_pred.shape)
     y_pred = torch.argmax(y_pred, dim=1)  # Shape: (batch_size, height, width)
-    print(y_pred.shape)
+  
     dice_scores = []
     iou_scores = []
     
     for i in range(num_classes):
         # Create binary masks for the i-th class
         pred_mask = (y_pred == i).float()
-        true_mask = (y_true == i).float()
-        print(pred_mask.shape)
-        print(true_mask.shape)
-
+        true_mask = (y_true[:, i] == 1).float() 
+        
         pred_mask_flat = torch.flatten(pred_mask)
         true_mask_flat = torch.flatten(true_mask)
-        print(pred_mask_flat.shape)
-        print(true_mask_flat.shape)
+        
         # Compute Dice score for the i-th class
         intersection = torch.sum(pred_mask_flat * true_mask_flat)
         pred_true = torch.sum(pred_mask_flat) + torch.sum(true_mask_flat)
