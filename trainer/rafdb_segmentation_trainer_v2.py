@@ -294,15 +294,14 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
     ):
 
       # Move images to GPU before feeding them to the model, to fix error happen : Input type (torch.cuda.FloatTensor) and weight type (torch.FloatTensor) should be the same
-      self.model = self.model.cuda()
-      
-      images = images.to(device=self.device)
-      masks = masks.to(device=self.device)
+      self.model = self.model.float().cuda()
+      images = images.to(dtype=torch.float).cuda()
+      masks = masks.to(dtype=torch.float).cuda()
 
       # compute output, accuracy and get loss
-      with torch.cuda.amp.autocast():
-        y_pred = self.model(images)
-        loss = self.criterion(y_pred, masks)
+      
+      y_pred = self.model(images)
+      loss = self.criterion(y_pred, masks)
       
        # Compute accuracy and dice score
       dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_classes)
