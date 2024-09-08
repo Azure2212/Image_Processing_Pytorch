@@ -353,6 +353,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
        # Compute accuracy and dice score
       dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_seg_classes)
       
+      print(dice_score)
 
       train_loss += loss.item()
       train_dice += dice_score.item()
