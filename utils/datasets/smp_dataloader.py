@@ -12,17 +12,6 @@ from torch.optim import lr_scheduler
 import segmentation_models_pytorch as smp
 import pytorch_lightning as pl
 
-DATA_DIR = '/kaggle/working/data/CamVid'
-
-x_train_dir = os.path.join(DATA_DIR, 'train')
-y_train_dir = os.path.join(DATA_DIR, 'trainannot')
-
-x_valid_dir = os.path.join(DATA_DIR, 'val')
-y_valid_dir = os.path.join(DATA_DIR, 'valannot')
-
-x_test_dir = os.path.join(DATA_DIR, 'test')
-y_test_dir = os.path.join(DATA_DIR, 'testannot')
-
 # training set images augmentation
 def get_training_augmentation():
     train_transform = [

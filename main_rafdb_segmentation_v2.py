@@ -66,7 +66,16 @@ if args.epoch_num != 1:
 
 
 CLASSES = ['car', 'road', 'pavement', 'building']
+DATA_DIR = '/kaggle/working/data/CamVid'
 
+x_train_dir = os.path.join(DATA_DIR, 'train')
+y_train_dir = os.path.join(DATA_DIR, 'trainannot')
+
+x_valid_dir = os.path.join(DATA_DIR, 'val')
+y_valid_dir = os.path.join(DATA_DIR, 'valannot')
+
+x_test_dir = os.path.join(DATA_DIR, 'test')
+y_test_dir = os.path.join(DATA_DIR, 'testannot')
 train_dataset = Dataset(
     x_train_dir, 
     y_train_dir, 
