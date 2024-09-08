@@ -350,9 +350,9 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
           enumerate(self.val_ds), total = len(self.val_ds), leave = True, colour = "green", desc = "        ",
           bar_format="{desc} {percentage:3.0f}%|{bar:30}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]"
       ):
-        images = images.to(device=self.device)
-        masks = masks.to(device=self.device)
-
+        self.model = self.model.float().cuda()
+        images = images.to(dtype=torch.float).cuda()
+        masks = masks.to(dtype=torch.float).cuda()
         # compute output, accuracy and get loss
     
         y_pred = self.model(images)
@@ -397,10 +397,10 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
           enumerate(self.test_ds), total = len(self.test_ds), leave = True, colour = "green", desc = "        ",
           bar_format="{desc} {percentage:3.0f}%|{bar:30}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]"
       ):
-        images = images.to(device=self.device)
-        masks = masks.to(device=self.device)
-
-       
+        self.model = self.model.float().cuda()
+        images = images.to(dtype=torch.float).cuda()
+        masks = masks.to(dtype=torch.float).cuda()
+    
         y_pred = self.model(images)
         loss = self.criterion(y_pred, masks)
       
