@@ -9,6 +9,7 @@ import torchvision
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
+import torchmetrics
 import segmentation_models_pytorch as smp
 # from utils.radam import RAdam
 
@@ -277,7 +278,6 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
   #   dataset_iou = smp.metrics.iou_score(tp, fp, fn, tn, reduction="micro")
   #   return per_image_iou, dataset_iou
 
-  import torchmetrics
 
   def compute_metrics(self, y_pred, masks, num_classes, average='macro'):
     """
