@@ -279,28 +279,49 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
   #   return per_image_iou, dataset_iou
 
 
-  def compute_metrics(self, y_pred, masks, num_classes, average='macro'):
+  def compute_metrics(self, y_pred, y_true, num_classes):
+    """
+    Compute Dice score and IoU score for a batch of images.
 
+    Args:
+        y_pred (torch.Tensor): The predicted output from the model, with shape (batch_size, num_classes, height, width).
+        y_true (torch.Tensor): The ground truth masks, with shape (batch_size, height, width).
+        num_classes (int): The number of segmentation classes.
+
+    Returns:
+        dice_scores (list of floats): The Dice score for each class.
+        iou_scores (list of floats): The IoU score for each class.
+    """
+    epsilon = 1e-6
     # Convert predictions to class indices
+    print(y_pred.tolist())
     y_pred = torch.argmax(y_pred, dim=1)  # Shape: (batch_size, height, width)
+    dice_scores = []
+    iou_scores = []
+    
+    for i in range(num_classes):
+        # Create binary masks for the i-th class
+        pred_mask = (y_pred == i).float()
+        true_mask = (y_true == i).float()
 
-    # Create metric instances
-    dice_metric = smp.metrics.IoU(num_classes=num_classes)
-    iou_metric = smp.metrics.Dice(num_classes=num_classes)
+        pred_mask_flat = torch.flatten(pred_mask)
+        true_mask_flat = torch.flatten(true_mask)
+        # Compute Dice score for the i-th class
+        intersection = torch.sum(pred_mask * true_mask)
+        pred_true = torch.sum(pred_mask_flat) + torch.sum(true_mask_flat)
+        dice_score = (2. * intersection) / (union + epsilon)
 
-    # Update metrics
-    dice_metric.update(y_pred, masks)
-    iou_metric.update(y_pred, masks)
+        # Compute IoU score for the i-th class
+        union = torch.sum(pred_mask_flat + true_mask_flat) - intersection
+        iou_score = intersection / (union + 1e-6)  # Add a small constant to avoid division by zero
 
-    # Compute metrics
-    dice_score = dice_metric.compute().item()
-    iou_score = iou_metric.compute().item()
+        dice_scores.append(dice_score.item())
+        iou_scores.append(iou_score.item())
 
-    # Reset metrics for next computation
-    dice_metric.reset()
-    iou_metric.reset()
-
-    return dice_score, iou_score
+    dice_score = torch.mean(torch.tensor(dice_scores)) * 100.0
+    iou_score = torch.mean(torch.tensor(iou_scores)) * 100.0
+    
+    return dice_scores, iou_scores
 
     
     # return wandb
