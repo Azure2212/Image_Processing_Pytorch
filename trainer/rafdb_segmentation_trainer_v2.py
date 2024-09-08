@@ -271,7 +271,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
       except:
           print("--------Can not import wandb-------")
 
-  def compute_metrics(pred_mask, mask, num_classes):
+  def compute_metrics(self, pred_mask, mask, num_classes):
     tp, fp, fn, tn = smp.metrics.get_stats(pred_mask.long(), mask.long(), mode="multiclass", num_classes=num_classes)
     per_image_iou = smp.metrics.iou_score(tp, fp, fn, tn, reduction="micro-imagewise")
     dataset_iou = smp.metrics.iou_score(tp, fp, fn, tn, reduction="micro")
