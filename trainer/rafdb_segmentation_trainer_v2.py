@@ -300,7 +300,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
     iou_scores = []
     for i in range(num_classes):
         # Create binary masks for the i-th class
-        pred_mask = (y_pred == i).float()
+        pred_mask = (y_pred == (i+1)).float()
         true_mask = (y_true[:, i] == 1).float() 
         
         pred_mask_flat = torch.flatten(pred_mask)
