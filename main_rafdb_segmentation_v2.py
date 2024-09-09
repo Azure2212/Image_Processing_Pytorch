@@ -127,7 +127,7 @@ class Resnet50UnetMultitask_v2(smp.Unet):
         return seg_output
 
 OUT_CLASSES = len(CLASSES)
-model = Resnet50UnetMultitask_v2(in_channels=3, num_seg_classes=OUT_CLASSES, num_cls_classes=7)
+model = Resnet50UnetMultitask_v2(in_channels=3, num_seg_classes=OUT_CLASSES+1, num_cls_classes=7)
 
 
 print(f"the number of parameter: {sum(p.numel() for p in model.parameters())}")
