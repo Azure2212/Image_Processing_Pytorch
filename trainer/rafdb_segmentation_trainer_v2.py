@@ -18,7 +18,7 @@ import torch.optim as optim
 from torch.autograd import Variable
 from torch.optim.lr_scheduler import MultiplicativeLR, StepLR, MultiStepLR, ConstantLR, LinearLR, PolynomialLR, CosineAnnealingLR, ChainedScheduler, ExponentialLR, SequentialLR, ReduceLROnPlateau, CyclicLR, CosineAnnealingWarmRestarts
 
-from sgu24project.utils.metrics.metrics import accuracy, make_batch, dice_coeff, multiclass_dice_coeff
+from sgu24project.utils.metrics.metrics import accuracy, make_batch, dice_coeff, multiclass_dice_coeff, dice_loss
 
 import warnings
 warnings.filterwarnings('ignore')
