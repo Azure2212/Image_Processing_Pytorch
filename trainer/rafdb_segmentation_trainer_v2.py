@@ -453,6 +453,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
         val_loss += loss.item()
         val_dice += dice_score.item()
         val_iou += iou_score.item()
+
         if self.isDebug == 1: 
           break
       i += 1
