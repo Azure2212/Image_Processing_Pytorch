@@ -279,50 +279,44 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
   #   return per_image_iou, dataset_iou
 
 
-  def compute_metrics(self, y_pred, y_true, num_classes):
-    """
-    Compute Dice score and IoU score for a batch of images.
+  def compute_metrics(self, y_pred, masks, num_classes):
+    # Chuyển đổi y_pred từ xác suất thành nhãn dự đoán (nhãn có xác suất cao nhất)
+    y_pred = torch.argmax(y_pred, dim=1)  # (batch_size, height, width)
 
-    Args:
-        y_pred (torch.Tensor): The predicted output from the model, with shape (batch_size, num_classes, height, width).
-        y_true (torch.Tensor): The ground truth masks, with shape (batch_size, height, width).
-        num_classes (int): The number of segmentation classes.
+    # Chuyển đổi masks từ one-hot thành nhãn
+    masks = torch.argmax(masks, dim=1)  # (batch_size, height, width)
 
-    Returns:
-        dice_scores (list of floats): The Dice score for each class.
-        iou_scores (list of floats): The IoU score for each class.
-    """
-    epsilon = 1e-6
-    # Convert predictions to class indices
-    y_pred = torch.argmax(y_pred, dim=1)  # Shape: (batch_size, height, width)
-    y_pred
-    dice_scores = []
-    iou_scores = []
+    # Tính Pixel Accuracy
+    correct_pixels = (y_pred == masks).sum().item()
+    total_pixels = masks.numel()
+    pixel_accuracy = correct_pixels / total_pixels
+
+    # Tính IoU và Dice Coefficient
+    iou_list = []
+    dice_list = []
+
     for i in range(num_classes):
-        # Create binary masks for the i-th class
-        pred_mask = (y_pred == i).float()
-        true_mask = (y_true[:, i] == 1).float() 
-        
-        pred_mask_flat = torch.flatten(pred_mask)
-        true_mask_flat = torch.flatten(true_mask)
-        
-        # Compute Dice score for the i-th class
-        intersection = torch.sum(pred_mask_flat * true_mask_flat)
-        pred_and_true = torch.sum(pred_mask_flat) + torch.sum(true_mask_flat)
-        dice_score = (2. * intersection) / (pred_and_true + epsilon)
+        pred_i = (y_pred == i).float()
+        mask_i = (masks == i).float()
 
-        # Compute IoU score for the i-th class
-        union = torch.sum(pred_mask_flat + true_mask_flat) - intersection
-        iou_score = intersection / (union + 1e-6)  # Add a small constant to avoid division by zero
+        intersection = (pred_i * mask_i).sum()
+        union = pred_i.sum() + mask_i.sum() - intersection
 
-        dice_scores.append(dice_score.item())
-        iou_scores.append(iou_score.item())
+        # Tránh chia cho 0
+        if union == 0:
+            iou = 0
+        else:
+            iou = intersection / union
+        iou_list.append(iou.item())
 
-    dice_score = torch.mean(torch.tensor(dice_scores)) * 100.0
-    iou_score = torch.mean(torch.tensor(iou_scores)) * 100.0
-    
-    return dice_score, iou_score
+        # Dice Coefficient
+        dice = 2 * intersection / (pred_i.sum() + mask_i.sum())
+        dice_list.append(dice.item())
 
+    mean_iou = sum(iou_list) / num_classes
+    mean_dice = sum(dice_list) / num_classes
+
+    return pixel_accuracy, mean_iou, mean_dice
   def dice_score(self, y_pred, y_true, epsilon=1e-6):
     # y_pred: (batch_size, num_classes, height, width)
     # y_true: (batch_size, num_classes, height, width)
@@ -388,12 +382,13 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
       loss = self.criterion(y_pred, after_argmax)
       
        # Compute accuracy and dice score
-      #dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_seg_classes)
       y_pred = y_pred.sigmoid()
       y_pred = (y_pred > 0.5).float()
-      dice_score = self.dice_score(y_pred, masks)
-      iou_score = self.iou_score(y_pred, masks, self.num_seg_classes)
+      dice_score, iou_score, acc = self.compute_metrics(y_pred, masks, self.num_seg_classes)
 
+      print(f'dice_score = {dice_score}')
+      print(f'iou_score = {dice_score}')
+      print(f'acc = {dice_score}')
       train_loss += loss.item()
       train_dice += dice_score.item()
       train_iou += iou_score.item()
