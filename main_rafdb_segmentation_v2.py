@@ -65,7 +65,7 @@ if args.epoch_num != 1:
     configs["max_epoch_num"] = args.epoch_num
 
 
-CLASSES = ['car', 'road', 'pavement', 'building']
+CLASSES = ['car', 'road', 'pavement', 'building', 'unlabelled']
 DATA_DIR = '/kaggle/working/data/CamVid'
 
 x_train_dir = os.path.join(DATA_DIR, 'train')
