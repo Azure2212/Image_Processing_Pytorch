@@ -447,7 +447,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
         dice_score, iou_score, acc = self.compute_metrics(y_pred, masks, self.num_seg_classes)
 
         print(f'dice_score = {dice_score}')
-        print(f'iou_score = {dice_score}')
+        print(f'iou_score = {iou_score}')
         print(f'acc = {dice_score}')
 
 
