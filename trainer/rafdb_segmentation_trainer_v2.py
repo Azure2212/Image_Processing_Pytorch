@@ -389,6 +389,8 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
       
        # Compute accuracy and dice score
       #dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_seg_classes)
+      y_pred = y_pred.sigmoid()
+      y_pred = (y_pred > 0.5).float()
       dice_score = self.dice_score(y_pred, masks)
       iou_score = self.iou_score(y_pred, masks, self.num_seg_classes)
 
@@ -446,10 +448,12 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
       
        # Compute accuracy and dice score
         #dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_seg_classes)
+        y_pred = y_pred.sigmoid()
+        y_pred = (y_pred > 0.5).float()
         dice_score = self.dice_score(y_pred, masks)
         iou_score = self.iou_score(y_pred, masks, self.num_seg_classes)
 
-        
+
         val_loss += loss.item()
         val_dice += dice_score.item()
         val_iou += iou_score.item()
