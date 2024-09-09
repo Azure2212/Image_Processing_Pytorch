@@ -18,7 +18,7 @@ import torch.optim as optim
 from torch.autograd import Variable
 from torch.optim.lr_scheduler import MultiplicativeLR, StepLR, MultiStepLR, ConstantLR, LinearLR, PolynomialLR, CosineAnnealingLR, ChainedScheduler, ExponentialLR, SequentialLR, ReduceLROnPlateau, CyclicLR, CosineAnnealingWarmRestarts
 
-from sgu24project.utils.metrics.metrics import accuracy, make_batch, dice_coeff, multiclass_dice_coeff, dice_loss
+from sgu24project.utils.metrics.metrics import accuracy, make_batch
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -295,7 +295,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
     epsilon = 1e-6
     # Convert predictions to class indices
     y_pred = torch.argmax(y_pred, dim=1)  # Shape: (batch_size, height, width)
-  
+    y_pred
     dice_scores = []
     iou_scores = []
     for i in range(num_classes):
@@ -323,7 +323,44 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
     
     return dice_score, iou_score
 
+  def dice_score(self, y_pred, y_true, epsilon=1e-6):
+    # y_pred: (batch_size, num_classes, height, width)
+    # y_true: (batch_size, num_classes, height, width)
+
+    # Flatten the tensors
+    y_pred = y_pred.view(-1)
+    y_true = y_true.view(-1)
     
+    # Compute intersection and union
+    intersection = torch.sum(y_pred * y_true)
+    union = torch.sum(y_pred) + torch.sum(y_true)
+    
+    # Compute Dice Score
+    dice = (2. * intersection + epsilon) / (union + epsilon)
+    
+    return dice
+
+  def iou_score(self, y_pred, y_true, num_classes):
+    # y_pred: (batch_size, num_classes, height, width)
+    # y_true: (batch_size, num_classes, height, width)
+
+    iou_scores = []
+    
+    for i in range(num_classes):
+        # Extract class-specific predictions and labels
+        y_pred_class = (y_pred[:, i] > 0.5).float()
+        y_true_class = y_true[:, i].float()
+
+        # Compute intersection and union
+        intersection = torch.sum(y_pred_class * y_true_class)
+        union = torch.sum(y_pred_class) + torch.sum(y_true_class) - intersection
+        
+        # Compute IoU Score
+        iou = (intersection + 1e-6) / (union + 1e-6)
+        iou_scores.append(iou)
+    
+    return torch.mean(torch.stack(iou_scores))
+  
     # return wandb
   def step_per_train(self):
     # if self.wb == True:
@@ -347,32 +384,13 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
       # compute output, accuracy and get loss
       
       y_pred = self.model(images)
+      after_argmax = torch.argmax(masks, dim=1)
+      loss = self.criterion(y_pred, after_argmax)
       
-      if self.num_seg_classes == 1:
-        #loss = self.criterion(y_pred.squeeze(1), masks.float())
-        loss = dice_loss(F.sigmoid(y_pred.squeeze(1)), masks.float(), multiclass=False)
-      else:
-        #loss = self.criterion(y_pred, masks)
-        loss = dice_loss(
-            F.softmax(y_pred, dim=1).float(),
-            F.one_hot(masks.argmax(dim=1), self.num_seg_classes).permute(0, 3, 1, 2).float(),
-            multiclass=True
-          )
-      
-      # Compute accuracy and dice score
+       # Compute accuracy and dice score
       #dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_seg_classes)
-      if self.num_seg_classes == 1:
-        assert masks.min() >= 0 and masks.max() <= 1, 'True mask indices should be in [0, 1]'
-        y_pred = (F.sigmoid(y_pred) > 0.5).float()
-        # compute the Dice score
-        dice_score += dice_coeff(y_pred, masks, reduce_batch_first=False)
-      else:
-        assert masks.min() >= 0 and masks.max() < self.num_seg_classes, 'True mask indices should be in [0, n_classes['
-        # convert to one-hot format
-        masks = F.one_hot(masks, self.num_seg_classes).permute(0, 3, 1, 2).float()
-        y_pred = F.one_hot(y_pred.argmax(dim=1), self.num_seg_classes).permute(0, 3, 1, 2).float()
-        # compute the Dice score, ignoring background
-        dice_score += multiclass_dice_coeff(y_pred[:, 1:], masks[:, 1:], reduce_batch_first=False)
+      dice_score = self.dice_score(y_pred, masks)
+      iou_score = self.iou_score(y_pred, masks, self.num_seg_classes)
 
       train_loss += loss.item()
       train_dice += dice_score.item()
@@ -423,39 +441,20 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
         # compute output, accuracy and get loss
     
         y_pred = self.model(images)
+        after_argmax = torch.argmax(masks, dim=1)
+        loss = self.criterion(y_pred, after_argmax)
       
-      if self.num_seg_classes == 1:
-        #loss = self.criterion(y_pred.squeeze(1), masks.float())
-        loss = dice_loss(F.sigmoid(y_pred.squeeze(1)), masks.float(), multiclass=False)
-      else:
-        #loss = self.criterion(y_pred, masks)
-        loss = dice_loss(
-            F.softmax(y_pred, dim=1).float(),
-            F.one_hot(masks, self.num_seg_classes).permute(0, 3, 1, 2).float(),
-            multiclass=True
-          )
-      
-      # Compute accuracy and dice score
-      #dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_seg_classes)
-      if self.num_seg_classes == 1:
-        assert masks.min() >= 0 and masks.max() <= 1, 'True mask indices should be in [0, 1]'
-        y_pred = (F.sigmoid(y_pred) > 0.5).float()
-        # compute the Dice score
-        dice_score += dice_coeff(y_pred, masks, reduce_batch_first=False)
-      else:
-        assert masks.min() >= 0 and masks.max() < self.num_seg_classes, 'True mask indices should be in [0, n_classes['
-        # convert to one-hot format
-        masks = F.one_hot(masks, self.num_seg_classes).permute(0, 3, 1, 2).float()
-        y_pred = F.one_hot(y_pred.argmax(dim=1), self.num_seg_classes).permute(0, 3, 1, 2).float()
-        # compute the Dice score, ignoring background
-        dice_score += multiclass_dice_coeff(y_pred[:, 1:], masks[:, 1:], reduce_batch_first=False)
+       # Compute accuracy and dice score
+        #dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_seg_classes)
+        dice_score = self.dice_score(y_pred, masks)
+        iou_score = self.iou_score(y_pred, masks, self.num_seg_classes)
 
+        
         val_loss += loss.item()
         val_dice += dice_score.item()
         val_iou += iou_score.item()
-
-        #if self.isDebug == 1: 
-         # break 
+        if self.isDebug == 1: 
+          break
       i += 1
       self.val_loss_list.append(val_loss / i)
       self.val_dice_list.append(val_dice / i)
