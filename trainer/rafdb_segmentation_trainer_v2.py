@@ -425,11 +425,11 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
         y_pred = self.model(images)
       
       if self.num_seg_classes == 1:
-        loss = self.criterion(y_pred.squeeze(1), masks.float())
-        loss += dice_loss(F.sigmoid(y_pred.squeeze(1)), masks.float(), multiclass=False)
+        #loss = self.criterion(y_pred.squeeze(1), masks.float())
+        loss = dice_loss(F.sigmoid(y_pred.squeeze(1)), masks.float(), multiclass=False)
       else:
-        loss = self.criterion(y_pred, masks)
-        loss += dice_loss(
+        #loss = self.criterion(y_pred, masks)
+        loss = dice_loss(
             F.softmax(y_pred, dim=1).float(),
             F.one_hot(masks, model.n_classes).permute(0, 3, 1, 2).float(),
             multiclass=True
