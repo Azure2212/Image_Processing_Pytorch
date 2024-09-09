@@ -18,7 +18,7 @@ import torch.optim as optim
 from torch.autograd import Variable
 from torch.optim.lr_scheduler import MultiplicativeLR, StepLR, MultiStepLR, ConstantLR, LinearLR, PolynomialLR, CosineAnnealingLR, ChainedScheduler, ExponentialLR, SequentialLR, ReduceLROnPlateau, CyclicLR, CosineAnnealingWarmRestarts
 
-from sgu24project.utils.metrics.metrics import accuracy, make_batch
+from sgu24project.utils.metrics.metrics import accuracy, make_batch, dice_coeff, multiclass_dice_coeff
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -347,12 +347,33 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
       # compute output, accuracy and get loss
       
       y_pred = self.model(images)
-      after_argmax = torch.argmax(masks, dim=1)
-      loss = self.criterion(y_pred, after_argmax)
       
-       # Compute accuracy and dice score
-      dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_seg_classes)
-    
+      if self.num_seg_classes == 1:
+        loss = criterion(y_pred.squeeze(1), masks.float())
+        loss += dice_loss(F.sigmoid(y_pred.squeeze(1)), masks.float(), multiclass=False)
+      else:
+        loss = criterion(y_pred, masks)
+        loss += dice_loss(
+            F.softmax(y_pred, dim=1).float(),
+            F.one_hot(masks, model.n_classes).permute(0, 3, 1, 2).float(),
+            multiclass=True
+          )
+      
+      # Compute accuracy and dice score
+      #dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_seg_classes)
+      if self.num_seg_classes == 1:
+        assert masks.min() >= 0 and masks.max() <= 1, 'True mask indices should be in [0, 1]'
+        y_pred = (F.sigmoid(y_pred) > 0.5).float()
+        # compute the Dice score
+        dice_score += dice_coeff(y_pred, masks, reduce_batch_first=False)
+      else:
+        assert masks.min() >= 0 and masks.max() < self.num_seg_classes, 'True mask indices should be in [0, n_classes['
+        # convert to one-hot format
+        masks = F.one_hot(masks, self.num_seg_classes).permute(0, 3, 1, 2).float()
+        y_pred = F.one_hot(y_pred.argmax(dim=1), self.num_seg_classes).permute(0, 3, 1, 2).float()
+        # compute the Dice score, ignoring background
+        dice_score += multiclass_dice_coeff(y_pred[:, 1:], masks[:, 1:], reduce_batch_first=False)
+
       train_loss += loss.item()
       train_dice += dice_score.item()
       train_iou += iou_score.item()
@@ -402,11 +423,32 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
         # compute output, accuracy and get loss
     
         y_pred = self.model(images)
-        after_argmax = torch.argmax(masks, dim=1)
-        loss = self.criterion(y_pred, after_argmax)
       
-       # Compute accuracy and dice score
-        dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_seg_classes)
+      if self.num_seg_classes == 1:
+        loss = criterion(y_pred.squeeze(1), masks.float())
+        loss += dice_loss(F.sigmoid(y_pred.squeeze(1)), masks.float(), multiclass=False)
+      else:
+        loss = criterion(y_pred, masks)
+        loss += dice_loss(
+            F.softmax(y_pred, dim=1).float(),
+            F.one_hot(masks, model.n_classes).permute(0, 3, 1, 2).float(),
+            multiclass=True
+          )
+      
+      # Compute accuracy and dice score
+      #dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_seg_classes)
+      if self.num_seg_classes == 1:
+        assert masks.min() >= 0 and masks.max() <= 1, 'True mask indices should be in [0, 1]'
+        y_pred = (F.sigmoid(y_pred) > 0.5).float()
+        # compute the Dice score
+        dice_score += dice_coeff(y_pred, masks, reduce_batch_first=False)
+      else:
+        assert masks.min() >= 0 and masks.max() < self.num_seg_classes, 'True mask indices should be in [0, n_classes['
+        # convert to one-hot format
+        masks = F.one_hot(masks, self.num_seg_classes).permute(0, 3, 1, 2).float()
+        y_pred = F.one_hot(y_pred.argmax(dim=1), self.num_seg_classes).permute(0, 3, 1, 2).float()
+        # compute the Dice score, ignoring background
+        dice_score += multiclass_dice_coeff(y_pred[:, 1:], masks[:, 1:], reduce_batch_first=False)
 
         val_loss += loss.item()
         val_dice += dice_score.item()
