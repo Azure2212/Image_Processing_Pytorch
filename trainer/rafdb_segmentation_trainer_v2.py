@@ -454,8 +454,8 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
         val_dice += dice_score.item()
         val_iou += iou_score.item()
 
-        if self.isDebug == 1: 
-          break
+        #if self.isDebug == 1: 
+         # break 
       i += 1
       self.val_loss_list.append(val_loss / i)
       self.val_dice_list.append(val_dice / i)
