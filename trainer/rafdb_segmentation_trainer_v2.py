@@ -390,8 +390,8 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
       print(f'iou_score = {dice_score}')
       print(f'acc = {dice_score}')
       train_loss += loss.item()
-      train_dice += dice_score.item()
-      train_iou += iou_score.item()
+      train_dice += dice_score
+      train_iou += iou_score
 
       # compute gradient and do SGD step
       self.optimizer.zero_grad()
@@ -452,8 +452,8 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
 
 
         val_loss += loss.item()
-        val_dice += dice_score.item()
-        val_iou += iou_score.item()
+        val_dice += Dice_score
+        val_iou += iou_score
         if self.isDebug == 1: 
           break
       i += 1
