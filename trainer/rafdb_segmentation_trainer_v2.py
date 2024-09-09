@@ -355,7 +355,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
         #loss = self.criterion(y_pred, masks)
         loss = dice_loss(
             F.softmax(y_pred, dim=1).float(),
-            F.one_hot(masks, self.num_seg_classes).permute(0, 3, 1, 2).float(),
+            F.one_hot(masks.argmax(dim=1), self.num_seg_classes).permute(0, 3, 1, 2).float(),
             multiclass=True
           )
       
