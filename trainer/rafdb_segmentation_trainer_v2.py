@@ -238,6 +238,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
       print("The selected learning_rate scheduler strategy is PolynomialLR")
 
     elif self.lr_scheduler_chose == "CosineAnnealingLR":
+      T_MAX = EPOCHS * len(self.train_ds)
       self.scheduler = CosineAnnealingLR(self.optimizer, T_max=10, eta_min=self.min_lr,  verbose=True)
       print("The selected learning_rate scheduler strategy is CosineAnnealingLR")
 
@@ -277,84 +278,6 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
   #   per_image_iou = smp.metrics.iou_score(tp, fp, fn, tn, reduction="micro-imagewise")
   #   dataset_iou = smp.metrics.iou_score(tp, fp, fn, tn, reduction="micro")
   #   return per_image_iou, dataset_iou
-
-
-  def compute_metrics(self, y_pred, masks, num_classes):
-    # Chuyển đổi y_pred từ xác suất thành nhãn dự đoán (nhãn có xác suất cao nhất)
-    y_pred = torch.argmax(y_pred, dim=1)  # (batch_size, height, width)
-
-    # Chuyển đổi masks từ one-hot thành nhãn
-    masks = torch.argmax(masks, dim=1)  # (batch_size, height, width)
-
-    # Tính Pixel Accuracy
-    correct_pixels = (y_pred == masks).sum().item()
-    total_pixels = masks.numel()
-    pixel_accuracy = correct_pixels / total_pixels
-
-    # Tính IoU và Dice Coefficient
-    iou_list = []
-    dice_list = []
-
-    for i in range(num_classes):
-        pred_i = (y_pred == i).float()
-        mask_i = (masks == i).float()
-
-        intersection = (pred_i * mask_i).sum()
-        union = pred_i.sum() + mask_i.sum() - intersection
-
-        # Tránh chia cho 0
-        if union == 0:
-            iou = 0
-        else:
-            iou = intersection / union
-        iou_list.append(iou.item())
-
-        # Dice Coefficient
-        dice = 2 * intersection / (pred_i.sum() + mask_i.sum())
-        dice_list.append(dice.item())
-
-    mean_iou = sum(iou_list) / num_classes
-    mean_dice = sum(dice_list) / num_classes
-
-    return pixel_accuracy, mean_iou, mean_dice
-  def dice_score(self, y_pred, y_true, epsilon=1e-6):
-    # y_pred: (batch_size, num_classes, height, width)
-    # y_true: (batch_size, num_classes, height, width)
-
-    # Flatten the tensors
-    y_pred = y_pred.view(-1)
-    y_true = y_true.view(-1)
-    
-    # Compute intersection and union
-    intersection = torch.sum(y_pred * y_true)
-    union = torch.sum(y_pred) + torch.sum(y_true)
-    
-    # Compute Dice Score
-    dice = (2. * intersection + epsilon) / (union + epsilon)
-    
-    return dice
-
-  def iou_score(self, y_pred, y_true, num_classes):
-    # y_pred: (batch_size, num_classes, height, width)
-    # y_true: (batch_size, num_classes, height, width)
-
-    iou_scores = []
-    
-    for i in range(num_classes):
-        # Extract class-specific predictions and labels
-        y_pred_class = (y_pred[:, i] > 0.5).float()
-        y_true_class = y_true[:, i].float()
-
-        # Compute intersection and union
-        intersection = torch.sum(y_pred_class * y_true_class)
-        union = torch.sum(y_pred_class) + torch.sum(y_true_class) - intersection
-        
-        # Compute IoU Score
-        iou = (intersection + 1e-6) / (union + 1e-6)
-        iou_scores.append(iou)
-    
-    return torch.mean(torch.stack(iou_scores))
-  
     # return wandb
   def step_per_train(self):
     # if self.wb == True:
