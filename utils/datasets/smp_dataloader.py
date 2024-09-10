@@ -98,7 +98,18 @@ class Dataset(BaseDataset):
         mask = cv2.imread(self.masks_fps[i], 0)
         # extract certain classes from mask (e.g. cars)
         masks = [(mask == v) for v in self.class_values]
+
+        # Chuyển đổi danh sách mặt nạ thành mảng 3 chiều
+        masks_stack = np.stack(masks, axis=-1)
+
+        # Tạo mặt nạ nền
+        background_mask = np.all(masks_stack == 0, axis=-1).astype(np.uint8)
+
+        # Thêm mặt nạ nền vào mảng mặt nạ
+        mask = np.concatenate([masks_stack, background_mask[:, :, np.newaxis]], axis=-1).astype('float')
+
         mask = np.stack(masks, axis=-1).astype('float')
+        
         
         # apply augmentations
         if self.augmentation:

@@ -51,12 +51,13 @@ print(torch.__version__)
 config_path = "sgu24project/configs/config_rafdb.json"
 
 configs = json.load(open(config_path))
+CLASSES = ['car', 'road', 'pavement', 'building', 'unlabelled']
 
 configs["optimizer_chose"] = args.optimizer_chose
 configs["lr_scheduler"] = args.lr_scheduler
 configs["lr"] = args.lr_value
 configs["isDebug"] = args.isDebug
-configs["num_seg_classes"] = args.num_classes
+configs["num_seg_classes"] = len(CLASSES)+1
 configs["current_epoch_num"] = args.current_epoch_num
 configs["name_run_wandb"] = args.name_run_wandb
 if args.load_state_dir != '':
