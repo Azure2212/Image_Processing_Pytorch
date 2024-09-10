@@ -309,9 +309,6 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
       y_pred = y_pred.sigmoid()
       y_pred = (y_pred > 0.5).float()
       #dice_score, iou_score, acc = self.compute_metrics(y_pred, masks, self.num_seg_classes)
-      print(f'shape mask: {masks.shape}')
-      print(f'shape y_pred: {y_pred.shape}')
-      print(f'self.num_seg_classes: {self.num_seg_classes}')
       pixel_acc, dice_score, iou_score, precision, recall = calculate_multi_metrics(masks, y_pred, self.num_seg_classes)
 
       train_loss += loss.item()

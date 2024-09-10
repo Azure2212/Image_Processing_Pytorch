@@ -88,7 +88,6 @@ class Dataset(BaseDataset):
         
         # convert str names to class values on masks
         self.class_values = [self.CLASSES.index(cls.lower()) for cls in classes]
-        
         self.augmentation = augmentation
     
     def __getitem__(self, i):
@@ -108,9 +107,6 @@ class Dataset(BaseDataset):
         # Thêm mặt nạ nền vào mảng mặt nạ
         mask = np.concatenate([masks_stack, background_mask[:, :, np.newaxis]], axis=-1).astype('float')
 
-        mask = np.stack(masks, axis=-1).astype('float')
-        
-        
         # apply augmentations
         if self.augmentation:
             sample = self.augmentation(image=image, mask=mask)
