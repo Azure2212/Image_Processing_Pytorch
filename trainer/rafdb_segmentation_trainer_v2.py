@@ -238,7 +238,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
       print("The selected learning_rate scheduler strategy is PolynomialLR")
 
     elif self.lr_scheduler_chose == "CosineAnnealingLR":
-      T_MAX = EPOCHS * len(self.train_ds)
+      T_MAX = self.max_epoch_num * len(self.train_ds)
       self.scheduler = CosineAnnealingLR(self.optimizer, T_max=10, eta_min=self.min_lr,  verbose=True)
       print("The selected learning_rate scheduler strategy is CosineAnnealingLR")
 
