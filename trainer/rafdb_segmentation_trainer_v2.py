@@ -461,7 +461,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
       i += 1
       self.val_loss_list.append(val_loss / i)
       self.val_dice_list.append(val_dice / i)
-      self.val_iou_list.append(iou_score / i)
+      self.val_iou_list.append(val_iou / i)
 
       print(" Val_Loss: {:.4f}".format(self.val_loss_list[-1])
             , ", Val_Dice: {:.4f}%".format(self.val_dice_list[-1])
