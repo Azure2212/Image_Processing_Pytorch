@@ -65,6 +65,10 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
     #self.model = model.to(self.device)'cpu'
     self.model = model.to(self.device)
 
+    params = smp.encoders.get_preprocessing_params(encoder_name)
+    self.register_buffer("std", torch.tensor(params["std"]).view(1, 3, 1, 1))
+    self.register_buffer("mean", torch.tensor(params["mean"]).view(1, 3, 1, 1))
+
 # Move the model to the device
     '''try:
       model = model.to(self.device)
@@ -296,6 +300,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
 
       # Move images to GPU before feeding them to the model, to fix error happen : Input type (torch.cuda.FloatTensor) and weight type (torch.FloatTensor) should be the same
       self.model = self.model.float().cuda()
+      images = (images - self.mean) / self.std
       images = images.to(dtype=torch.float).cuda()
       masks = masks.to(dtype=torch.float).cuda()
 
@@ -359,6 +364,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
           bar_format="{desc} {percentage:3.0f}%|{bar:30}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]"
       ):
         self.model = self.model.float().cuda()
+        images = (images - self.mean) / self.std
         images = images.to(dtype=torch.float).cuda()
         masks = masks.to(dtype=torch.float).cuda()
         # compute output, accuracy and get loss
@@ -414,6 +420,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
           bar_format="{desc} {percentage:3.0f}%|{bar:30}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]"
       ):
         self.model = self.model.float().cuda()
+        images = (images - self.mean) / self.std
         images = images.to(dtype=torch.float).cuda()
         masks = masks.to(dtype=torch.float).cuda()
     
