@@ -18,7 +18,7 @@ import torch.optim as optim
 from torch.autograd import Variable
 from torch.optim.lr_scheduler import MultiplicativeLR, StepLR, MultiStepLR, ConstantLR, LinearLR, PolynomialLR, CosineAnnealingLR, ChainedScheduler, ExponentialLR, SequentialLR, ReduceLROnPlateau, CyclicLR, CosineAnnealingWarmRestarts
 
-from sgu24project.utils.metrics.metrics import accuracy, make_batch
+from sgu24project.utils.metrics.metrics import accuracy, make_batch, calculate_multi_metrics
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -384,7 +384,8 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
        # Compute accuracy and dice score
       y_pred = y_pred.sigmoid()
       y_pred = (y_pred > 0.5).float()
-      dice_score, iou_score, acc = self.compute_metrics(y_pred, masks, self.num_seg_classes)
+      #dice_score, iou_score, acc = self.compute_metrics(y_pred, masks, self.num_seg_classes)
+      pixel_acc, dice_score, iou_score, precision, recall = calculate_multi_metrics(true_masks, masks_pred, self.num_seg_classes)
 
       print(f'dice_score = {dice_score}')
       print(f'iou_score = {iou_score}')
@@ -444,8 +445,9 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
        # Compute accuracy and dice score
         y_pred = y_pred.sigmoid()
         y_pred = (y_pred > 0.5).float()
-        dice_score, iou_score, acc = self.compute_metrics(y_pred, masks, self.num_seg_classes)
-
+        #dice_score, iou_score, acc = self.compute_metrics(y_pred, masks, self.num_seg_classes)
+        pixel_acc, dice_score, iou_score, precision, recall = calculate_multi_metrics(true_masks, masks_pred, self.num_seg_classes)
+        
         print(f'dice_score = {dice_score}')
         print(f'iou_score = {iou_score}')
         print(f'acc = {dice_score}')
