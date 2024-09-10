@@ -127,7 +127,7 @@ class Resnet50UnetMultitask_v2(smp.Unet):
         #seg_output = torch.randn(42, 6, 224, 224)
         return seg_output
 
-OUT_CLASSES = len(CLASSES)
+OUT_CLASSES = len(CLASSES) + 1 
 model = Resnet50UnetMultitask_v2(in_channels=3, num_seg_classes=OUT_CLASSES, num_cls_classes=7)
 
 
