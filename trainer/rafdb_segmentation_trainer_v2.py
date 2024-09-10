@@ -287,6 +287,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
     train_loss = 0.0
     train_dice = 0.0
     train_iou = 0.0
+    train_pixel_acc = 0.0
 
     for i, (images, masks) in tqdm.tqdm(
         enumerate(self.train_ds), total = len(self.train_ds), leave = True, colour = "blue", desc = f"Epoch {self.current_epoch_num}",
@@ -310,12 +311,10 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
       #dice_score, iou_score, acc = self.compute_metrics(y_pred, masks, self.num_seg_classes)
       pixel_acc, dice_score, iou_score, precision, recall = calculate_multi_metrics(masks, y_pred, self.num_seg_classes)
 
-      print(f'dice_score = {dice_score}')
-      print(f'iou_score = {iou_score}')
-      print(f'acc = {dice_score}')
       train_loss += loss.item()
       train_dice += dice_score
       train_iou += iou_score
+      train_pixel_acc += pixel_acc
 
       # compute gradient and do SGD step
       self.optimizer.zero_grad()
@@ -325,6 +324,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
       # write wandb
       metric = {
           " Loss" : train_loss / (i+1),
+          " Pixel_acc" : train_pixel_acc / (i+1),
           " DiceScore" :train_dice / (i+1),
           " IouScore" :train_iou / (i+1),
           " epochs" : self.current_epoch_num,
@@ -342,14 +342,16 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
 
 
     print(" Loss: {:.4f}".format(self.train_loss_list[-1])
-          , ", Dice_score: {:.4f}%".format(self.train_dice_list[-1])
-          , ", Iou_score: {:.4f}%".format(self.train_iou_list[-1]))
+          , ", Pixel_acc: {:.4f}".format(train_pixel_acc / i)
+          , ", Dice_score: {:.4f}".format(self.train_dice_list[-1])
+          , ", Iou_score: {:.4f}".format(self.train_iou_list[-1]))
 
   def step_per_val(self):
     self.model.eval()
     val_loss = 0.0
     val_dice = 0.0
     val_iou = 0.0
+    val_pixel_acc = 0.0
 
     with torch.no_grad():
       for i, (images, masks) in tqdm.tqdm(
@@ -371,14 +373,11 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
         #dice_score, iou_score, acc = self.compute_metrics(y_pred, masks, self.num_seg_classes)
         pixel_acc, dice_score, iou_score, precision, recall = calculate_multi_metrics(masks, y_pred, self.num_seg_classes)
 
-        print(f'dice_score = {dice_score}')
-        print(f'iou_score = {iou_score}')
-        print(f'acc = {dice_score}')
-
-
         val_loss += loss.item()
         val_dice += dice_score
         val_iou += iou_score
+        val_pixel_acc += pixel_acc
+
         if self.isDebug == 1: 
           break
       i += 1
@@ -387,8 +386,9 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
       self.val_iou_list.append(val_iou / i)
 
       print(" Val_Loss: {:.4f}".format(self.val_loss_list[-1])
-            , ", Val_Dice: {:.4f}%".format(self.val_dice_list[-1])
-            , ", Val_Iou: {:.4f}%".format(self.val_iou_list[-1]))
+            , ", Val_Pixel_acc: {:.4f}".format(val_pixel_acc / i)
+            , ", Val_Dice: {:.4f}".format(self.val_dice_list[-1])
+            , ", Val_Iou: {:.4f}".format(self.val_iou_list[-1]))
 
       # write wandb
       if self.wb == True:
@@ -406,6 +406,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
     test_loss = 0.0
     test_dice = 0.0
     test_iou = 0.0
+    test_pixel_acc = 0.0
 
     with torch.no_grad():
       for i, (images, masks) in tqdm.tqdm(
@@ -420,12 +421,16 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
         after_argmax = torch.argmax(masks, dim=1)
         loss = self.criterion(y_pred, after_argmax)
       
-       # Compute accuracy and dice score
-        dice_score, iou_score = self.compute_metrics(y_pred, masks, self.num_seg_classes)
+        # Compute accuracy and dice score
+        y_pred = y_pred.sigmoid()
+        y_pred = (y_pred > 0.5).float()
+        #dice_score, iou_score, acc = self.compute_metrics(y_pred, masks, self.num_seg_classes)
+        pixel_acc, dice_score, iou_score, precision, recall = calculate_multi_metrics(masks, y_pred, self.num_seg_classes)
 
         test_loss += loss.item()
-        test_dice += dice_score.item()
-        test_iou += iou_score.item()
+        test_dice += dice_score
+        test_iou += iou_score
+        test_pixel_acc += pixel_acc
 
         if self.isDebug == 1: 
           break
@@ -434,8 +439,9 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
       test_loss = (test_loss / i)
       test_dice = (test_dice / i)
       test_iou = (test_iou / i)
+      test_pixel_acc = (test_pixel_acc / i)
 
-      print("Test_Loss: {:.4f}, Test_Dice_score: {:.4f}, Test_IOU_score:{:.4f} ".format(test_loss, test_dice, test_iou))
+      print("Test_Loss: {:.4f}, Test_Pixel_acc: {:.4f}, Test_Dice_score: {:.4f}, Test_IOU_score:{:.4f} ".format(test_loss, test_pixel_acc, test_dice, test_iou))
       if self.wb == True:
         self.wandb.log({
           "Test_diceScore": test_dice,
