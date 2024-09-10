@@ -98,7 +98,7 @@ test_dataset = Dataset(
     classes=CLASSES,
 )
 
-print(f'number of classes = {args.num_seg_classes}')
+print(f'number of classes = {configs["num_seg_classes"]}')
 import segmentation_models_pytorch as smp
 
 
