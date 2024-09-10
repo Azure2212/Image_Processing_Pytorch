@@ -65,9 +65,9 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
     #self.model = model.to(self.device)'cpu'
     self.model = model.to(self.device)
 
-    params = smp.encoders.get_preprocessing_params("resnet50")
-    self.std = torch.tensor(params["std"]).view(1, 3, 1, 1)
-    self.mean = torch.tensor(params["mean"]).view(1, 3, 1, 1)
+    #params = smp.encoders.get_preprocessing_params("resnet50")
+    #self.std = torch.tensor(params["std"]).view(1, 3, 1, 1)
+    #self.mean = torch.tensor(params["mean"]).view(1, 3, 1, 1)
 
 # Move the model to the device
     '''try:
