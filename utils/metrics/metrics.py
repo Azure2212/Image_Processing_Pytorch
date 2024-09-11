@@ -70,15 +70,18 @@ def calculate_multi_metrics2(gt, pred, class_num, average = True):
 
     return pixel_acc, dice, iou, precision, recall
 
-def calculate_multi_metrics(gt, pred, class_num, average = True):
+def _dice_score(tp, fp, fn, tn):
+    return (2*tp) / (2*tp + fp + fn)
+
+def calculate_multi_metrics(gt, pred, class_num, average = True, reduction: Optional[str] = "micro", class_weights: Optional[List[float]] = None, zero_division: Union[str, float] = 1.0):
     import segmentation_models_pytorch as smp
     tp, fp, fn, tn = smp.metrics.get_stats(pred.long(), gt.long(), mode="multiclass", num_classes=class_num)
 
-    iou = smp.metrics.iou_score(tp, fp, fn, tn, reduction="micro")
+    iou = smp.metrics.iou_score(tp, fp, fn, tn, reduction=reduction)
 
-    pixel_acc = smp.metrics.accuracy(tp, fp, fn, tn, reduction="micro")
+    pixel_acc = smp.metrics.accuracy(tp, fp, fn, tn, reduction=reduction)
 
-    dice = (2*tp) / (2*tp + fp + fn)
+    dice = smp.metrics._compute_metric(_dice_score,tp, fp, fn, tn, reduction=reduction, class_weights=class_weights, zero_division=zero_division,)
 
     precision = smp.metrics.positive_predictive_value(tp, fp, fn, tn, reduction="micro")
 
