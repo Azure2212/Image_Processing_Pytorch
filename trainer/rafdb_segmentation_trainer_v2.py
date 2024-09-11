@@ -65,9 +65,10 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
     #self.model = model.to(self.device)'cpu'
     self.model = model.to(self.device)
 
-    #params = smp.encoders.get_preprocessing_params("resnet50")
-    #self.std = torch.tensor(params["std"]).view(1, 3, 1, 1)
-    #self.mean = torch.tensor(params["mean"]).view(1, 3, 1, 1)
+    params = smp.encoders.get_preprocessing_params("resnet50")
+    self.std = torch.tensor(params["std"]).view(1, 3, 1, 1)
+    self.mean = torch.tensor(params["mean"]).view(1, 3, 1, 1)
+
 
 # Move the model to the device
     '''try:
@@ -305,7 +306,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
       masks = masks.to(dtype=torch.float).cuda()
 
       # compute output, accuracy and get loss
-      
+      images = (images - self.mean) / self.std
       y_pred = self.model(images)
       after_argmax = torch.argmax(masks, dim=1)
       loss = self.criterion(y_pred, after_argmax)
@@ -364,7 +365,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
           bar_format="{desc} {percentage:3.0f}%|{bar:30}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]"
       ):
         self.model = self.model.float().cuda()
-        #images = (images - self.mean) / self.std
+        images = (images - self.mean) / self.std
         images = images.to(dtype=torch.float).cuda()
         masks = masks.to(dtype=torch.float).cuda()
         # compute output, accuracy and get loss
@@ -420,7 +421,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
           bar_format="{desc} {percentage:3.0f}%|{bar:30}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]"
       ):
         self.model = self.model.float().cuda()
-        #images = (images - self.mean) / self.std
+        images = (images - self.mean) / self.std
         images = images.to(dtype=torch.float).cuda()
         masks = masks.to(dtype=torch.float).cuda()
     
