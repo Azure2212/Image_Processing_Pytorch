@@ -76,11 +76,11 @@ def calculate_multi_metrics(gt, pred, class_num, average = True):
 
     iou = smp.metrics.iou_score(tp, fp, fn, tn, reduction="micro")
 
-    pixel_acc = smp.accuracy((tp, fp, fn, tn, reduction="micro"))
+    pixel_acc = smp.metrics.accuracy((tp, fp, fn, tn, reduction="micro"))
 
     dice = (2*tp) / (2*tp + fp + fn)
 
-    precision = smp.positive_predictive_value(tp, fp, fn, tn, reduction="micro")
+    precision = smp.metrics.positive_predictive_value(tp, fp, fn, tn, reduction="micro")
 
     recall = smp.metrics.recall(tp, fp, fn, tn, reduction="micro")
     return pixel_acc, dice, iou, precision, recall
