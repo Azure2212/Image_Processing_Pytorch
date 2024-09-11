@@ -76,7 +76,7 @@ def calculate_multi_metrics(gt, pred, class_num, average = True):
 
     iou = smp.metrics.iou_score(tp, fp, fn, tn, reduction="micro")
 
-    pixel_acc = smp.metrics.accuracy((tp, fp, fn, tn, reduction="micro"))
+    pixel_acc = smp.metrics.accuracy(tp, fp, fn, tn, reduction="micro")
 
     dice = (2*tp) / (2*tp + fp + fn)
 
