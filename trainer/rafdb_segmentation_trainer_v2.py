@@ -522,7 +522,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
       self.best_train_iou = self.train_iou_list[-1]
       
       self.best_val_acc = self.val_iou_list[-1]
-      print(f'Weight was updated because val_iou_score get highest(={val_iou_list[-1]})')
+      print(f'Weight was updated because val_iou_score get highest(={self.val_iou_list[-1]})')
     else:
       self.plateau_count += 1
 # 100 - self.best_val_acc
