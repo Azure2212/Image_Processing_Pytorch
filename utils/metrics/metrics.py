@@ -74,13 +74,13 @@ def calculate_multi_metrics(gt, pred, class_num, average = True):
     import segmentation_models_pytorch as smp
     tp, fp, fn, tn = smp.metrics.get_stats(pred.long(), gt.long(), mode="multiclass", num_classes=class_num)
 
-    per_image_iou = smp.metrics.iou_score(tp, fp, fn, tn, reduction="micro-imagewise")
-        
-    dataset_iou = smp.metrics.iou_score(tp, fp, fn, tn, reduction="micro")
+    iou = smp.metrics.iou_score(tp, fp, fn, tn, reduction="micro")
 
-    pixel_acc = 0.0
-    dice = per_image_iou
-    iou = dataset_iou
-    precision = 0.0
-    recall = 0.0
+    pixel_acc = smp.accuracy((tp, fp, fn, tn, reduction="micro"))
+
+    dice = (2*tp) / (2*tp + fp + fn)
+
+    precision = smp.positive_predictive_value(tp, fp, fn, tn, reduction="micro")
+
+    recall = smp.metrics.recall(tp, fp, fn, tn, reduction="micro")
     return pixel_acc, dice, iou, precision, recall
