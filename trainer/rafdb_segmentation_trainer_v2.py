@@ -301,12 +301,11 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
 
       # Move images to GPU before feeding them to the model, to fix error happen : Input type (torch.cuda.FloatTensor) and weight type (torch.FloatTensor) should be the same
       self.model = self.model.float().cuda()
-      #images = (images - self.mean) / self.std
+      images = (images - self.mean) / self.std
       images = images.to(dtype=torch.float).cuda()
       masks = masks.to(dtype=torch.float).cuda()
 
       # compute output, accuracy and get loss
-      images = (images - self.mean) / self.std
       y_pred = self.model(images)
       after_argmax = torch.argmax(masks, dim=1)
       loss = self.criterion(y_pred, after_argmax)
