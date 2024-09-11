@@ -1,6 +1,8 @@
 import torch
 from torch import Tensor
 import numpy as np
+from typing import Optional, List, Tuple, Union
+import segmentation_models_pytorch as smp
 
 def accuracy(y_pred, labels):
     with torch.no_grad():
@@ -9,7 +11,6 @@ def accuracy(y_pred, labels):
         correct = pred.eq(labels).float().sum(0)
         acc = correct * 100 / batch_size
     return [acc]
-
 
 def make_batch(images):
     if not isinstance(images, list):
@@ -74,7 +75,6 @@ def _dice_score(tp, fp, fn, tn):
     return (2*tp) / (2*tp + fp + fn)
 
 def calculate_multi_metrics(gt, pred, class_num, average = True, reduction: Optional[str] = "micro", class_weights: Optional[List[float]] = None, zero_division: Union[str, float] = 1.0):
-    import segmentation_models_pytorch as smp
     tp, fp, fn, tn = smp.metrics.get_stats(pred.long(), gt.long(), mode="multiclass", num_classes=class_num)
 
     iou = smp.metrics.iou_score(tp, fp, fn, tn, reduction=reduction)
