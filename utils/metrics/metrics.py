@@ -44,7 +44,7 @@ def _get_class_data(gt_onehot, pred, class_num):
 
         return matrix
 
-def calculate_multi_metrics(gt, pred, class_num, average = True):
+def calculate_multi_metrics2(gt, pred, class_num, average = True):
     # calculate metrics in multi-class segmentation
     eps = 1e-6
     matrix = _get_class_data(gt, pred, class_num)
@@ -68,4 +68,19 @@ def calculate_multi_metrics(gt, pred, class_num, average = True):
         precision = np.average(precision)
         recall = np.average(recall)
 
+    return pixel_acc, dice, iou, precision, recall
+
+def calculate_multi_metrics(gt, pred, class_num, average = True):
+    import segmentation_models_pytorch as smp
+    tp, fp, fn, tn = smp.metrics.get_stats(pred.long(), gt.long(), mode="multiclass", num_classes=class_num)
+
+    per_image_iou = smp.metrics.iou_score(tp, fp, fn, tn, reduction="micro-imagewise")
+        
+    dataset_iou = smp.metrics.iou_score(tp, fp, fn, tn, reduction="micro")
+
+    pixel_acc = 0.0
+    dice = per_image_iou
+    iou = dataset_iou
+    precision = 0.0
+    recall = 0.0
     return pixel_acc, dice, iou, precision, recall
