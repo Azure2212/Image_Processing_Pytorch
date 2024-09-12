@@ -100,7 +100,7 @@ DATA_DIR = '/kaggle/working/data/CamVid'
 # )
 
 train_dataset = RafDataSet_Mask(data_type = 'train', configs = configs , classes=CLASSES)
-train_dataset = RafDataSet_Mask(data_type = 'test', configs = configs , classes=CLASSES)
+valid_dataset = RafDataSet_Mask(data_type = 'test', configs = configs , classes=CLASSES)
 test_dataset = RafDataSet_Mask(data_type = 'test', configs = configs , classes=CLASSES)
 
 print(f'number of classes = {configs["num_seg_classes"]}')
