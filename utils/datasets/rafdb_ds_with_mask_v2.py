@@ -4,6 +4,7 @@ import albumentations as A
 import pandas as pd
 import os
 import numpy as np
+import cv2
 
 def get_training_augmentation():
     train_transform = [
