@@ -21,9 +21,9 @@ np.random.seed(seed)
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
-from sgu24project.utils.datasets.rafdb_ds_with_mask import RafDataSet_Mask
-from sgu24project.utils.datasets.smp_dataloader import get_training_augmentation, get_validation_augmentation, Dataset
-from sgu24project.trainer.rafdb_segmentation_trainer_v2 import RAFDB_Segmentation_Trainer_v2
+from sgu24project.utils.datasets.rafdb_ds_with_mask_v2 import RafDataSet_Mask
+from sgu24project.utils.datasets.rafdb_segmentation_trainer_v2 import RAFDB_Segmentation_Trainer_v2
+#from sgu24project.trainer.rafdb_segmentation_trainer_v2 import RAFDB_Segmentation_Trainer_v2
 from sgu24project.trainer.rafdb_multitask_trainer import RAFDB_Multitask_Trainer
 
 from sgu24project.models.Unet import UNET
@@ -51,7 +51,8 @@ print(torch.__version__)
 config_path = "sgu24project/configs/config_rafdb.json"
 
 configs = json.load(open(config_path))
-CLASSES = ['car', 'road', 'pavement', 'building', 'unlabelled']
+#CLASSES = ['car', 'road', 'pavement', 'building', 'unlabelled']
+CLASSES = ['eyes_mask', 'eyebrows_mask', 'nose_mask', 'mouth_mask', 'face_mask']
 
 configs["optimizer_chose"] = args.optimizer_chose
 configs["lr_scheduler"] = args.lr_scheduler
@@ -68,34 +69,38 @@ if args.epoch_num != 1:
 
 DATA_DIR = '/kaggle/working/data/CamVid'
 
-x_train_dir = os.path.join(DATA_DIR, 'train')
-y_train_dir = os.path.join(DATA_DIR, 'trainannot')
+# x_train_dir = os.path.join(DATA_DIR, 'train')
+# y_train_dir = os.path.join(DATA_DIR, 'trainannot')
 
-x_valid_dir = os.path.join(DATA_DIR, 'val')
-y_valid_dir = os.path.join(DATA_DIR, 'valannot')
+# x_valid_dir = os.path.join(DATA_DIR, 'val')
+# y_valid_dir = os.path.join(DATA_DIR, 'valannot')
 
-x_test_dir = os.path.join(DATA_DIR, 'test')
-y_test_dir = os.path.join(DATA_DIR, 'testannot')
-train_dataset = Dataset(
-    x_train_dir, 
-    y_train_dir, 
-    augmentation=get_training_augmentation(), 
-    classes=CLASSES,
-)
+# x_test_dir = os.path.join(DATA_DIR, 'test')
+# y_test_dir = os.path.join(DATA_DIR, 'testannot')
+# train_dataset = Dataset(
+#     x_train_dir, 
+#     y_train_dir, 
+#     augmentation=get_training_augmentation(), 
+#     classes=CLASSES,
+# )
 
-valid_dataset = Dataset(
-    x_valid_dir, 
-    y_valid_dir, 
-    augmentation=get_validation_augmentation(), 
-    classes=CLASSES,
-)
+# valid_dataset = Dataset(
+#     x_valid_dir, 
+#     y_valid_dir, 
+#     augmentation=get_validation_augmentation(), 
+#     classes=CLASSES,
+# )
 
-test_dataset = Dataset(
-    x_test_dir,
-    y_test_dir,
-    augmentation=get_validation_augmentation(), 
-    classes=CLASSES,
-)
+# test_dataset = Dataset(
+#     x_test_dir,
+#     y_test_dir,
+#     augmentation=get_validation_augmentation(), 
+#     classes=CLASSES,
+# )
+
+train_dataset = RafDataSet_Mask(data_type = 'train', configs = configs , classes=CLASSES)
+train_dataset = RafDataSet_Mask(data_type = 'test', configs = configs , classes=CLASSES)
+test_dataset = RafDataSet_Mask(data_type = 'test', configs = configs , classes=CLASSES)
 
 print(f'number of classes = {configs["num_seg_classes"]}')
 import segmentation_models_pytorch as smp

@@ -81,7 +81,7 @@ def calculate_multi_metrics(gt, pred, class_num, average = True, reduction: Opti
 
     pixel_acc = smp.metrics.accuracy(tp, fp, fn, tn, reduction=reduction)
 
-    dice = compute_metric(_dice_score,tp, fp, fn, tn, reduction=reduction, class_weights=class_weights, zero_division=zero_division,)
+    dice = compute_metric(_dice_score,tp, fp, fn, tn, reduction=reduction, class_weights=class_weights, zero_division=zero_division)
 
     precision = smp.metrics.positive_predictive_value(tp, fp, fn, tn, reduction="micro")
 
