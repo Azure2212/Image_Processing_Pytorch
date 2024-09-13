@@ -69,7 +69,7 @@ print(pr_masks.shape)
 print(f'number_image_test: {args.number_image_test}')
 end = min(args.number_image_test, len(images))
 
-fig, ax = plt.subplots(end,13,figsize=(20, 6))
+fig, ax = plt.subplots(end, 13, figsize=(20, 6))
 for i in range(end):
     image_np = images[i].cpu().numpy().transpose(1, 2, 0)
     image_np = (image_np - image_np.min()) / (image_np.max() - image_np.min())
@@ -78,7 +78,7 @@ for i in range(end):
     ax[i, 0].axis('off')
 
     ax[i, 1].imshow(masks[i][0].cpu().numpy(), cmap='gray')
-    ax[i, 1].set_title(f"{CLASSES[0]}(gt)")
+    ax[i, 1].set_title(f"{CLASSES[0]} (gt)")
     ax[i, 1].axis('off')
 
     ax[i, 2].imshow(pr_masks[i][0].cpu().numpy(), cmap='gray')
@@ -86,7 +86,7 @@ for i in range(end):
     ax[i, 2].axis('off')
 
     ax[i, 3].imshow(masks[i][1].cpu().numpy(), cmap='gray')
-    ax[i, 3].set_title(f"{CLASSES[1]}(gt)")
+    ax[i, 3].set_title(f"{CLASSES[1]} (gt)")
     ax[i, 3].axis('off')
 
     ax[i, 4].imshow(pr_masks[i][1].cpu().numpy(), cmap='gray')
@@ -94,15 +94,15 @@ for i in range(end):
     ax[i, 4].axis('off')
 
     ax[i, 5].imshow(masks[i][2].cpu().numpy(), cmap='gray')
-    ax[i, 5].set_title(f"{CLASSES[2]}(gt)")
+    ax[i, 5].set_title(f"{CLASSES[2]} (gt)")
     ax[i, 5].axis('off')
 
     ax[i, 6].imshow(pr_masks[i][2].cpu().numpy(), cmap='gray')
     ax[i, 6].set_title('pd')
     ax[i, 6].axis('off')
 
-    ax[i, 7].imshow(mmasks[i][3].cpu().numpy(), cmap='gray')
-    ax[i, 7].set_title(f"{CLASSES[3]}(gt)")
+    ax[i, 7].imshow(masks[i][3].cpu().numpy(), cmap='gray')
+    ax[i, 7].set_title(f"{CLASSES[3]} (gt)")
     ax[i, 7].axis('off')
 
     ax[i, 8].imshow(pr_masks[i][3].cpu().numpy(), cmap='gray')
@@ -110,7 +110,7 @@ for i in range(end):
     ax[i, 8].axis('off')
 
     ax[i, 9].imshow(masks[i][4].cpu().numpy(), cmap='gray')
-    ax[i, 9].set_title(f"{CLASSES[4]}(gt)")
+    ax[i, 9].set_title(f"{CLASSES[4]} (gt)")
     ax[i, 9].axis('off')
 
     ax[i, 10].imshow(pr_masks[i][4].cpu().numpy(), cmap='gray')
@@ -118,7 +118,7 @@ for i in range(end):
     ax[i, 10].axis('off')
 
     ax[i, 11].imshow(masks[i][5].cpu().numpy(), cmap='gray')
-    ax[i, 11].set_title(f"{CLASSES[5]}(gt)")
+    ax[i, 11].set_title(f"{CLASSES[5]} (gt)")
     ax[i, 11].axis('off')
 
     ax[i, 12].imshow(pr_masks[i][5].cpu().numpy(), cmap='gray')
