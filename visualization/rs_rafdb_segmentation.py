@@ -73,7 +73,7 @@ ax, fig = plt.subplots(end,13,figsize=(20, 6))
 for i in range(len(images)):
     if i == end:
         break
-    image_np = image[i].cpu().numpy().transpose(1, 2, 0)
+    image_np = images[i].cpu().numpy().transpose(1, 2, 0)
     image_np = (image_np - image_np.min()) / (image_np.max() - image_np.min())
     ax[i, 0].imshow(image_np)
     ax[i, 0].set_title('image')
