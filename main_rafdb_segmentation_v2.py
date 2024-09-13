@@ -45,7 +45,7 @@ parser.add_argument('--isDebug', default= 0, type=int, help='debug = 1')
 parser.add_argument('--num-classes', default= 5, type=int, help='num-classes')
 parser.add_argument('--use-pretrained', default= 1, type=int, help='use pre-trained = 1')
 parser.add_argument('--current-epoch-num', default= 0, type=int, help='epoch start')
-parser.add_argument('--epoch-num', default= 20, type=int, help='total epoch')
+parser.add_argument('--epoch-num', default= 2, type=int, help='total epoch')
 parser.add_argument('--name-run-wandb', default= 'Resnet50', type=str, help='name to save in wandb')
 args, unknown = parser.parse_known_args()
 
