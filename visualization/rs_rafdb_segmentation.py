@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import imgaug
 import random
 import torch
+import numpy as np
 
 import cv2
 
