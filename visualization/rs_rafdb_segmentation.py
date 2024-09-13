@@ -134,7 +134,6 @@ end = min(args.number_image_test, len(images))
 for idx, (image, gt_mask, pr_mask) in enumerate(zip(images, masks, pr_masks)):
     # Number of samples visualized
     if idx <= args.number_image_test:
-        print(f'vo day {idx}')
         plt.figure(figsize=(20, 6))
         plt.subplot(1, 13, 1)
         image_np = image.cpu().numpy().transpose(1, 2, 0)
