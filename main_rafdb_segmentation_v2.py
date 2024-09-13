@@ -45,7 +45,7 @@ parser.add_argument('--isDebug', default= 0, type=int, help='debug = 1')
 parser.add_argument('--num-classes', default= 5, type=int, help='num-classes')
 parser.add_argument('--use-pretrained', default= 1, type=int, help='use pre-trained = 1')
 parser.add_argument('--current-epoch-num', default= 0, type=int, help='epoch start')
-parser.add_argument('--epoch-num', default= 2, type=int, help='total epoch')
+parser.add_argument('--epoch-num', default= 120, type=int, help='total epoch')
 parser.add_argument('--name-run-wandb', default= 'Resnet50', type=str, help='name to save in wandb')
 args, unknown = parser.parse_known_args()
 
@@ -56,7 +56,7 @@ config_path = "sgu24project/configs/config_rafdb.json"
 configs = json.load(open(config_path))
 #CLASSES = ['car', 'road', 'pavement', 'building', 'unlabelled']
 CLASSES = ['eyes_mask', 'eyebrows_mask', 'nose_mask', 'mouth_mask', 'face_mask']
-
+max_epoch_num
 configs["optimizer_chose"] = args.optimizer_chose
 configs["lr_scheduler"] = args.lr_scheduler
 configs["lr"] = args.lr_value
@@ -67,6 +67,7 @@ configs["name_run_wandb"] = args.name_run_wandb
 if args.load_state_dir != '':
     configs["load_state_dir"] = args.load_state_dir
 if args.epoch_num != 1:
+    print(f'total epoch = {args.epoch_num}')
     configs["max_epoch_num"] = args.epoch_num
 
 

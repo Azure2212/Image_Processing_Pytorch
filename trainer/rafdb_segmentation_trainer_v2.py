@@ -61,7 +61,8 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
     self.name_run_wandb = configs["name_run_wandb"]
     self.wb = wb
     self.num_seg_classes = configs["num_seg_classes"]
-    print(f'self.num_seg_classes ={self.num_seg_classes}')
+    print(f'self.num_seg_classes = {self.num_seg_classes}')
+    print(f'self.max_epoch_num = {self.max_epoch_num}')
     #self.model = model.to(self.device)'cpu'
     self.model = model.to(self.device)
 
