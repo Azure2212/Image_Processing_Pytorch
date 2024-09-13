@@ -69,10 +69,8 @@ print(pr_masks.shape)
 print(f'number_image_test: {args.number_image_test}')
 end = min(args.number_image_test, len(images))
 
-ax, fig = plt.subplots(end,13,figsize=(20, 6))
-for i in range(len(images)):
-    if i == end:
-        break
+fig, ax = plt.subplots(end,13,figsize=(20, 6))
+for i in range(end):
     image_np = images[i].cpu().numpy().transpose(1, 2, 0)
     image_np = (image_np - image_np.min()) / (image_np.max() - image_np.min())
     ax[i, 0].imshow(image_np)
