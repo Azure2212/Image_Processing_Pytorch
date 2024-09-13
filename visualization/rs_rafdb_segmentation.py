@@ -65,12 +65,13 @@ with torch.no_grad():
 pr_masks = seg_logits.sigmoid()
 pr_masks = (pr_masks > 0.5).float()
 print(pr_masks.shape)
+
 print(f'number_image_test: {args.number_image_test}')
 for idx, (image, gt_mask, pr_mask) in enumerate(zip(images, masks, pr_masks)):
-    # Number of samples visualized
-    if idx <= args.number_image_test:
-        print(f'vo day {idx}')
-        plt.figure(figsize=(20, 6))
+    if idx < args.number_image_test:  # idx < number_image_test to process the correct number of images
+        plt.figure(figsize=(20, 5))  # Adjust figure size as needed
+        
+        # Image
         plt.subplot(1, 13, 1)
         image_np = image.cpu().numpy().transpose(1, 2, 0)
         image_np = (image_np - image_np.min()) / (image_np.max() - image_np.min())
@@ -78,65 +79,20 @@ for idx, (image, gt_mask, pr_mask) in enumerate(zip(images, masks, pr_masks)):
         plt.title("Image")
         plt.axis("off")
         
-        plt.subplot(1, 13, 2)
-        plt.imshow(gt_mask[0].cpu().numpy().squeeze())
-        plt.title(f"{CLASSES[0]}(gt)")
-        plt.axis("off")
-
-        plt.subplot(1, 13, 3)
-        plt.imshow(pr_mask[0].cpu().numpy().squeeze())
-        plt.title(f"(pt)")
-        plt.axis("off")
-
-        plt.subplot(1, 13, 4)
-        plt.imshow(gt_mask[1].cpu().numpy().squeeze())
-        plt.title(plt.title(f"{CLASSES[1]}(gt)"))
-        plt.axis("off")
-
-        plt.subplot(1, 13, 5)
-        plt.imshow(pr_mask[1].cpu().numpy().squeeze())
-        plt.title(f"(pt)")
-        plt.axis("off")
+        # Ground Truth Masks
+        for i in range(len(gt_mask)):
+            plt.subplot(1, 13, i + 2)
+            plt.imshow(gt_mask[i].cpu().numpy().squeeze())
+            plt.title(f"{CLASSES[i]}(gt)")
+            plt.axis("off")
         
-        plt.subplot(1, 13, 6)
-        plt.imshow(gt_mask[2].cpu().numpy().squeeze())
-        plt.title(plt.title(f"{CLASSES[2]}(gt)"))
-        plt.axis("off")
+        # Prediction Masks
+        for i in range(len(pr_mask)):
+            plt.subplot(1, 13, len(gt_mask) + i + 2)
+            plt.imshow(pr_mask[i].cpu().numpy().squeeze())
+            plt.title(f"(pt)")
+            plt.axis("off")
 
-        plt.subplot(1, 13, 7)
-        plt.imshow(pr_mask[2].cpu().numpy().squeeze())
-        plt.title(f"(pt)")
-        plt.axis("off")
-        
-        plt.subplot(1, 13, 8)
-        plt.imshow(gt_mask[3].cpu().numpy().squeeze())
-        plt.title(plt.title(f"{CLASSES[3]}(gt)"))
-        plt.axis("off")
-
-        plt.subplot(1, 13, 9)
-        plt.imshow(pr_mask[3].cpu().numpy().squeeze())
-        plt.title(f"(pt)")
-        plt.axis("off")
-        
-        plt.subplot(1, 13, 10)
-        plt.imshow(gt_mask[4].cpu().numpy().squeeze())
-        plt.title(plt.title(f"{CLASSES[4]}(gt)"))
-        plt.axis("off")
-
-        plt.subplot(1, 13, 11)
-        plt.imshow(pr_mask[4].cpu().numpy().squeeze())
-        plt.title(f"(pt)")
-        plt.axis("off")
-        
-        plt.subplot(1, 13, 12)
-        plt.imshow(gt_mask[5].cpu().numpy().squeeze())
-        plt.title("bg(gt)")
-        plt.axis("off")
-
-        plt.subplot(1, 13, 13)
-        plt.imshow(pr_mask[5].cpu().numpy().squeeze())
-        plt.title("(pt)")
-        plt.axis("off")
         plt.show()
     else:
         break
