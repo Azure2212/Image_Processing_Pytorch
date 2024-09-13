@@ -56,7 +56,6 @@ config_path = "sgu24project/configs/config_rafdb.json"
 configs = json.load(open(config_path))
 #CLASSES = ['car', 'road', 'pavement', 'building', 'unlabelled']
 CLASSES = ['eyes_mask', 'eyebrows_mask', 'nose_mask', 'mouth_mask', 'face_mask']
-max_epoch_num
 configs["optimizer_chose"] = args.optimizer_chose
 configs["lr_scheduler"] = args.lr_scheduler
 configs["lr"] = args.lr_value
