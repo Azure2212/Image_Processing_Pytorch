@@ -8,7 +8,7 @@ import cv2
 
 import argparse
 parser = argparse.ArgumentParser()
-parser.add_argument('--rs-dir', default= "'/kaggle/working/ResnetDuck_Cbam_cuaTuan'", type=str, help='rs dir in kaggle')
+parser.add_argument('--rs-dir', default= "/kaggle/working/ResnetDuck_Cbam_cuaTuan", type=str, help='rs dir in kaggle')
 parser.add_argument('--number-image-test', default= 5, type=int, help='number_image_test')
 parser.add_argument('--model-name', default= "Resnet50UnetMultitask_v2", type=str, help='model2load')
 args, unknown = parser.parse_known_args()
