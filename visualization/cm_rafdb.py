@@ -5,6 +5,7 @@ import warnings
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
+import random
 import imgaug
 import torch
 import torch.multiprocessing as mp
