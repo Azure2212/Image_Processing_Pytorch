@@ -69,7 +69,7 @@ print(f'number_image_test: {args.number_image_test}')
 for idx, (image, gt_mask, pr_mask) in enumerate(zip(images, masks, pr_masks)):
     # Number of samples visualized
     if idx <= args.number_image_test:
-        plt.figure(figsize=(20, args.number_image_test))
+        plt.figure(figsize=(20, 6))
         plt.subplot(1, 13, 1)
         image_np = image.cpu().numpy().transpose(1, 2, 0)
         image_np = (image_np - image_np.min()) / (image_np.max() - image_np.min())
