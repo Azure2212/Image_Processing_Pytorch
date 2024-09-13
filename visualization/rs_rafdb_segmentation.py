@@ -65,6 +65,7 @@ with torch.no_grad():
 pr_masks = seg_logits.sigmoid()
 pr_masks = (pr_masks > 0.5).float()
 print(pr_masks.shape)
+print(f'number_image_test: {number_image_test}')
 for idx, (image, gt_mask, pr_mask) in enumerate(zip(images, masks, pr_masks)):
     # Number of samples visualized
     if idx <= args.number_image_test:
