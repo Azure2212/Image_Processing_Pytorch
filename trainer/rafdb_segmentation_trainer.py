@@ -541,7 +541,7 @@ class RAFDB_Segmentation_Trainer(Trainer):
       self.plateau_count += 1
 # 100 - self.best_val_acc
     if self.lr_scheduler_chose == "ReduceLROnPlateau":
-      self.scheduler.step(100 - self.val_acc_list[-1])
+      self.scheduler.step(100 - self.val_iou_list[-1])
     else:
       self.scheduler.step()
 

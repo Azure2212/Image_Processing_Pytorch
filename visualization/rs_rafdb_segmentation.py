@@ -1,6 +1,7 @@
 from sgu24project.models.segmentation_models_pytorch.model import Resnet50UnetMultitask_v2 
 from sgu24project.utils.datasets.rafdb_ds_with_mask_v2 import RafDataSet_Mask
 import segmentation_models_pytorch as smp
+from torch.utils.data import DataLoader
 import torchvision.models as models
 import matplotlib.pyplot as plt
 import imgaug
@@ -41,7 +42,8 @@ OUT_CLASSES = len(CLASSES) + 1
 model = Resnet50UnetMultitask_v2(in_channels=3, num_seg_classes=OUT_CLASSES, num_cls_classes=7)
 
 test_dataset = RafDataSet_Mask(data_type = 'test', configs = configs , classes=CLASSES)
-
+test_loader = DataLoader(test_dataset, batch_size= 1,num_workers=1,
+                      pin_memory=True, shuffle=False)
 # Khởi tạo mô hình
 model = Resnet50UnetMultitask_v2(in_channels=3, num_seg_classes=6, num_cls_classes=7)
 
