@@ -57,7 +57,7 @@ class RafDataSet_Mask(Dataset):
         if data_type == 'train':
             self.augmentation = get_training_augmentation()
         else:
-            self.augmentation = get_validation_augmentation()
+            self.augmentation = None
         self.configs = configs
         self.shape = (configs["image_size"], configs["image_size"])
 
