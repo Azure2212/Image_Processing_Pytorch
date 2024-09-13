@@ -26,6 +26,13 @@ np.random.seed(seed)
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
+config_path = "sgu24project/configs/config_rafdb.json"
+
+configs = json.load(open(config_path))
+#CLASSES = ['car', 'road', 'pavement', 'building', 'unlabelled']
+CLASSES = ['eyes_mask', 'eyebrows_mask', 'nose_mask', 'mouth_mask', 'face_mask']
+
+configs["num_seg_classes"] = len(CLASSES)+1
 
 CLASSES = ['eyes_mask', 'eyebrows_mask', 'nose_mask', 'mouth_mask', 'face_mask']
 OUT_CLASSES = len(CLASSES) + 1 
