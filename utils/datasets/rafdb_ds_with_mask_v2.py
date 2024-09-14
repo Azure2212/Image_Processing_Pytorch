@@ -139,4 +139,4 @@ class RafDataSet_Mask(Dataset):
         
         return image.transpose(2, 0, 1), mask.transpose(2, 0, 1)
        
-        return image, mask
+        return image, mask, label
