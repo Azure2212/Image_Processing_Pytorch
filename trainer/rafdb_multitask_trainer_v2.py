@@ -77,24 +77,22 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
     except Exception as e:
       print("Error:", e)'''
     #index 0 is segmentation, 1 is classification
-    self.train_loss_list = [[],[]]
-    self.train_acc_list = [[],[]]
-    self.train_dice_list = [[],[]]
-    self.train_iou_list = [[],[]]
-    self.train_pixel_acc_list = [[],[]]
+    self.train_loss_list = [[],[]] #
+    self.train_dice_list = []
+    self.train_iou_list = []
+    self.train_pixel_acc_list = [[],[]] #
 
-    self.val_loss_list = [[],[]]
-    self.val_acc_list = [[],[]]
-    self.val_dice_list = [[],[]]
-    self.val_iou_list = [[],[]]
-    self.val_pixel_acc_list = [[],[]]
+    self.val_loss_list = [[],[]]  #
+    self.val_dice_list = []
+    self.val_iou_list = []
+    self.val_pixel_acc_list = [[],[]] # 
 
-    self.best_train_pixel_acc = [0.0,0.0]
-    self.best_train_loss = [0.0,0.0]
+    self.best_train_pixel_acc = [0.0,0.0] #
+    self.best_train_loss = [0.0,0.0] #
     self.best_train_dice = 0.0
     self.best_train_iou = 0.0
 
-    self.best_val_pixel_acc = [0.0,0.0]
+    self.best_val_pixel_acc = [0.0,0.0] #
     self.best_val_loss = [0.0,0.0]
     self.best_val_dice = 0.0
     self.best_val_iou = 0.0
@@ -365,7 +363,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
 
     print(" Seg_Loss: {:.4f}".format(self.train_loss_list[0][-1])
           ," Cls_Loss: {:.4f}".format(self.train_loss_list[1][-1])
-          ," AVG_Loss: {:.4f}".format((self.train_loss_list[1][-1] + self.train_loss_list[1][-1])/2)
+          ," Avg_Loss: {:.4f}".format((self.train_loss_list[0][-1] + self.train_loss_list[1][-1])/2)
           , ", Seg_Pixel_acc: {:.4f}".format(self.train_pixel_acc_list[0][-1])
           , ", Cls_acc: {:.4f}".format(self.train_pixel_acc_list[1][-1])
           , ", Avg_acc: {:.4f}".format((self.train_pixel_acc_list[0][-1] + self.train_pixel_acc_list[1][-1])/2)
@@ -427,7 +425,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
             ," Avg_Val_Loss: {:.4f}".format((self.val_loss_list[0][-1] + self.val_loss_list[1][-1])/2)
             , ", Seg_Val_Pixel_acc: {:.4f}".format(self.val_pixel_acc_list[0][-1])
             , ", Cls_Val_acc: {:.4f}".format(self.val_pixel_acc_list[1][-1])
-            , ", Avg_Val_acc: {:.4f}".format((self.val_pixel_acc_list[0][-1] + self.val_pixel_acc_list[0][-1])/2)
+            , ", Avg_Val_acc: {:.4f}".format((self.val_pixel_acc_list[0][-1] + self.val_pixel_acc_list[1][-1])/2)
             , ", Val_Dice: {:.4f}".format(self.val_dice_list[-1])
             , ", Val_Iou: {:.4f}".format(self.val_iou_list[-1]))
 
@@ -561,7 +559,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
   
   def update_state_training(self):
     current_best_avg_val = (self.best_val_pixel_acc[0] + self.best_val_pixel_acc[1])/2
-    if (self.val_pixel_acc_list[0][-1] + self.val_pixel_acc_list[0][-1])/2 > current_best_avg_val:
+    if (self.val_pixel_acc_list[0][-1] + self.val_pixel_acc_list[1][-1])/2 > current_best_avg_val:
       self.save_weights()
       self.plateau_count = 0
 
@@ -570,7 +568,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
       self.best_val_dice = self.val_dice_list[-1]
       self.best_val_iou = self.val_iou_list[-1]
       self.best_val_pixel_acc[0] = self.val_pixel_acc_list[0][-1]
-      self.best_val_pixel_acc[1] = self.val_pixel_acc_list[0][-1]
+      self.best_val_pixel_acc[1] = self.val_pixel_acc_list[1][-1]
 
       self.best_train_loss[0] = self.train_loss_list[0][-1]
       self.best_train_loss[1] = self.train_loss_list[1][-1]
@@ -579,7 +577,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
       self.best_train_pixel_acc[0] = self.train_pixel_acc_list[0][-1]
       self.best_train_pixel_acc[1] = self.train_pixel_acc_list[1][-1]
       
-      print(f'Weight was updated because Avg_accuracy get highest(={(self.val_pixel_acc_list[0][-1] + self.val_pixel_acc_list[0][-1])/2})')
+      print(f'Weight was updated because Avg_accuracy get highest(={(self.val_pixel_acc_list[0][-1] + self.val_pixel_acc_list[1][-1])/2})')
     else:
       self.plateau_count += 1
 # 100 - self.best_val_acc
@@ -605,7 +603,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
         "best_train_dice": self.best_train_dice,
         "best_train_iou": self.best_train_iou,
 
-        "best_val_loss": (self.best_val_loss[0]+self.best_val_loss[0])/2,
+        "best_val_loss": (self.best_val_loss[0]+self.best_val_loss[1])/2,
         "val_loss_list": self.val_loss_list,
         "val_acc_list": self.val_acc_list,
         "best_val_dice": self.best_val_dice,
