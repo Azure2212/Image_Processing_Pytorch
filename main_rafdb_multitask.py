@@ -82,7 +82,7 @@ use_wb = True if args.use_wandb == 1 else False
 
 
   
-trainer = RAFDB_Segmentation_Trainer_v2(model = model, 
+trainer = RAFDB_Multitask_Trainer_v2(model = model, 
                                     train_loader = train_dataset, 
                                     val_loader = valid_dataset, 
                                     test_loader = test_dataset, 
