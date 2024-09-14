@@ -10,15 +10,6 @@ import random
 import imgaug
 import torch
 
-seed = 113
-random.seed(seed)
-imgaug.seed(seed)
-torch.manual_seed(seed)
-torch.cuda.manual_seed_all(seed)
-np.random.seed(seed)
-torch.backends.cudnn.deterministic = True
-torch.backends.cudnn.benchmark = False
-
 import argparse 
 parser = argparse.ArgumentParser()
 parser.add_argument('--type-data', default= "train", type=str, help='type data')
@@ -54,6 +45,10 @@ for i, (images, masks) in tqdm.tqdm(
     print(f"list all distinct value in all masks = {masks.view(-1).unique()}")
 
     for idx in range(batch_size):
+
+        if(len(np.unique(masks[idx][4])) == 1):
+            continue
+
         ax[idx, 0].imshow(images[idx].permute(1,2,0))
         ax[idx, 0].set_title(f'image')
         ax[idx, 0].axis('off')
