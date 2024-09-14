@@ -6,9 +6,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from torch.utils.data import DataLoader
 from sgu24project.utils.datasets.rafdb_ds_with_mask_v2 import RafDataSet_Mask
-import random
-import imgaug
-import torch
 
 import argparse 
 parser = argparse.ArgumentParser()
