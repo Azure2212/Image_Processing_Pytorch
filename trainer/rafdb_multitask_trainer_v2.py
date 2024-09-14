@@ -453,7 +453,6 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
     test_dice = 0.0
     test_iou = 0.0
     test_pixel_acc = [0.0,0.0]
-    print('vo day ma0')
     with torch.no_grad():
       for i, (images, masks, labels) in tqdm.tqdm(
           enumerate(self.test_ds), total = len(self.test_ds), leave = True, colour = "green", desc = "        ",
@@ -477,7 +476,7 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
         seg_output = (seg_output > 0.5).float()
         #dice_score, iou_score, acc = self.compute_metrics(y_pred, masks, self.num_seg_classes)
         pixel_acc, dice_score, iou_score, precision, recall = calculate_multi_metrics(masks, seg_output, self.num_seg_classes)
-        print('vo day ma2')
+ 
         test_loss[0] += seg_loss.item()
         test_loss[1] += cls_loss.item()
         test_dice += dice_score
@@ -546,6 +545,9 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
     print("----------------------SUMMARY-----------------------")
     print(" After {} epochs and {} plateau count, consume {}".format((self.current_epoch_num), (self.plateau_count),consume_time[:-7]))
     print(" Best Train Loss: {:.4f}, Best Train Dice Score: {:.4f}, Best Train IOU Score:{:.4f} ".format(self.best_train_loss, self.best_train_dice, self.best_train_iou))
+    print(self.best_val_loss)
+    print(self.best_val_dice)
+    print(self.best_val_iou)
     print(" Best Val Loss: {:.4f}, Best Val Dice Score: {:.4f}, Best Val IOU Score:{:.4f} ".format(self.best_val_loss, self.best_val_dice, self.best_val_iou))
     print(" Test Loss: {:.4f}, Test Dice Score: {:.4f}, Test IOU Score:{:.4f} ".format((self.test_loss), (self.test_dice), (self.test_iou)))
 
