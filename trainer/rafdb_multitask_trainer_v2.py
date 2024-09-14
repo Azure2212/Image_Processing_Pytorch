@@ -315,7 +315,7 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
       seg_loss = self.seg_criterion(seg_output, after_argmax)
       # compute output, accuracy and get loss in classification task
       cls_loss = self.cls_criterion(cls_output, labels)
-      cls_acc = accuracy(cls_output, labels)[0] * 100
+      cls_acc = accuracy(cls_output, labels)[0] 
       
        # Compute accuracy and dice score
       seg_output = seg_output.sigmoid()
@@ -326,7 +326,7 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
       train_loss[1] += cls_loss.item()
       train_dice += dice_score
       train_iou += iou_score
-      train_pixel_acc[0] += pixel_acc
+      train_pixel_acc[0] += pixel_acc * 100
       train_pixel_acc[1] += cls_acc
 
       loss = (seg_loss + cls_loss) / 2
@@ -396,7 +396,7 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
 
         # compute output, accuracy and get loss classification
         cls_loss = self.cls_criterion(cls_output, labels)
-        cls_acc = accuracy(cls_output, labels)[0] * 100
+        cls_acc = accuracy(cls_output, labels)[0]
 
         loss = (seg_loss + cls_loss) / 2
        # Compute accuracy and dice score
@@ -409,7 +409,7 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
         val_loss[1] += cls_loss.item()
         val_dice += dice_score
         val_iou += iou_score
-        val_pixel_acc[0] += pixel_acc
+        val_pixel_acc[0] += pixel_acc * 100
         val_pixel_acc[1] += cls_acc
 
         if self.isDebug == 1: 
@@ -471,7 +471,7 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
 
         # compute output, accuracy and get loss classification
         cls_loss = self.cls_criterion(cls_output, labels)
-        cls_acc = accuracy(cls_output, labels)[0] * 100
+        cls_acc = accuracy(cls_output, labels)[0]
       
         # Compute accuracy and dice score 
         seg_output = seg_output.sigmoid()
@@ -483,7 +483,7 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
         test_loss[1] += cls_loss.item()
         test_dice += dice_score
         test_iou += iou_score
-        test_pixel_acc[0] += pixel_acc
+        test_pixel_acc[0] += pixel_acc * 100
         test_pixel_acc[1] += cls_acc
 
         if self.isDebug == 1: 
@@ -587,7 +587,7 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
     else:
       self.plateau_count += 1
 # 100 - self.best_val_acc
-    if self.lr_scheduler_chose == "ReduceLROnPlateau" and current_best_avg_val != 0.0:
+    if self.lr_scheduler_chose == "ReduceLROnPlateau":
       avg_acc = (self.val_iou_list[0][-1] + self.val_iou_list[1][-1])/2
       self.scheduler.step(100 - avg_acc)
     else:
