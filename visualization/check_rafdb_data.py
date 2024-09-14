@@ -34,7 +34,6 @@ for i, (images, masks) in tqdm.tqdm(
         enumerate(test_ds), total=len(test_ds), leave=True, colour="blue", desc=f"Epoch {0}",
         bar_format="{desc}: {percentage:3.0f}%|{bar:50}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]"
     ):
-    batch_size = len(images)  # or len(labels), assuming they have the same length
     # Optionally, you can ccperform your training steps here
     fig, ax = plt.subplots(batch_size,7,figsize=(10, batch_size * 2))
     # Example: print batch size
