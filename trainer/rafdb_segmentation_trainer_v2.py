@@ -364,7 +364,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
     val_pixel_acc = 0.0
 
     with torch.no_grad():
-      for i, (images, masks) in tqdm.tqdm(
+      for i, (images, masks, labels) in tqdm.tqdm(
           enumerate(self.val_ds), total = len(self.val_ds), leave = True, colour = "green", desc = "        ",
           bar_format="{desc} {percentage:3.0f}%|{bar:30}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]"
       ):
@@ -422,7 +422,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
     test_pixel_acc = 0.0
 
     with torch.no_grad():
-      for i, (images, masks) in tqdm.tqdm(
+      for i, (images, masks, labels) in tqdm.tqdm(
           enumerate(self.test_ds), total = len(self.test_ds), leave = True, colour = "green", desc = "        ",
           bar_format="{desc} {percentage:3.0f}%|{bar:30}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]"
       ):
