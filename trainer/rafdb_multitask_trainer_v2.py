@@ -468,7 +468,7 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
         seg_output, cls_output = self.model(images)
         after_argmax = torch.argmax(masks, dim=1)
         seg_loss = self.seg_criterion(seg_output, after_argmax)
-
+        print('vo day ma')
         # compute output, accuracy and get loss classification
         cls_loss = self.cls_criterion(cls_output, labels)
         cls_acc = accuracy(cls_output, labels)[0]
@@ -478,7 +478,7 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
         seg_output = (seg_output > 0.5).float()
         #dice_score, iou_score, acc = self.compute_metrics(y_pred, masks, self.num_seg_classes)
         pixel_acc, dice_score, iou_score, precision, recall = calculate_multi_metrics(masks, seg_output, self.num_seg_classes)
-
+        print('vo day ma2')
         test_loss[0] += seg_loss.item()
         test_loss[1] += cls_loss.item()
         test_dice += dice_score
@@ -505,7 +505,6 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
           "Test_diceScore": test_dice,
           "Test_iouScore": test_iou
           })
-      print('vo day ma')
       test_loss = (test_loss[0] + test_loss[1])/2
       return test_loss, test_dice, test_iou
 
