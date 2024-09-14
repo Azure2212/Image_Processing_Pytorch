@@ -6,6 +6,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 from torch.utils.data import DataLoader
 from sgu24project.utils.datasets.rafdb_ds_with_mask_v2 import RafDataSet_Mask
+import random
+import imgaug
+import torch
+
+seed = 113
+random.seed(seed)
+imgaug.seed(seed)
+torch.manual_seed(seed)
+torch.cuda.manual_seed_all(seed)
+np.random.seed(seed)
+torch.backends.cudnn.deterministic = True
+torch.backends.cudnn.benchmark = False
 
 import argparse 
 parser = argparse.ArgumentParser()
