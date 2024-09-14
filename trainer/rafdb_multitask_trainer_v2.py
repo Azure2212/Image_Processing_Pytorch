@@ -34,7 +34,7 @@ class Trainer(object):
         pass
 
 
-class RAFDB_Segmentation_Trainer_v2(Trainer):
+class RAFDB_Multitask_Trainer_v2(Trainer):
   def __init__(self, model, train_loader, val_loader, test_loader, configs, wb = True):
 
     self.train_loader = train_loader
