@@ -43,7 +43,7 @@ for i, (images, masks) in tqdm.tqdm(
 
     for idx in range(batch_size):
         ax[idx, 0].imshow(images[idx].permute(1,2,0))
-        ax[idx, 0].set_title(f'image({images[idx].shape})')
+        ax[idx, 0].set_title(f'image')
         ax[idx, 0].axis('off')
 
         ax[idx, 1].imshow(masks[idx][0])
