@@ -341,7 +341,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
           " Avg_Loss": ((train_loss[0] / (i+1)) + (train_loss[1] / (i+1)))/2,
           " Seg_Pixel_acc" : train_pixel_acc[0] / (i+1),
           " Cls_acc" : train_pixel_acc[1] / (i+1),
-          " Avg_acc" : ((train_pixel_acc[0] / (i+1)) + (train_pixel_acc[1] / (i+1)))/2
+          " Avg_acc" : ((train_pixel_acc[0] / (i+1)) + (train_pixel_acc[1] / (i+1)))/2,
           " DiceScore" :train_dice / (i+1),
           " IouScore" :train_iou / (i+1),
           " epochs" : self.current_epoch_num,
