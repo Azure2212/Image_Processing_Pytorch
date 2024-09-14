@@ -21,7 +21,7 @@ np.random.seed(seed)
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
-from sgu24project.utils.datasets.rafdb_ds_with_mask import RafDataSet_Mask
+from sgu24project.utils.datasets.rafdb_ds_with_mask_v2 import RafDataSet_Mask
 from sgu24project.trainer.rafdb_multitask_trainer_v2 import RAFDB_Multitask_Trainer_v2
 
 from sgu24project.models.multi_task_resunet import Resnet50UnetMultitask
