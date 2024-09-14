@@ -310,7 +310,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
       masks = masks.to(dtype=torch.float).cuda()
 
       # compute output, accuracy and get loss
-      y_pred = self.model(images)
+      y_pred, y_cls_pred = self.model(images)
       after_argmax = torch.argmax(masks, dim=1)
       loss = self.criterion(y_pred, after_argmax)
       
@@ -374,7 +374,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
         masks = masks.to(dtype=torch.float).cuda()
         # compute output, accuracy and get loss
     
-        y_pred = self.model(images)
+        y_pred, y_cls_pred = self.model(images)
         after_argmax = torch.argmax(masks, dim=1)
         loss = self.criterion(y_pred, after_argmax)
       
@@ -431,7 +431,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
         images = images.to(dtype=torch.float).cuda()
         masks = masks.to(dtype=torch.float).cuda()
     
-        y_pred = self.model(images)
+        y_pred, y_cls_pred = self.model(images)
         after_argmax = torch.argmax(masks, dim=1)
         loss = self.criterion(y_pred, after_argmax)
       
@@ -535,7 +535,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
       self.plateau_count += 1
 # 100 - self.best_val_acc
     if self.lr_scheduler_chose == "ReduceLROnPlateau":
-      self.scheduler.step(100 - self.val_iou_list[-1])
+      self.scheduler.step(100 - self.best_train_pixel_acc[-1])
     else:
       self.scheduler.step()
 
