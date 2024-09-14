@@ -315,7 +315,7 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
       seg_loss = self.seg_criterion(seg_output, after_argmax)
       # compute output, accuracy and get loss in classification task
       cls_loss = self.cls_criterion(cls_output, labels)
-      cls_acc = accuracy(cls_output, labels)[0]
+      cls_acc = accuracy(cls_output, labels)[0] * 100
       
        # Compute accuracy and dice score
       seg_output = seg_output.sigmoid()
@@ -358,8 +358,8 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
     self.train_loss_list[1].append(train_loss[1] / i)
     self.train_dice_list.append(train_dice / i)
     self.train_iou_list.append(train_iou / i)
-    self.train_pixel_acc_list[0].append((train_pixel_acc[0] / i)*100)
-    self.train_pixel_acc_list[1].append((train_pixel_acc[1] / i)*100)
+    self.train_pixel_acc_list[0].append((train_pixel_acc[0] / i))
+    self.train_pixel_acc_list[1].append((train_pixel_acc[1] / i))
 
 
     print(" Seg_Loss: {:.4f}".format(self.train_loss_list[0][-1])
@@ -396,7 +396,7 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
 
         # compute output, accuracy and get loss classification
         cls_loss = self.cls_criterion(cls_output, labels)
-        cls_acc = accuracy(cls_output, labels)[0]
+        cls_acc = accuracy(cls_output, labels)[0] * 100
 
         loss = (seg_loss + cls_loss) / 2
        # Compute accuracy and dice score
@@ -419,8 +419,8 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
       self.val_loss_list[1].append(val_loss[1] / i)
       self.val_dice_list.append(val_dice / i)
       self.val_iou_list.append(val_iou / i)
-      self.val_pixel_acc_list[0].append((val_pixel_acc[0] / i)*100)
-      self.val_pixel_acc_list[1].append((val_pixel_acc[1] / i)*100)
+      self.val_pixel_acc_list[0].append((val_pixel_acc[0] / i))
+      self.val_pixel_acc_list[1].append((val_pixel_acc[1] / i))
 
       print(" Seg_Val_Loss: {:.4f}".format(self.val_loss_list[0][-1])
             ," Cls_Val_Loss: {:.4f}".format(self.val_loss_list[1][-1])
@@ -471,7 +471,7 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
 
         # compute output, accuracy and get loss classification
         cls_loss = self.cls_criterion(cls_output, labels)
-        cls_acc = accuracy(cls_output, labels)[0]
+        cls_acc = accuracy(cls_output, labels)[0] * 100
       
         # Compute accuracy and dice score 
         seg_output = seg_output.sigmoid()
@@ -562,7 +562,7 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
   
   def update_state_training(self):
     current_best_avg_val = 0.0
-    if current_best_avg_val != 0.0
+    if current_best_avg_val != 0.0:
       current_best_avg_val = (self.best_val_pixel_acc[0] + self.best_val_pixel_acc[1])/2
       print(current_best_avg_val)
     if (self.val_pixel_acc_list[0][-1] + self.val_pixel_acc_list[1][-1])/2 > current_best_avg_val:
@@ -587,7 +587,7 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
     else:
       self.plateau_count += 1
 # 100 - self.best_val_acc
-    if self.lr_scheduler_chose == "ReduceLROnPlateau":
+    if self.lr_scheduler_chose == "ReduceLROnPlateau" and current_best_avg_val != 0.0:
       avg_acc = (self.val_iou_list[0][-1] + self.val_iou_list[1][-1])/2
       self.scheduler.step(100 - avg_acc)
     else:
