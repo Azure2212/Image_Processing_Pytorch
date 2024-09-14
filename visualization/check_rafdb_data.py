@@ -30,7 +30,7 @@ test_ds = DataLoader(
                 worker_init_fn=lambda x: np.random.seed(x),
             )
 stop = 0 
-for i, (images, masks) in tqdm.tqdm(
+for i, (images, masks, labels) in tqdm.tqdm(
         enumerate(test_ds), total=len(test_ds), leave=True, colour="blue", desc=f"Batch {0}",
         bar_format="{desc}: {percentage:3.0f}%|{bar:50}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]"
     ):
