@@ -81,21 +81,24 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
     self.train_acc_list = []
     self.train_dice_list = []
     self.train_iou_list = []
+    self.train_pixel_acc_list = []
 
     self.val_loss_list = []
     self.val_acc_list = []
     self.val_dice_list = []
     self.val_iou_list = []
+    self.val_pixel_acc_list = []
 
-    self.best_train_acc = 0.0
+    self.best_train_pixel_acc = 0.0
     self.best_train_loss = 0.0
     self.best_train_dice = 0.0
     self.best_train_iou = 0.0
 
-    self.best_val_acc = 0.0
+    self.best_val_pixel_acc = 0.0
     self.best_val_loss = 0.0
     self.best_val_dice = 0.0
     self.best_val_iou = 0.0
+
 
     self.test_acc = 0.0
     self.test_acc_ttau = 0.0
@@ -345,10 +348,11 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
     self.train_loss_list.append(train_loss / i)
     self.train_dice_list.append(train_dice / i)
     self.train_iou_list.append(train_iou / i)
+    self.train_pixel_acc_list.append(train_pixel_acc / i)
 
 
     print(" Loss: {:.4f}".format(self.train_loss_list[-1])
-          , ", Pixel_acc: {:.4f}".format(train_pixel_acc / i)
+          , ", Pixel_acc: {:.4f}".format(self.train_pixel_acc_list[-1])
           , ", Dice_score: {:.4f}".format(self.train_dice_list[-1])
           , ", Iou_score: {:.4f}".format(self.train_iou_list[-1]))
 
@@ -391,9 +395,10 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
       self.val_loss_list.append(val_loss / i)
       self.val_dice_list.append(val_dice / i)
       self.val_iou_list.append(val_iou / i)
+      self.val_pixel_acc_list.append(val_pixel_acc / i)
 
       print(" Val_Loss: {:.4f}".format(self.val_loss_list[-1])
-            , ", Val_Pixel_acc: {:.4f}".format(val_pixel_acc / i)
+            , ", Val_Pixel_acc: {:.4f}".format(self.val_pixel_acc_list[-1])
             , ", Val_Dice: {:.4f}".format(self.val_dice_list[-1])
             , ", Val_Iou: {:.4f}".format(self.val_iou_list[-1]))
 
@@ -401,6 +406,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
       if self.wb == True:
         metric = {
             " Val_Loss" : self.val_loss_list[-1],
+            " Val_pixel_acc" :self.val_pixel_acc_list[-1],
             " Val_DiceScore" :self.val_dice_list[-1],
             " Val_IouScore" :self.val_iou_list[-1],
         }
@@ -510,19 +516,20 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
     )
   
   def update_state_training(self):
-    if self.val_iou_list[-1] > self.best_val_acc:
+    if self.val_iou_list[-1] > self.best_val_iou:
       self.save_weights()
       self.plateau_count = 0
 
       self.best_val_loss = self.val_loss_list[-1]
       self.best_val_dice = self.val_dice_list[-1]
       self.best_val_iou = self.val_iou_list[-1]
+      self.best_val_pixel_acc = self.val_pixel_acc_list[-1]
 
       self.best_train_loss = self.train_loss_list[-1]
       self.best_train_dice = self.train_dice_list[-1]
       self.best_train_iou = self.train_iou_list[-1]
+      self.best_train_pixel_acc = self.train_pixel_acc_list[-1]
       
-      self.best_val_acc = self.val_iou_list[-1]
       print(f'Weight was updated because val_iou_score get highest(={self.val_iou_list[-1]})')
     else:
       self.plateau_count += 1
