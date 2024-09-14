@@ -41,10 +41,9 @@ for i, (images, masks) in tqdm.tqdm(
     print(f"list all distinct value in all masks = {masks.view(-1).unique()}")
     count = 0
     for idx in range(len(images)):
-        count = count + 1
         if(len(np.unique(masks[idx][4])) == 1):
             continue
-
+        count = count + 1
         ax[idx, 0].imshow(images[idx].permute(1,2,0))
         ax[idx, 0].set_title(f'image')
         ax[idx, 0].axis('off')
@@ -74,7 +73,7 @@ for i, (images, masks) in tqdm.tqdm(
         ax[idx, 6].axis('off')
         
         #print(masks[0].tolist())
-        if count == 7:
+        if count == args.batch_size:
             break
 
 plt.tight_layout()
