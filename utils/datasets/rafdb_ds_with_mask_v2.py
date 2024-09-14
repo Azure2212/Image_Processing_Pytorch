@@ -137,6 +137,4 @@ class RafDataSet_Mask(Dataset):
             sample = self.augmentation(image=image, mask=mask)
             image, mask = sample['image'], sample['mask']
         
-        return image.transpose(2, 0, 1), mask.transpose(2, 0, 1)
-       
-        return image, mask, label
+        return image.transpose(2, 0, 1), mask.transpose(2, 0, 1), label
