@@ -455,7 +455,7 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
     test_pixel_acc = [0.0,0.0]
     print('vo day ma0')
     with torch.no_grad():
-      for i, (images, masks) in tqdm.tqdm(
+      for i, (images, masks, labels) in tqdm.tqdm(
           enumerate(self.test_ds), total = len(self.test_ds), leave = True, colour = "green", desc = "        ",
           bar_format="{desc} {percentage:3.0f}%|{bar:30}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]"
       ):
@@ -464,11 +464,10 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
         images = images.to(dtype=torch.float).cuda()
         masks = masks.to(dtype=torch.float).cuda()
         labels = labels.cuda(non_blocking = True)
-        print('vo day ma-1')
+
         seg_output, cls_output = self.model(images)
         after_argmax = torch.argmax(masks, dim=1)
         seg_loss = self.seg_criterion(seg_output, after_argmax)
-        print('vo day ma')
         # compute output, accuracy and get loss classification
         cls_loss = self.cls_criterion(cls_output, labels)
         cls_acc = accuracy(cls_output, labels)[0]
