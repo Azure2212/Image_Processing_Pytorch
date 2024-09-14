@@ -24,4 +24,4 @@ class Resnet50UnetMultitask_v2(smp.Unet):
         seg_output = self.segmentation_head(seg_output) 
         
         #seg_output = torch.randn(42, 6, 224, 224)
-        return seg_output
+        return seg_output, cls_output

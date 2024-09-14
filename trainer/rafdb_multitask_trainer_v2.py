@@ -9,6 +9,7 @@ import torchvision
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
+import torchmetrics
 import segmentation_models_pytorch as smp
 # from utils.radam import RAdam
 
@@ -17,10 +18,10 @@ import torch.optim as optim
 from torch.autograd import Variable
 from torch.optim.lr_scheduler import MultiplicativeLR, StepLR, MultiStepLR, ConstantLR, LinearLR, PolynomialLR, CosineAnnealingLR, ChainedScheduler, ExponentialLR, SequentialLR, ReduceLROnPlateau, CyclicLR, CosineAnnealingWarmRestarts
 
-from sgu24project.utils.metrics.metrics import accuracy, make_batch
-
+from sgu24project.utils.metrics.metrics import accuracy, make_batch, calculate_multi_metrics
 import warnings
 warnings.filterwarnings('ignore')
+
 def get_lr(optimizer):
     for param_group in optimizer.param_groups:
         return param_group['lr']
@@ -33,7 +34,7 @@ class Trainer(object):
         pass
 
 
-class RAFDB_Multitask_Trainer(Trainer):
+class RAFDB_Segmentation_Trainer_v2(Trainer):
   def __init__(self, model, train_loader, val_loader, test_loader, configs, wb = True):
 
     self.train_loader = train_loader
@@ -60,42 +61,47 @@ class RAFDB_Multitask_Trainer(Trainer):
     self.name_run_wandb = configs["name_run_wandb"]
     self.wb = wb
     self.num_seg_classes = configs["num_seg_classes"]
-    print(f'self.num_seg_classes ={self.num_seg_classes}')
+    print(f'self.num_seg_classes = {self.num_seg_classes}')
+    print(f'self.max_epoch_num = {self.max_epoch_num}')
     #self.model = model.to(self.device)'cpu'
     self.model = model.to(self.device)
+
+    params = smp.encoders.get_preprocessing_params("resnet50")
+    self.std = torch.tensor(params["std"]).view(1, 3, 1, 1)
+    self.mean = torch.tensor(params["mean"]).view(1, 3, 1, 1)
+
 
 # Move the model to the device
     '''try:
       model = model.to(self.device)
     except Exception as e:
       print("Error:", e)'''
-    #index 0 is segmentation, index 1 is classification
+    #index 0 is segmentation, 1 is classification
     self.train_loss_list = [[],[]]
     self.train_acc_list = [[],[]]
-    self.train_dice_list = []
-    self.train_iou_list = []
-    self.train_total_loss_list = []
+    self.train_dice_list = [[],[]]
+    self.train_iou_list = [[],[]]
+    self.train_pixel_acc_list = [[],[]]
 
     self.val_loss_list = [[],[]]
     self.val_acc_list = [[],[]]
-    self.val_dice_list = []
-    self.val_iou_list = []
-    self.val_total_loss_list = []
+    self.val_dice_list = [[],[]]
+    self.val_iou_list = [[],[]]
+    self.val_pixel_acc_list = [[],[]]
 
-    self.best_train_acc = {'segmentation':0.0, 'classification':0.0}
-    self.best_train_loss = {'segmentation':0.0, 'classification':0.0}
-    self.best_train_dice = []
-    self.best_train_iou = []
+    self.best_train_pixel_acc = [0.0,0.0]
+    self.best_train_loss = [0.0,0.0]
+    self.best_train_dice = 0.0
+    self.best_train_iou = 0.0
 
-    self.best_val_acc = {'segmentation':0.0, 'classification':0.0}
-    self.best_val_loss = {'segmentation':0.0, 'classification':0.0}
-    self.best_val_dice = {'segmentation':0.0, 'classification':0.0}
-    self.best_val_iou = {'segmentation':0.0, 'classification':0.0}
+    self.best_val_pixel_acc = [0.0,0.0]
+    self.best_val_loss = [0.0,0.0]
+    self.best_val_dice = 0.0
+    self.best_val_iou = 0.0
 
-    self.test_acc = {'segmentation':0.0, 'classification':0.0}
-    self.test_acc_ttau = {'segmentation':0.0, 'classification':0.0}
-    self.test_dice =0.0
-    self.test_iou = 0.0
+
+    self.test_acc = 0.0
+    self.test_acc_ttau = 0.0
     self.plateau_count = 0
     #self.current_epoch_num = 0
     self.current_epoch_num = configs["current_epoch_num"]
@@ -151,7 +157,9 @@ class RAFDB_Multitask_Trainer(Trainer):
                       pin_memory=True, shuffle=False)
     
     
-    self.criterion = nn.CrossEntropyLoss().to(self.device)
+    self.seg_criterion = smp.losses.DiceLoss(smp.losses.MULTICLASS_MODE, from_logits=True)
+    self.cls_criterion = nn.CrossEntropyLoss().to(self.device)
+
     if self.optimizer_chose == "RAdam":
       print("The selected optimizer is RAdam")
       self.optimizer = torch.optim.RAdam(
@@ -240,6 +248,7 @@ class RAFDB_Multitask_Trainer(Trainer):
       print("The selected learning_rate scheduler strategy is PolynomialLR")
 
     elif self.lr_scheduler_chose == "CosineAnnealingLR":
+      T_MAX = self.max_epoch_num * len(self.train_ds)
       self.scheduler = CosineAnnealingLR(self.optimizer, T_max=10, eta_min=self.min_lr,  verbose=True)
       print("The selected learning_rate scheduler strategy is CosineAnnealingLR")
 
@@ -268,61 +277,27 @@ class RAFDB_Multitask_Trainer(Trainer):
             name = self.name_run_wandb,
             config = self.configs
         )
-        self.wandb.watch(self.model, self.criterion, log="all", log_freq=10)
+        self.wandb.watch(self.model, log="all", log_freq=10)
         print()
         print("-----------------------TRAINING MODEL-----------------------")
       except:
           print("--------Can not import wandb-------")
 
-  def compute_metrics(self, preds, labels, num_classes):
-    # Convert logits to probabilities
-    preds = torch.softmax(preds, dim=1)
-    
-    # Compute accuracy
-    _, predicted = torch.max(preds, 1)
-    correct = (predicted == labels).sum().item()
-    total = labels.numel()
-    accuracy = (correct / total) * 100.0
-    
-    # Compute Dice score per class
-    smooth = 1e-8
-    dice_scores = []
-    iou_scores = []
-    
-    for c in range(num_classes):
-        # Compute Dice score for class c
-        pred_c = (predicted == c).float()
-        label_c = (labels == c).float()
-        intersection = (pred_c * label_c).sum()
-        union = pred_c.sum() + label_c.sum()
-        dice_score_c = (2. * intersection + smooth) / (union + smooth)
-        dice_scores.append(dice_score_c)
-        
-        # Compute IoU for class c
-        union = (pred_c + label_c).sum() - intersection
-        iou_score_c = (intersection + smooth) / (union + smooth)
-        iou_scores.append(iou_score_c)
-    
-    # Average Dice score and IoU across all classes
-    dice_score = torch.mean(torch.tensor(dice_scores))
-    iou_score = torch.mean(torch.tensor(iou_scores))
-    
-    return accuracy, dice_score, iou_score
+  # def compute_metrics(self, pred_mask, mask, num_classes):
+  #   tp, fp, fn, tn = smp.metrics.get_stats(pred_mask.long(), mask.long(), mode="multiclass", num_classes=num_classes)
+  #   per_image_iou = smp.metrics.iou_score(tp, fp, fn, tn, reduction="micro-imagewise")
+  #   dataset_iou = smp.metrics.iou_score(tp, fp, fn, tn, reduction="micro")
+  #   return per_image_iou, dataset_iou
     # return wandb
   def step_per_train(self):
     # if self.wb == True:
     #   self.wandb.watch(model)
 
     self.model.train()
-    seg_train_loss = 0.0
-    seg_train_acc = 0.0
-    seg_train_dice = 0.0
-    seg_train_iou = 0.0
-
-    cls_train_acc = 0.0
-    cls_train_loss = 0.0
-
-    train_total_loss = 0.0
+    train_loss = [0.0,0.0]
+    train_dice = 0.0
+    train_iou = 0.0
+    train_pixel_acc = [0.0,0.0]
 
     for i, (images, masks, labels) in tqdm.tqdm(
         enumerate(self.train_ds), total = len(self.train_ds), leave = True, colour = "blue", desc = f"Epoch {self.current_epoch_num}",
@@ -330,46 +305,47 @@ class RAFDB_Multitask_Trainer(Trainer):
     ):
 
       # Move images to GPU before feeding them to the model, to fix error happen : Input type (torch.cuda.FloatTensor) and weight type (torch.FloatTensor) should be the same
-      self.model = self.model.cuda()
+      self.model = self.model.float().cuda()
+      images = (images - self.mean) / self.std
+      images = images.to(dtype=torch.float).cuda()
+      masks = masks.to(dtype=torch.float).cuda()
+
+      # compute output, accuracy and get loss in segmentation task
+      y_pred = self.model(images)
+      after_argmax = torch.argmax(masks, dim=1)
+      seg_loss = self.seg_criterion(y_pred, after_argmax)
+      # compute output, accuracy and get loss in classification task
+      cls_loss = self.cls_criterion(y_pred, labels)
+      cls_acc = accuracy(y_pred, labels)[0]
       
-      images = images.cuda(non_blocking = True)
-      labels = labels.cuda(non_blocking = True)
-      masks = masks.long().to(device=self.device)
-
-      # compute output, accuracy and get loss
-      y_seg_pred, y_cls_pred = self.model(images)
-      seg_loss = self.criterion(y_seg_pred, masks)
-      cls_loss = self.criterion(y_cls_pred, labels)
-
-      total_loss = 0.4 * seg_loss + 0.6 * cls_loss
        # Compute accuracy and dice score
-      acc, dice_score, iou_score = self.compute_metrics(y_seg_pred, masks, self.num_classes)
-      cls_acc = accuracy(y_cls_pred, labels)[0]
+      y_pred = y_pred.sigmoid()
+      y_pred = (y_pred > 0.5).float()
+      pixel_acc, dice_score, iou_score, precision, recall = calculate_multi_metrics(masks, y_pred, self.num_seg_classes)
 
-      seg_train_loss += seg_loss.item()
-      seg_train_acc += acc
-      seg_train_dice += dice_score
-      seg_train_iou += iou_score
+      train_loss[0] += seg_loss.item()
+      train_loss[1] += cls_loss.item()
+      train_dice += dice_score
+      train_iou += iou_score
+      train_pixel_acc[0] += pixel_acc
+      train_pixel_acc[1] += cls_acc
 
-      cls_train_acc += cls_acc.item()
-      cls_train_loss += cls_loss.item()
-
-      train_total_loss += total_loss.item()
-      
+      loss = (seg_loss + cls_loss) / 2
       # compute gradient and do SGD step
       self.optimizer.zero_grad()
-      total_loss.backward()
+      loss.backward()
       self.optimizer.step()
 
       # write wandb
       metric = {
-          " Seg_Loss" : seg_train_loss / (i+1),
-          " Seg_Accuracy" :seg_train_acc / (i+1),
-          " Cls_Loss" : cls_train_loss / (i+1),
-          " Cls_Accuracy" :cls_train_acc / (i+1),
-          " Seg_DiceScore" :seg_train_dice / (i+1),
-          " Seg_IouScore" :seg_train_iou / (i+1),
-          " Total_Loss" : train_total_loss / (i+1),
+          " Seg_Loss" : train_loss[0] / (i+1),
+          " Cls_Loss" : train_loss[1] / (i+1),
+          " Avg_Loss": ((train_loss[0] / (i+1)) + (train_loss[1] / (i+1)))/2,
+          " Seg_Pixel_acc" : train_pixel_acc[0] / (i+1),
+          " Cls_acc" : train_pixel_acc[1] / (i+1),
+          " Avg_acc" : ((train_pixel_acc[0] / (i+1)) + (train_pixel_acc[1] / (i+1)))/2
+          " DiceScore" :train_dice / (i+1),
+          " IouScore" :train_iou / (i+1),
           " epochs" : self.current_epoch_num,
           " Learning_rate" : get_lr(self.optimizer)
       }
@@ -379,103 +355,93 @@ class RAFDB_Multitask_Trainer(Trainer):
         break
 
     i += 1
-    print(f'train_cls_acc : {cls_train_acc / i}')
-    self.train_loss_list[0].append(seg_train_loss / i)
-    self.train_acc_list[0].append(seg_train_acc / i)
-    self.train_dice_list.append(seg_train_dice / i)
-    self.train_iou_list.append(seg_train_iou / i)
+    self.train_loss_list[0].append(train_loss[0] / i)
+    self.train_loss_list[1].append(train_loss[1] / i)
+    self.train_dice_list.append(train_dice / i)
+    self.train_iou_list.append(train_iou / i)
+    self.train_pixel_acc_list[0].append((train_pixel_acc[0] / i)*100)
+    self.train_pixel_acc_list[1].append((train_pixel_acc[1] / i)*100)
 
-    self.train_loss_list[1].append(cls_train_loss / i)
-    self.train_acc_list[1].append(cls_train_acc / i)
-    self.train_total_loss_list.append(train_total_loss / i)
-
-    print(seg_train_acc / i)
-    print(cls_train_acc / i)
 
     print(" Seg_Loss: {:.4f}".format(self.train_loss_list[0][-1])
-          , ", Seg_Accuracy: {:.4f}%".format(self.train_acc_list[0][-1])
+          ," Cls_Loss: {:.4f}".format(self.train_loss_list[1][-1])
+          ," AVG_Loss: {:.4f}".format((self.train_loss_list[1][-1] + self.train_loss_list[1][-1])/2)
+          , ", Seg_Pixel_acc: {:.4f}".format(self.train_pixel_acc_list[0][-1])
+          , ", Cls_acc: {:.4f}".format(self.train_pixel_acc_list[1][-1])
+          , ", Avg_acc: {:.4f}".format((self.train_pixel_acc_list[0][-1] + self.train_pixel_acc_list[1][-1])/2)
           , ", Dice_score: {:.4f}".format(self.train_dice_list[-1])
-          , ", Iou_score: {:.4f}".format(self.train_iou_list[-1])
-          , ", Cls_Loss: {:.4f}%".format(self.train_loss_list[1][-1])
-          , ", Cls_Accuracy: {:.4f}%".format(self.train_acc_list[1][-1])
-          , ", Train_total_loss: {:.4f}".format(self.train_total_loss_list[-1]))
+          , ", Iou_score: {:.4f}".format(self.train_iou_list[-1]))
 
   def step_per_val(self):
     self.model.eval()
-    seg_val_loss = 0.0
-    seg_val_acc = 0.0
-    seg_val_dice = 0.0
-    seg_val_iou = 0.0
-
-    cls_val_acc = 0.0
-    cls_val_loss = 0.0
-
-    val_total_loss = 0.0
+    val_loss = [0.0,0.0]
+    val_dice = 0.0
+    val_iou = 0.0
+    val_pixel_acc = [0.0,0.0]
 
     with torch.no_grad():
       for i, (images, masks, labels) in tqdm.tqdm(
           enumerate(self.val_ds), total = len(self.val_ds), leave = True, colour = "green", desc = "        ",
           bar_format="{desc} {percentage:3.0f}%|{bar:30}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]"
       ):
-        images = images.cuda(non_blocking = True)
-        labels = labels.cuda(non_blocking = True)
-        masks = masks.long().to(device=self.device)
+        self.model = self.model.float().cuda()
+        images = (images - self.mean) / self.std
+        images = images.to(dtype=torch.float).cuda()
+        masks = masks.to(dtype=torch.float).cuda()
 
-        # compute output, accuracy and get loss
-        y_seg_pred, y_cls_pred = self.model(images)
-        seg_loss = self.criterion(y_seg_pred, masks)
-        cls_loss = self.criterion(y_cls_pred, labels)
-        total_loss = 0.4 * seg_loss + 0.6 * cls_loss
-      
+        # compute output, accuracy and get loss segmentation
+        y_pred = self.model(images)
+        after_argmax = torch.argmax(masks, dim=1)
+        seg_loss = self.seg_criterion(y_pred, after_argmax)
+
+        # compute output, accuracy and get loss classification
+        cls_loss = self.cls_criterion(y_pred, labels)
+        cls_acc = accuracy(y_pred, labels)[0]
+
+        loss = (seg_loss + cls_loss) / 2
        # Compute accuracy and dice score
-        acc, dice_score, iou_score = self.compute_metrics(y_seg_pred, masks, self.num_classes)
-        cls_acc = accuracy(y_cls_pred, labels)[0]
-        seg_val_loss += seg_loss.item()
-        seg_val_acc += acc
-        seg_val_dice += dice_score
-        seg_val_iou += iou_score
+        y_pred = y_pred.sigmoid()
+        y_pred = (y_pred > 0.5).float()
+        #dice_score, iou_score, acc = self.compute_metrics(y_pred, masks, self.num_seg_classes)
+        pixel_acc, dice_score, iou_score, precision, recall = calculate_multi_metrics(masks, y_pred, self.num_seg_classes)
 
-        cls_val_acc += cls_acc.item()
-        cls_val_loss += cls_loss.item()
+        val_loss[0] += seg_loss.item()
+        val_loss[1] += cls_loss.item()
+        val_dice += dice_score
+        val_iou += iou_score
+        val_pixel_acc[0] += pixel_acc
+        val_pixel_acc[1] += cls_acc
 
-        val_total_loss += total_loss.item()
         if self.isDebug == 1: 
           break
       i += 1
-      self.val_loss_list[0].append(seg_val_loss / i)
-      self.val_acc_list[0].append(seg_val_acc / i)
-      self.val_dice_list.append(seg_val_dice / i)
-      self.val_iou_list.append(seg_val_iou / i)
-
-      self.val_loss_list[1].append(cls_val_loss / i)
-      self.val_acc_list[1].append(cls_val_acc / i)
-
-      self.val_total_loss_list.append(val_total_loss / i)
-
-
-      print(seg_val_acc / i)
-      print(cls_val_acc / i)
-
+      self.val_loss_list[0].append(val_loss[0] / i)
+      self.val_loss_list[1].append(val_loss[1] / i)
+      self.val_dice_list.append(val_dice / i)
+      self.val_iou_list.append(val_iou / i)
+      self.val_pixel_acc_list[0].append((val_pixel_acc[0] / i)*100)
+      self.val_pixel_acc_list[1].append((val_pixel_acc[1] / i)*100)
 
       print(" Seg_Val_Loss: {:.4f}".format(self.val_loss_list[0][-1])
-            ,", Seg_Val_Accuracy: {:.4f}%".format(self.val_acc_list[0][-1])
-            ,", Cls_Val_Loss: {:.4f}%".format(self.val_loss_list[1][-1])
-            ,", Cls_Val_Accuracy: {:.4f}%".format(self.val_acc_list[1][-1])
-            , ", Seg_Val_Dice: {:.4f}".format(self.val_dice_list[-1])
-            , ", Seg_Val_Iou: {:.4f}".format(self.val_iou_list[-1])
-            , ", Val_total_loss: {:.4f}".format(self.val_total_loss_list[-1]))
+            ," Cls_Val_Loss: {:.4f}".format(self.val_loss_list[1][-1])
+            ," Avg_Val_Loss: {:.4f}".format((self.val_loss_list[0][-1] + self.val_loss_list[1][-1])/2)
+            , ", Seg_Val_Pixel_acc: {:.4f}".format(self.val_pixel_acc_list[0][-1])
+            , ", Cls_Val_acc: {:.4f}".format(self.val_pixel_acc_list[1][-1])
+            , ", Avg_Val_acc: {:.4f}".format((self.val_pixel_acc_list[0][-1] + self.val_pixel_acc_list[0][-1])/2)
+            , ", Val_Dice: {:.4f}".format(self.val_dice_list[-1])
+            , ", Val_Iou: {:.4f}".format(self.val_iou_list[-1]))
 
       # write wandb
       if self.wb == True:
         metric = {
             " Seg_Val_Loss" : self.val_loss_list[0][-1],
-            " Seg_Val_Accuracy" :self.val_acc_list[0][-1],
+            " Cls_Val_Loss" : self.val_loss_list[1][-1],
+            " Avg_Val_Loss" : (self.val_loss_list[0][-1] + self.val_loss_list[1][-1]) / 2,
+            " Seg_Val_pixel_acc" :self.val_pixel_acc_list[0][-1],
+            " Cls_Val_acc" :self.val_pixel_acc_list[1][-1],
+            " Avg_Val_acc" :(self.val_pixel_acc_list[0][-1] + self.val_pixel_acc_list[1][-1]) / 2,
             " Val_DiceScore" :self.val_dice_list[-1],
             " Val_IouScore" :self.val_iou_list[-1],
-            " Val_Cls_Loss" : self.val_loss_list[1][-1],
-            " Val_Cls_Accuracy" :self.val_acc_list[1][-1],
-            " Val_total_loss": self.val_total_loss_list[-1]
-            # "Learning_rate" : self.learning_rate
         }
         self.wandb.log(metric)
 
@@ -483,66 +449,63 @@ class RAFDB_Multitask_Trainer(Trainer):
 
   def acc_on_test(self):
     self.model.eval()
-    seg_test_loss = 0.0
-    seg_test_acc = 0.0
-    seg_test_dice = 0.0
-    seg_test_iou = 0.0
+    test_loss = [0.0,0.0]
+    test_dice = 0.0
+    test_iou = 0.0
+    test_pixel_acc = [0.0,0.0]
 
-    cls_test_loss = 0.0
-    cls_test_acc = 0.0
-
-    test_total_loss = 0.0
     with torch.no_grad():
-      for i, (images, masks, labels) in tqdm.tqdm(
+      for i, (images, masks) in tqdm.tqdm(
           enumerate(self.test_ds), total = len(self.test_ds), leave = True, colour = "green", desc = "        ",
           bar_format="{desc} {percentage:3.0f}%|{bar:30}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]"
       ):
-        images = images.cuda(non_blocking = True)
-        labels = labels.cuda(non_blocking = True)
-        masks = masks.long().to(device=self.device)
-     
-        # compute output, accuracy and get loss
-        with torch.cuda.amp.autocast():
-          y_seg_pred, y_cls_pred = self.model(images)
-          seg_loss = self.criterion(y_seg_pred, masks)
-          cls_loss = self.criterion(y_cls_pred, labels)
-          total_loss = 0.4 * seg_loss + 0.6 * cls_loss
-      
-       # Compute accuracy and dice score
-        acc, dice_score, iou_score = self.compute_metrics(y_seg_pred, masks, self.num_classes)
-        cls_acc = accuracy(y_cls_pred, labels)[0]
-        print(f'cls_acc_test ={cls_acc}')
-       
-        seg_test_loss += seg_loss.item()
-        seg_test_acc += acc
-        seg_test_dice += dice_score
-        seg_test_iou += iou_score
-        
-        cls_test_acc += cls_acc
-        cls_test_loss += cls_loss.item()
+        self.model = self.model.float().cuda()
+        images = (images - self.mean) / self.std
+        images = images.to(dtype=torch.float).cuda()
+        masks = masks.to(dtype=torch.float).cuda()
     
-        test_total_loss += total_loss.item()
+        y_pred = self.model(images)
+        after_argmax = torch.argmax(masks, dim=1)
+        seg_loss = self.seg_criterion(y_pred, after_argmax)
+
+        # compute output, accuracy and get loss classification
+        cls_loss = self.cls_criterion(y_pred, labels)
+        cls_acc = accuracy(y_pred, labels)[0]
+      
+        # Compute accuracy and dice score 
+        y_pred = y_pred.sigmoid()
+        y_pred = (y_pred > 0.5).float()
+        #dice_score, iou_score, acc = self.compute_metrics(y_pred, masks, self.num_seg_classes)
+        pixel_acc, dice_score, iou_score, precision, recall = calculate_multi_metrics(masks, y_pred, self.num_seg_classes)
+
+        test_loss[0] += seg_loss.item()
+        test_loss[1] += cls_loss.item()
+        test_dice += dice_score
+        test_iou += iou_score
+        test_pixel_acc[0] += pixel_acc
+        test_pixel_acc[1] += cls_acc
+
         if self.isDebug == 1: 
           break
- 
-      i += 1
-      seg_test_loss = (seg_test_loss / i)
-      seg_test_acc = (seg_test_acc / i)
-      seg_test_dice = (seg_test_dice / i)
-      seg_test_iou = (seg_test_iou / i)
-      
-      cls_test_acc = cls_test_acc / i
-      cls_test_loss = cls_test_loss / i 
 
-      print("Seg_Test_Accuracy: {:.4f}, Cls_Test_Accuracy: {:.4f}, Test_Dice_score: {:.4f}, Test_IOU_score:{:.4f} ".format(seg_test_acc, cls_test_acc, seg_test_dice, seg_test_iou))
+      i += 1
+      test_loss[0] = (test_loss[0] / i)
+      test_loss[1] = (test_loss[1] / i)
+      test_dice = (test_dice / i)
+      test_iou = (test_iou / i)
+      test_pixel_acc[0] = (test_pixel_acc[0] / i)
+      test_pixel_acc[1] = (test_pixel_acc[1] / i)
+
+      print("Seg_Test_Loss: {:.4f}, Cls_Test_Loss: {:.4f}, Avg_Test_Loss: {:.4f}, Seg_Test_Pixel_acc: {:.4f}, Cls_Test_acc: {:.4f}, Avg_Test_acc {:4f}, Test_Dice_score: {:.4f}, Test_IOU_score:{:.4f} ".format(test_loss[0], test_loss[1],(test_loss[0] + test_loss[1])/2, test_pixel_acc[0],
+                                                                                                                                                                                                        test_pixel_acc[1], (test_pixel_acc[0] + test_pixel_acc[1])/2, test_dice, test_iou))
       if self.wb == True:
         self.wandb.log({
-          "Seg_Test_accuracy": seg_test_acc,
-          "Cls_Test_accuracy": cls_test_acc,
+          "Test_Avg_Acc": (test_loss[0] + test_loss[1])/2,
           "Test_diceScore": test_dice,
           "Test_iouScore": test_iou
           })
-      return seg_test_acc, cls_test_acc, seg_test_dice, seg_test_iou
+      rs_test_loss = (test_loss[0] + test_loss[1])/2
+      return rs_test_loss, test_dice, test_iou
 
   def Train_model(self):
     self.init_wandb()
@@ -572,7 +535,7 @@ class RAFDB_Multitask_Trainer(Trainer):
       state = torch.load(self.checkpoint_path)
       self.model.load_state_dict(state["net"])
       print("----------------------Cal on Test-----------------------")
-      self.test_acc['segmentation'], self.test_acc['classification'], self.test_dice, self.test_iou = self.acc_on_test()
+      self.test_loss, self.test_dice, self.test_iou = self.acc_on_test()
       self.save_weights()
 
     except Exception as e:
@@ -582,9 +545,9 @@ class RAFDB_Multitask_Trainer(Trainer):
     consume_time = str(datetime.datetime.now() - self.start_time)
     print("----------------------SUMMARY-----------------------")
     print(" After {} epochs and {} plateau count, consume {}".format((self.current_epoch_num), (self.plateau_count),consume_time[:-7]))
-    print(" Best Train Seg Accuracy: {:.4f}, Best Train Cls Accuracy: {:.4f}, Dice Score: {:.4f}, Best Train IOU Score:{:.4f} ".format(self.best_train_acc['segmentation'], self.best_train_acc['classification'], self.best_train_dice, self.best_train_iou))
-    print(" Best Val Seg Accuracy: {:.4f}, Best Val Cls Accuracy: {:.4f}, Dice Score: {:.4f}, Best Val IOU Score:{:.4f} ".format(self.best_val_acc['segmentation'], self.best_val_acc['classification'], self.best_val_dice, self.best_val_iou))
-    print(" Seg Test Accuracy: {:.4f}, Cls Test Accuracy: {:.4f}, Test Dice Score: {:.4f}, Test IOU Score:{:.4f} ".format((self.test_acc['segmentation']), (self.test_acc['classification']), (self.test_dice), (self.test_iou)))
+    print(" Best Train Loss: {:.4f}, Best Train Dice Score: {:.4f}, Best Train IOU Score:{:.4f} ".format(self.best_train_loss, self.best_train_dice, self.best_train_iou))
+    print(" Best Val Loss: {:.4f}, Best Val Dice Score: {:.4f}, Best Val IOU Score:{:.4f} ".format(self.best_val_loss, self.best_val_dice, self.best_val_iou))
+    print(" Test Loss: {:.4f}, Test Dice Score: {:.4f}, Test IOU Score:{:.4f} ".format((self.test_loss), (self.test_dice), (self.test_iou)))
 
   #set up for training (update epoch, stopping training, write logging)
   def update_epoch_num(self):
@@ -595,33 +558,34 @@ class RAFDB_Multitask_Trainer(Trainer):
         self.plateau_count > self.max_plateau_count or
         self.current_epoch_num > self.max_epoch_num 
     )
+  
   def update_state_training(self):
-    if self.val_acc_list[0][-1] > self.best_val_acc['segmentation'] and self.val_acc_list[1][-1] > self.best_val_acc['classification']:
+    current_best_avg_val = (self.best_val_pixel_acc[0] + self.best_val_pixel_acc[1])/2
+    if (self.val_pixel_acc_list[0][-1] + self.val_pixel_acc_list[0][-1])/2 > current_best_avg_val:
       self.save_weights()
       self.plateau_count = 0
-      self.best_val_acc['segmentation'] = self.val_acc_list[0][-1]
-      self.best_val_loss['segmentation'] = self.val_loss_list[0][-1]
-      self.best_val_acc['classification'] = self.val_acc_list[1][-1]
-      self.best_val_loss['classification'] = self.val_loss_list[1][-1]
+
+      self.best_val_loss[0] = self.val_loss_list[0][-1]
+      self.best_val_loss[1] = self.val_loss_list[1][-1]
       self.best_val_dice = self.val_dice_list[-1]
       self.best_val_iou = self.val_iou_list[-1]
+      self.best_val_pixel_acc[0] = self.val_pixel_acc_list[0][-1]
+      self.best_val_pixel_acc[1] = self.val_pixel_acc_list[0][-1]
 
-      self.best_train_acc['segmentation'] = self.train_acc_list[0][-1]
-      self.best_train_loss['segmentation']  = self.train_loss_list[0][-1]
-      self.best_train_acc['classification'] = self.train_acc_list[1][-1]
-      self.best_train_loss['classification']  = self.train_loss_list[1][-1]
-      
+      self.best_train_loss[0] = self.train_loss_list[0][-1]
+      self.best_train_loss[1] = self.train_loss_list[1][-1]
       self.best_train_dice = self.train_dice_list[-1]
       self.best_train_iou = self.train_iou_list[-1]
+      self.best_train_pixel_acc[0] = self.train_pixel_acc_list[0][-1]
+      self.best_train_pixel_acc[1] = self.train_pixel_acc_list[1][-1]
       
+      print(f'Weight was updated because Avg_accuracy get highest(={(self.val_pixel_acc_list[0][-1] + self.val_pixel_acc_list[0][-1])/2})')
     else:
       self.plateau_count += 1
 # 100 - self.best_val_acc
     if self.lr_scheduler_chose == "ReduceLROnPlateau":
-      last_val_seg_acc = self.val_acc_list[0][-1]
-      last_val_cls_acc = self.val_acc_list[1][-1]
-      combined_score = 0.6 * (100 - last_val_cls_acc) + 0.4 * (100 - last_val_seg_acc)
-      self.scheduler.step(combined_score)
+      avg_acc = (self.val_iou_list[0][-1] + self.val_iou_list[1][-1])/2
+      self.scheduler.step(100 - avg_acc)
     else:
       self.scheduler.step()
 
@@ -635,32 +599,17 @@ class RAFDB_Multitask_Trainer(Trainer):
     state = {
         **self.configs,
         "net": state_dict,
-        "best_train_seg_loss": self.best_train_loss['segmentation'],
-        "best_train_seg_acc": self.best_train_acc['segmentation'],
-        "seg_train_loss_list": self.train_loss_list[0],
-        "seg_train_acc_list": self.train_acc_list[0],
-
-        "best_train_cls_loss": self.best_train_loss['classification'],
-        "best_train_cls_acc": self.best_train_acc['classification'],
-        "cls_train_loss_list": self.train_loss_list[1],
-        "cls_train_acc_list": self.train_acc_list[1],
+        "best_train_loss": (self.best_train_loss[0] + self.best_train_loss[1])/2,
+        "train_loss_list": self.train_loss_list,
+        "train_acc_list": self.train_acc_list,
         "best_train_dice": self.best_train_dice,
         "best_train_iou": self.best_train_iou,
 
-        "best_val_Seg_loss": self.best_val_loss['segmentation'],
-        "best_val_Seg_acc": self.best_val_acc['segmentation'],
-        "seg_val_loss_list": self.val_loss_list[0],
-        "seg_val_acc_list": self.val_acc_list[0],
-
-        "best_val_Cls_loss": self.best_val_loss['classification'],
-        "best_val_Cls_acc": self.best_val_acc['classification'],
-        "cls_val_loss_list": self.val_loss_list[1],
-        "cls_val_acc_list": self.val_acc_list[1],
+        "best_val_loss": (self.best_val_loss[0]+self.best_val_loss[0])/2,
+        "val_loss_list": self.val_loss_list,
+        "val_acc_list": self.val_acc_list,
         "best_val_dice": self.best_val_dice,
         "best_val_iou": self.best_val_iou,
-
-        "seg_test_acc": self.test_acc['segmentation'],
-        "cls_test_acc": self.test_acc['classification'],
         "optimizer": self.optimizer.state_dict(),
     }
 
