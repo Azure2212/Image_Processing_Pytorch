@@ -20,7 +20,7 @@ configs = {
     "label_path": "rafdb_mask_basic/EmoLabel/list_patition_label.txt",
     "image_size": 224,
           }
-
+CLASSES = ['eyes_mask', 'eyebrows_mask', 'nose_mask', 'mouth_mask', 'face_mask']
 data_loader = RafDataSet_Mask(data_type = args.type_data, configs = configs , classes=CLASSES)
 test_ds = data_loader(
                 train_loader,
@@ -31,7 +31,6 @@ test_ds = data_loader(
             )
 print(len(test_ds))
 
-CLASSES = ['eyes_mask', 'eyebrows_mask', 'nose_mask', 'mouth_mask', 'face_mask']
 for i, (images, masks, labels) in tqdm.tqdm(
         enumerate(test_ds), total=len(test_ds), leave=True, colour="blue", desc=f"Epoch {0}",
         bar_format="{desc}: {percentage:3.0f}%|{bar:50}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]"
