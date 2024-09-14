@@ -3,9 +3,9 @@ import torch.nn as nn
 import torch
 
 class Resnet50UnetMultitask(smp.Unet):
-    def __init__(self, encoder_name="resnet50", encoder_weights="imagenet", num_seg_classes=6, num_cls_classes=7, activation=None):
+    def __init__(self, encoder_name="resnet50", encoder_weights="imagenet", in_channels=3, num_seg_classes=2, num_cls_classes=7, activation=None):
         # Initialize the parent class (smp.Unet)
-        super().__init__(encoder_name=encoder_name, encoder_weights=encoder_weights, activation=None, classes=num_seg_classes)
+        super().__init__(encoder_name=encoder_name, encoder_weights=encoder_weights, in_channels=in_channels, activation=None, classes=num_seg_classes)
         
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc = nn.Linear(512 * 4, num_cls_classes)
@@ -25,11 +25,3 @@ class Resnet50UnetMultitask(smp.Unet):
         
         #seg_output = torch.randn(42, 6, 224, 224)
         return seg_output, cls_output
-
-# # Example usage
-# model = Resnet50UnetMultitask(num_seg_classes=8, num_cls_classes=7, activation=None)
-# #print(model)
-# input_tensor = torch.randn(16, 3, 224, 224)  # Batch of 1 image, 3 channels (RGB), 256x256 sSize
-# seg_output, cls_output = model(input_tensor)
-# print(seg_output.shape)  # Should be (1, 2, 256, 256) for 2 classes
-# print(cls_output.shape)

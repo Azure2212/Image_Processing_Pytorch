@@ -309,17 +309,17 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
       masks = masks.to(dtype=torch.float).cuda()
 
       # compute output, accuracy and get loss in segmentation task
-      y_pred = self.model(images)
+      seg_output, cls_output = self.model(images)
       after_argmax = torch.argmax(masks, dim=1)
-      seg_loss = self.seg_criterion(y_pred, after_argmax)
+      seg_loss = self.seg_criterion(seg_output, after_argmax)
       # compute output, accuracy and get loss in classification task
-      cls_loss = self.cls_criterion(y_pred, labels)
-      cls_acc = accuracy(y_pred, labels)[0]
+      cls_loss = self.cls_criterion(cls_output, labels)
+      cls_acc = accuracy(cls_output, labels)[0]
       
        # Compute accuracy and dice score
-      y_pred = y_pred.sigmoid()
-      y_pred = (y_pred > 0.5).float()
-      pixel_acc, dice_score, iou_score, precision, recall = calculate_multi_metrics(masks, y_pred, self.num_seg_classes)
+      seg_output = seg_output.sigmoid()
+      seg_output = (seg_output > 0.5).float()
+      pixel_acc, dice_score, iou_score, precision, recall = calculate_multi_metrics(masks, seg_output, self.num_seg_classes)
 
       train_loss[0] += seg_loss.item()
       train_loss[1] += cls_loss.item()
@@ -388,20 +388,20 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
         masks = masks.to(dtype=torch.float).cuda()
 
         # compute output, accuracy and get loss segmentation
-        y_pred = self.model(images)
+        seg_output, cls_output = self.model(images)
         after_argmax = torch.argmax(masks, dim=1)
-        seg_loss = self.seg_criterion(y_pred, after_argmax)
+        seg_loss = self.seg_criterion(seg_output, after_argmax)
 
         # compute output, accuracy and get loss classification
-        cls_loss = self.cls_criterion(y_pred, labels)
-        cls_acc = accuracy(y_pred, labels)[0]
+        cls_loss = self.cls_criterion(cls_output, labels)
+        cls_acc = accuracy(cls_output, labels)[0]
 
         loss = (seg_loss + cls_loss) / 2
        # Compute accuracy and dice score
-        y_pred = y_pred.sigmoid()
-        y_pred = (y_pred > 0.5).float()
+        seg_output = seg_output.sigmoid()
+        seg_output = (seg_output > 0.5).float()
         #dice_score, iou_score, acc = self.compute_metrics(y_pred, masks, self.num_seg_classes)
-        pixel_acc, dice_score, iou_score, precision, recall = calculate_multi_metrics(masks, y_pred, self.num_seg_classes)
+        pixel_acc, dice_score, iou_score, precision, recall = calculate_multi_metrics(masks, seg_output, self.num_seg_classes)
 
         val_loss[0] += seg_loss.item()
         val_loss[1] += cls_loss.item()
@@ -462,19 +462,19 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
         images = images.to(dtype=torch.float).cuda()
         masks = masks.to(dtype=torch.float).cuda()
     
-        y_pred = self.model(images)
+        seg_output, cls_output = self.model(images)
         after_argmax = torch.argmax(masks, dim=1)
-        seg_loss = self.seg_criterion(y_pred, after_argmax)
+        seg_loss = self.seg_criterion(seg_output, after_argmax)
 
         # compute output, accuracy and get loss classification
-        cls_loss = self.cls_criterion(y_pred, labels)
-        cls_acc = accuracy(y_pred, labels)[0]
+        cls_loss = self.cls_criterion(cls_output, labels)
+        cls_acc = accuracy(cls_output, labels)[0]
       
         # Compute accuracy and dice score 
-        y_pred = y_pred.sigmoid()
-        y_pred = (y_pred > 0.5).float()
+        seg_output = seg_output.sigmoid()
+        seg_output = (seg_output > 0.5).float()
         #dice_score, iou_score, acc = self.compute_metrics(y_pred, masks, self.num_seg_classes)
-        pixel_acc, dice_score, iou_score, precision, recall = calculate_multi_metrics(masks, y_pred, self.num_seg_classes)
+        pixel_acc, dice_score, iou_score, precision, recall = calculate_multi_metrics(masks, seg_output, self.num_seg_classes)
 
         test_loss[0] += seg_loss.item()
         test_loss[1] += cls_loss.item()

@@ -22,11 +22,10 @@ torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
 from sgu24project.utils.datasets.rafdb_ds_with_mask import RafDataSet_Mask
-from sgu24project.trainer.rafdb_segmentation_trainer import RAFDB_Segmentation_Trainer
-from sgu24project.trainer.rafdb_multitask_trainer import RAFDB_Multitask_Trainer
+from sgu24project.trainer.rafdb_multitask_trainer_v2 import RAFDB_Multitask_Trainer_v2
 
-from sgu24project.models.Unet import UNET
 from sgu24project.models.multi_task_resunet import Resnet50UnetMultitask
+import segmentation_models_pytorch as smp
 
 #from sgu24project.models.resnet_cbam_v5 import resnet50_co_cbam
 import argparse 
@@ -62,53 +61,29 @@ if args.load_state_dir != '':
     configs["load_state_dir"] = args.load_state_dir
 if args.epoch_num != 1:
     configs["max_epoch_num"] = args.epoch_num
-train_loader = RafDataSet_Mask( "train", configs)
-test_loader = RafDataSet_Mask("test", configs, ttau = False, len_tta = 48) 
-print(f'number of classes = {args.num_classes}')
-import segmentation_models_pytorch as smp
 
-if args.model_name == 'UNET':
-    print('unet Tuan code')
-    model = UNET(in_channels=3, classes=args.num_classes)
-elif args.model_name == 'Resnet50UnetMultitask':
-    print('multi task Unet Resnet Tuan code')
-    model = Resnet50UnetMultitask(num_seg_classes=6, num_cls_classes=7, activation=None)
-elif args.model_name =='UNET_resnet50_imagenet':
-    print('smp.unet resnet50 on imagenet in library segmentation_models_pytorch')
-    model = smp.Unet(
-        encoder_name="resnet50",        # Choose an encoder (backbone)
-        encoder_weights="imagenet",      # Use pretrained weights for the encoder
-        classes=args.num_classes,             # Number of output classes
-        activation=None                  # Choose activation function
-    )
-else:
-# Create a U-Net model with a pretrained encoder
-    print('unet in library segmentation_models_pytorch')
-    model = smp.Unet(
-        encoder_name="resnet50",        # Choose an encoder (backbone)
-        encoder_weights="imagenet",      # Use pretrained weights for the encoder
-        classes=args.num_classes,             # Number of output classes
-        activation=None                  # Choose activation function
-    )
+CLASSES = ['eyes_mask', 'eyebrows_mask', 'nose_mask', 'mouth_mask', 'face_mask']
+
+train_dataset = RafDataSet_Mask(data_type = 'train', configs = configs , classes=CLASSES)
+valid_dataset = RafDataSet_Mask(data_type = 'test', configs = configs , classes=CLASSES)
+test_dataset = RafDataSet_Mask(data_type = 'test', configs = configs , classes=CLASSES)
+
+print(f'number of classes = {configs["num_seg_classes"]}')
+
+OUT_CLASSES = len(CLASSES) + 1 
+model = Resnet50UnetMultitask(in_channels=3, num_seg_classes=OUT_CLASSES, num_cls_classes=7)
+
 print(f"the number of parameter: {sum(p.numel() for p in model.parameters())}")
 
 
 use_wb = True if args.use_wandb == 1 else False
 
 
-if args.model_name == 'Resnet50UnetMultitask':    
-    trainer = RAFDB_Multitask_Trainer(model = model, 
-                                    train_loader = train_loader, 
-                                    val_loader = test_loader, 
-                                    test_loader = test_loader, 
+  
+trainer = RAFDB_Segmentation_Trainer_v2(model = model, 
+                                    train_loader = train_dataset, 
+                                    val_loader = valid_dataset, 
+                                    test_loader = test_dataset, 
                                     configs = configs, 
                                     wb = use_wb)
-else:
-    trainer = RAFDB_Segmentation_Trainer(model = model, 
-                                    train_loader = train_loader, 
-                                    val_loader = test_loader, 
-                                    test_loader = test_loader, 
-                                    configs = configs, 
-                                    wb = use_wb)
-
 trainer.Train_model()
