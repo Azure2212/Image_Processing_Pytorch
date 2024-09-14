@@ -588,7 +588,8 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
       self.plateau_count += 1
 # 100 - self.best_val_acc
     if self.lr_scheduler_chose == "ReduceLROnPlateau":
-      avg_acc = (self.val_iou_list[0][-1] + self.val_iou_list[1][-1])/2
+      avg_acc = (self.val_pixel_acc_list[0][-1] + self.val_pixel_acc_list[1][-1])/2
+      print(f'reduce: {avg_acc}')
       self.scheduler.step(100 - avg_acc)
     else:
       self.scheduler.step()
