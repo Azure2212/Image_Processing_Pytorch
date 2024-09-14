@@ -99,6 +99,18 @@ class RafDataSet_Mask(Dataset):
         mouth_mask = self.read_mask_of_image(masks_dir, self.classes[3])
         face_mask = self.read_mask_of_image(masks_dir, self.classes[4])
 
+        face_is_one = (face_mask == 1.0)
+
+        any_other_mask_is_one = (
+        (eyes_mask == 1.0) |
+        (eyebrows_mask == 1.0) |
+        (nose_mask == 1.0) |
+        (mouth_mask == 1.0)
+        )
+    
+        # Update face_mask where conditions are met
+        face_mask[face_is_one & any_other_mask_is_one] = 0.0
+
         masks = [eyes_mask, eyebrows_mask, nose_mask, mouth_mask, face_mask]
 
         masks_stack = np.stack(masks, axis=-1)
