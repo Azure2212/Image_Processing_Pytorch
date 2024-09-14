@@ -31,7 +31,7 @@ test_ds = DataLoader(
             )
 
 for i, (images, masks) in tqdm.tqdm(
-        enumerate(test_ds), total=len(test_ds), leave=True, colour="blue", desc=f"Epoch {0}",
+        enumerate(test_ds), total=len(test_ds), leave=True, colour="blue", desc=f"Batch {0}",
         bar_format="{desc}: {percentage:3.0f}%|{bar:50}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]"
     ):
     # Optionally, you can ccperform your training steps here
@@ -42,8 +42,9 @@ for i, (images, masks) in tqdm.tqdm(
     print(len(images))
     for idx in range(len(images)):
         print(count)
-        if(len(np.unique(masks[idx][4])) == 1):
-            continue
+        #if(len(np.unique(masks[idx][4])) == 1):
+            #continue
+        print(len(np.unique(masks[idx][4])))
         count = count + 1
         ax[idx, 0].imshow(images[idx].permute(1,2,0))
         ax[idx, 0].set_title(f'image')
