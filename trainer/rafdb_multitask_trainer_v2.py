@@ -602,13 +602,11 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
         "net": state_dict,
         "best_train_loss": (self.best_train_loss[0] + self.best_train_loss[1])/2,
         "train_loss_list": self.train_loss_list,
-        "train_acc_list": self.train_acc_list,
         "best_train_dice": self.best_train_dice,
         "best_train_iou": self.best_train_iou,
 
         "best_val_loss": (self.best_val_loss[0]+self.best_val_loss[1])/2,
         "val_loss_list": self.val_loss_list,
-        "val_acc_list": self.val_acc_list,
         "best_val_dice": self.best_val_dice,
         "best_val_iou": self.best_val_iou,
         "optimizer": self.optimizer.state_dict(),
