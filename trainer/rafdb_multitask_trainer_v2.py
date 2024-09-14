@@ -316,6 +316,7 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
       # compute output, accuracy and get loss in classification task
       cls_loss = self.cls_criterion(cls_output, labels)
       cls_acc = accuracy(cls_output, labels)[0] 
+      print(f'ne ne:{cls_acc}')
       
        # Compute accuracy and dice score
       seg_output = seg_output.sigmoid()
