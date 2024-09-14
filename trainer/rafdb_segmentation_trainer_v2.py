@@ -516,7 +516,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
     )
   
   def update_state_training(self):
-    if self.val_iou_list[-1] > self.best_val_iou:
+    if self.val_pixel_acc_list[-1] > self.best_val_pixel_acc:
       self.save_weights()
       self.plateau_count = 0
 
@@ -535,7 +535,7 @@ class RAFDB_Segmentation_Trainer_v2(Trainer):
       self.plateau_count += 1
 # 100 - self.best_val_acc
     if self.lr_scheduler_chose == "ReduceLROnPlateau":
-      self.scheduler.step(100 - self.best_train_pixel_acc[-1])
+      self.scheduler.step(100 - self.val_pixel_acc_list[-1])
     else:
       self.scheduler.step()
 
