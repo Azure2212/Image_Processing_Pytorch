@@ -41,7 +41,7 @@ for i, (images, masks) in tqdm.tqdm(
     print(f"list all distinct value in all masks = {masks.view(-1).unique()}")
 
     for idx in range(len(images[i])):
-
+        print(f"unique: {len(np.unique(masks[idx][4]))}")
         if(len(np.unique(masks[idx][4])) == 1):
             continue
         stop = stop + 1
