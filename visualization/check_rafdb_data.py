@@ -44,35 +44,35 @@ for i, (images, masks) in tqdm.tqdm(
         print(f"unique: {len(np.unique(masks[idx][4]))}")
         if(len(np.unique(masks[idx][4])) == 1):
             continue
-        stop = stop + 1
-        ax[idx, 0].imshow(images[idx].permute(1,2,0))
-        ax[idx, 0].set_title(f'image')
-        ax[idx, 0].axis('off')
+        ax[stop, 0].imshow(images[idx].permute(1,2,0))
+        ax[stop, 0].set_title(f'image')
+        ax[stop, 0].axis('off')
 
-        ax[idx, 1].imshow(masks[idx][0])
-        ax[idx, 1].set_title('eyes_mask')
-        ax[idx, 1].axis('off')
+        ax[stop, 1].imshow(masks[idx][0])
+        ax[stop, 1].set_title('eyes_mask')
+        ax[stop, 1].axis('off')
 
-        ax[idx, 2].imshow(masks[idx][1])
-        ax[idx, 2].set_title('eyebrows_mask')
-        ax[idx, 2].axis('off')
+        ax[stop, 2].imshow(masks[idx][1])
+        ax[stop, 2].set_title('eyebrows_mask')
+        ax[stop, 2].axis('off')
 
-        ax[idx, 3].imshow(masks[idx][2])
-        ax[idx, 3].set_title('nose_mask')
-        ax[idx, 3].axis('off')
+        ax[stop, 3].imshow(masks[idx][2])
+        ax[stop, 3].set_title('nose_mask')
+        ax[stop, 3].axis('off')
 
-        ax[idx, 4].imshow(masks[idx][3])
-        ax[idx, 4].set_title('mouth_mask')
-        ax[idx, 4].axis('off')
+        ax[stop, 4].imshow(masks[idx][3])
+        ax[stop, 4].set_title('mouth_mask')
+        ax[stop, 4].axis('off')
 
-        ax[idx, 5].imshow(masks[idx][4])
-        ax[idx, 5].set_title('face_mask')
-        ax[idx, 5].axis('off')
+        ax[stop, 5].imshow(masks[idx][4])
+        ax[stop, 5].set_title('face_mask')
+        ax[stop, 5].axis('off')
 
-        ax[idx, 6].imshow(masks[idx][5])
-        ax[idx, 6].set_title('background')
-        ax[idx, 6].axis('off')
+        ax[stop, 6].imshow(masks[idx][5])
+        ax[stop, 6].set_title('background')
+        ax[stop, 6].axis('off')
         
+        stop = stop + 1
         #print(masks[0].tolist())
         if stop == args.batch_size:
             break
