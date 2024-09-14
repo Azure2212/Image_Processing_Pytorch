@@ -561,7 +561,10 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
     )
   
   def update_state_training(self):
-    current_best_avg_val = (self.best_val_pixel_acc[0] + self.best_val_pixel_acc[1])/2
+    current_best_avg_val = 0.0
+    if current_best_avg_val != 0.0
+      current_best_avg_val = (self.best_val_pixel_acc[0] + self.best_val_pixel_acc[1])/2
+      print(current_best_avg_val)
     if (self.val_pixel_acc_list[0][-1] + self.val_pixel_acc_list[1][-1])/2 > current_best_avg_val:
       self.save_weights()
       self.plateau_count = 0
