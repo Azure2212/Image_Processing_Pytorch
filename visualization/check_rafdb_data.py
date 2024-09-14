@@ -21,9 +21,9 @@ configs = {
     "image_size": 224,
           }
 CLASSES = ['eyes_mask', 'eyebrows_mask', 'nose_mask', 'mouth_mask', 'face_mask']
-my_data_loader = RafDataSet_Mask(data_type = args.type_data, configs = configs , classes=CLASSES)
-test_ds = data_loader(
-                my_data_loader,
+data_loader = RafDataSet_Mask(data_type = args.type_data, configs = configs , classes=CLASSES)
+test_ds = DataLoader(
+                data_loader,
                 batch_size=args.batch_size,
                 pin_memory=True,
                 shuffle=True if args.use_shuffle == 1 else False,
