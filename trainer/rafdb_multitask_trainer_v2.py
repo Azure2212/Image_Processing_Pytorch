@@ -544,14 +544,11 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
     consume_time = str(datetime.datetime.now() - self.start_time)
     print("----------------------SUMMARY-----------------------")
     print(" After {} epochs and {} plateau count, consume {}".format((self.current_epoch_num), (self.plateau_count),consume_time[:-7]))
-    print(self.best_train_loss)
-    print(self.best_train_dice)
-    print(self.best_train_iou)
-    print(" Best Train Loss: {:.4f}, Best Train Dice Score: {:.4f}, Best Train IOU Score:{:.4f} ".format(self.best_train_loss, self.best_train_dice, self.best_train_iou))
-    print(self.best_val_loss)
-    print(self.best_val_dice)
-    print(self.best_val_iou)
-    print(" Best Val Loss: {:.4f}, Best Val Dice Score: {:.4f}, Best Val IOU Score:{:.4f} ".format(self.best_val_loss, self.best_val_dice, self.best_val_iou))
+   
+    best_train_loss = (self.best_train_loss[0] + self.best_train_loss[1])/2
+    best_val_loss = (self.best_val_loss[0] + self.best_val_loss[1])/2
+    print(" Best Train Loss: {:.4f}, Best Train Dice Score: {:.4f}, Best Train IOU Score:{:.4f} ".format(best_train_loss, self.best_train_dice, self.best_train_iou))
+    print(" Best Val Loss: {:.4f}, Best Val Dice Score: {:.4f}, Best Val IOU Score:{:.4f} ".format(best_val_loss, self.best_val_dice, self.best_val_iou))
     print(" Test Loss: {:.4f}, Test Dice Score: {:.4f}, Test IOU Score:{:.4f} ".format((self.test_loss), (self.test_dice), (self.test_iou)))
 
   #set up for training (update epoch, stopping training, write logging)
