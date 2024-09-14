@@ -20,14 +20,20 @@ configs = {
     "label_path": "rafdb_mask_basic/EmoLabel/list_patition_label.txt",
     "image_size": 224,
           }
-          
-CLASSES = ['eyes_mask', 'eyebrows_mask', 'nose_mask', 'mouth_mask', 'face_mask']
-data_loader = RafDataSet_Mask( args.type_data, configs, use_albumentation = True if args.use_albumentation == 1 else False)
-train_ds = data_loader(data_type = args.type_data, configs = configs , classes=CLASSES)
-print(len(train_ds))
 
+data_loader = RafDataSet_Mask(data_type = args.type_data, configs = configs , classes=CLASSES)
+test_ds = data_loader(
+                train_loader,
+                batch_size=args.batch_size,
+                pin_memory=True,
+                shuffle=True if args.use_shuffle == 1 else False,
+                worker_init_fn=lambda x: np.random.seed(x),
+            )
+print(len(test_ds))
+
+CLASSES = ['eyes_mask', 'eyebrows_mask', 'nose_mask', 'mouth_mask', 'face_mask']
 for i, (images, masks, labels) in tqdm.tqdm(
-        enumerate(train_ds), total=len(train_ds), leave=True, colour="blue", desc=f"Epoch {0}",
+        enumerate(test_ds), total=len(test_ds), leave=True, colour="blue", desc=f"Epoch {0}",
         bar_format="{desc}: {percentage:3.0f}%|{bar:50}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]"
     ):
     batch_size = len(images)  # or len(labels), assuming they have the same length
