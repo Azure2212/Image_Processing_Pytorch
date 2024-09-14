@@ -29,23 +29,22 @@ test_ds = DataLoader(
                 shuffle=True if args.use_shuffle == 1 else False,
                 worker_init_fn=lambda x: np.random.seed(x),
             )
-
+stop = 0 
 for i, (images, masks) in tqdm.tqdm(
-        enumerate(test_ds), total=len(test_ds), leave=True, colour="blue", desc=f"Batch {0}",
+        enumerate(test_ds), total=len(test_ds), leave=True, colour="blue", desc=f"Epoch {0}",
         bar_format="{desc}: {percentage:3.0f}%|{bar:50}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]"
     ):
+    batch_size = len(images)  # or len(labels), assuming they have the same length
     # Optionally, you can ccperform your training steps here
     fig, ax = plt.subplots(batch_size,7,figsize=(10, batch_size * 2))
     # Example: print batch size
     print(f"list all distinct value in all masks = {masks.view(-1).unique()}")
-    count = 0
-    print(len(images))
-    for idx in range(len(images)):
-        print(count)
-        #if(len(np.unique(masks[idx][4])) == 1):
-            #continue
-        print(len(np.unique(masks[idx][4])))
-        count = count + 1
+
+    for idx in range(images[i]):
+
+        if(len(np.unique(masks[idx][4])) == 1):
+            continue
+        stop = stop + 1
         ax[idx, 0].imshow(images[idx].permute(1,2,0))
         ax[idx, 0].set_title(f'image')
         ax[idx, 0].axis('off')
@@ -75,8 +74,11 @@ for i, (images, masks) in tqdm.tqdm(
         ax[idx, 6].axis('off')
         
         #print(masks[0].tolist())
-        if count == args.batch_size:
+        if stop == args.batch_size:
             break
+            
+    if stop == args.batch_size:
+        break
+
 plt.tight_layout()
 plt.show()
-
