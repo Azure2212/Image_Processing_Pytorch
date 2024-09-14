@@ -24,12 +24,11 @@ CLASSES = ['eyes_mask', 'eyebrows_mask', 'nose_mask', 'mouth_mask', 'face_mask']
 data_loader = RafDataSet_Mask(data_type = args.type_data, configs = configs , classes=CLASSES)
 test_ds = DataLoader(
                 data_loader,
-                batch_size=args.batch_size,
+                batch_size=len(data_loader),
                 pin_memory=True,
                 shuffle=True if args.use_shuffle == 1 else False,
                 worker_init_fn=lambda x: np.random.seed(x),
             )
-print(len(test_ds))
 
 for i, (images, masks) in tqdm.tqdm(
         enumerate(test_ds), total=len(test_ds), leave=True, colour="blue", desc=f"Epoch {0}",
@@ -40,9 +39,9 @@ for i, (images, masks) in tqdm.tqdm(
     fig, ax = plt.subplots(batch_size,7,figsize=(10, batch_size * 2))
     # Example: print batch size
     print(f"list all distinct value in all masks = {masks.view(-1).unique()}")
-
-    for idx in range(batch_size):
-
+    count = 0
+    for idx in range(len(images)):
+        count = count + 1
         if(len(np.unique(masks[idx][4])) == 1):
             continue
 
@@ -75,7 +74,8 @@ for i, (images, masks) in tqdm.tqdm(
         ax[idx, 6].axis('off')
         
         #print(masks[0].tolist())
-    break
+        if count == 7:
+            break
 
 plt.tight_layout()
 plt.show()
