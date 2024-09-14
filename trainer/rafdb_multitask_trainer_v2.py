@@ -505,8 +505,9 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
           "Test_diceScore": test_dice,
           "Test_iouScore": test_iou
           })
-      rs_test_loss = (test_loss[0] + test_loss[1])/2
-      return rs_test_loss, test_dice, test_iou
+      print('vo day ma')
+      test_loss = (test_loss[0] + test_loss[1])/2
+      return test_loss, test_dice, test_iou
 
   def Train_model(self):
     self.init_wandb()
