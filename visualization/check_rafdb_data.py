@@ -24,7 +24,7 @@ CLASSES = ['eyes_mask', 'eyebrows_mask', 'nose_mask', 'mouth_mask', 'face_mask']
 data_loader = RafDataSet_Mask(data_type = args.type_data, configs = configs , classes=CLASSES)
 test_ds = DataLoader(
                 data_loader,
-                batch_size=args.batch_size * 10,
+                batch_size=len(data_loader),
                 pin_memory=True,
                 shuffle=True if args.use_shuffle == 1 else False,
                 worker_init_fn=lambda x: np.random.seed(x),
@@ -77,6 +77,6 @@ for i, (images, masks) in tqdm.tqdm(
         #print(masks[0].tolist())
         if count == args.batch_size:
             break
-
 plt.tight_layout()
 plt.show()
+
