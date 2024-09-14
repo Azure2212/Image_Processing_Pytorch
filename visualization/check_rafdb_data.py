@@ -76,4 +76,4 @@ for i, (images, masks, labels) in tqdm.tqdm(
     break
 
 plt.tight_layout()
-    plt.show()
+plt.show()
