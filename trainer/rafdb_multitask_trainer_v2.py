@@ -397,7 +397,6 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
         # compute output, accuracy and get loss classification
         cls_loss = self.cls_criterion(cls_output, labels)
         cls_acc = accuracy(cls_output, labels)[0]
-        print(f'ne ne:{cls_acc}')
 
         loss = (seg_loss + cls_loss) / 2
        # Compute accuracy and dice score
@@ -564,7 +563,7 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
   
   def update_state_training(self):
     current_best_avg_val = 0.0
-    if len(self.best_val_pixel_acc[0]) != 0:
+    if len(self.val_pixel_acc_list[0]) != 0:
       current_best_avg_val = (self.best_val_pixel_acc[0] + self.best_val_pixel_acc[1])/2
       print(current_best_avg_val)
     if (self.val_pixel_acc_list[0][-1] + self.val_pixel_acc_list[1][-1])/2 > current_best_avg_val:
