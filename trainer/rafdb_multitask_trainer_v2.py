@@ -453,7 +453,7 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
     test_dice = 0.0
     test_iou = 0.0
     test_pixel_acc = [0.0,0.0]
-
+    print('vo day ma0')
     with torch.no_grad():
       for i, (images, masks) in tqdm.tqdm(
           enumerate(self.test_ds), total = len(self.test_ds), leave = True, colour = "green", desc = "        ",
@@ -464,7 +464,7 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
         images = images.to(dtype=torch.float).cuda()
         masks = masks.to(dtype=torch.float).cuda()
         labels = labels.cuda(non_blocking = True)
-    
+        print('vo day ma-1')
         seg_output, cls_output = self.model(images)
         after_argmax = torch.argmax(masks, dim=1)
         seg_loss = self.seg_criterion(seg_output, after_argmax)
