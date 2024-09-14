@@ -5,7 +5,7 @@ from PIL import Image
 import matplotlib.pyplot as plt
 import numpy as np
 from torch.utils.data import DataLoader
-from sgu24project.utils.datasets.rafdb_ds_with_mask import RafDataSet_Mask
+from sgu24project.utils.datasets.rafdb_ds_with_mask_v2 import RafDataSet_Mask
 
 import argparse 
 parser = argparse.ArgumentParser()
@@ -32,14 +32,14 @@ train_ds = DataLoader(
             )
 print(len(train_ds))
 
-stop = 0 
+CLASSES = ['eyes_mask', 'eyebrows_mask', 'nose_mask', 'mouth_mask', 'face_mask']
 for i, (images, masks, labels) in tqdm.tqdm(
         enumerate(train_ds), total=len(train_ds), leave=True, colour="blue", desc=f"Epoch {0}",
         bar_format="{desc}: {percentage:3.0f}%|{bar:50}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]"
     ):
     batch_size = len(images)  # or len(labels), assuming they have the same length
     # Optionally, you can ccperform your training steps here
-    fig, ax = plt.subplots(batch_size,2,figsize=(10, batch_size * 2))
+    fig, ax = plt.subplots(batch_size,7,figsize=(10, batch_size * 2))
     # Example: print batch size
     print(f"list all distinct value in all masks = {masks.view(-1).unique()}")
 
@@ -48,8 +48,32 @@ for i, (images, masks, labels) in tqdm.tqdm(
         ax[idx, 0].set_title(f'image({images[idx].shape})')
         ax[idx, 0].axis('off')
 
-        ax[idx, 1].imshow(masks[idx], cmap = mcolors.ListedColormap(['#440154', 'blue', 'green', 'red', 'yellow', 'orange']))
-        ax[idx, 1].set_title('one-hot-mask')
+        ax[idx, 1].imshow(masks[idx][0])
+        ax[idx, 1].set_title('eyes_mask')
         ax[idx, 1].axis('off')
+
+        ax[idx, 2].imshow(masks[idx][1])
+        ax[idx, 2].set_title('eyebrows_mask')
+        ax[idx, 2].axis('off')
+
+        ax[idx, 3].imshow(masks[idx][2])
+        ax[idx, 3].set_title('nose_mask')
+        ax[idx, 3].axis('off')
+
+        ax[idx, 4].imshow(masks[idx][3])
+        ax[idx, 4].set_title('mouth_mask')
+        ax[idx, 4].axis('off')
+
+        ax[idx, 5].imshow(masks[idx][4])
+        ax[idx, 5].set_title('face_mask')
+        ax[idx, 5].axis('off')
+
+        ax[idx, 6].imshow(masks[idx][5])
+        ax[idx, 6].set_title('background')
+        ax[idx, 6].axis('off')
+        
         #print(masks[0].tolist())
     break
+
+plt.tight_layout()
+    plt.show()
