@@ -40,7 +40,7 @@ for i, (images, masks) in tqdm.tqdm(
     # Example: print batch size
     print(f"list all distinct value in all masks = {masks.view(-1).unique()}")
 
-    for idx in range(test_ds[i]):
+    for idx in range(len(images[i])):
 
         if(len(np.unique(masks[idx][4])) == 1):
             continue
