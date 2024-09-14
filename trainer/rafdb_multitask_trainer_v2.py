@@ -307,7 +307,7 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
       images = (images - self.mean) / self.std
       images = images.to(dtype=torch.float).cuda()
       masks = masks.to(dtype=torch.float).cuda()
-      labels = labels.to(dtype=torch.float).cuda()
+      labels = labels.cuda(non_blocking = True)
 
       # compute output, accuracy and get loss in segmentation task
       seg_output, cls_output = self.model(images)
@@ -387,7 +387,7 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
         images = (images - self.mean) / self.std
         images = images.to(dtype=torch.float).cuda()
         masks = masks.to(dtype=torch.float).cuda()
-        labels = labels.to(dtype=torch.float).cuda()
+        labels = labels.cuda(non_blocking = True)
 
         # compute output, accuracy and get loss segmentation
         seg_output, cls_output = self.model(images)
@@ -463,7 +463,7 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
         images = (images - self.mean) / self.std
         images = images.to(dtype=torch.float).cuda()
         masks = masks.to(dtype=torch.float).cuda()
-        labels = labels.to(dtype=torch.float).cuda()
+        labels = labels.cuda(non_blocking = True)
     
         seg_output, cls_output = self.model(images)
         after_argmax = torch.argmax(masks, dim=1)
