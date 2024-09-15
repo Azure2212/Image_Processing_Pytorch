@@ -54,7 +54,7 @@ model.load_state_dict(state["net"])
 params = smp.encoders.get_preprocessing_params("resnet50")
 std = torch.tensor(params["std"]).view(1, 3, 1, 1)
 mean = torch.tensor(params["mean"]).view(1, 3, 1, 1)
-images, masks = next(iter(test_loader))
+images, masks, labels = next(iter(test_loader))
 with torch.no_grad():
     model = model.float().cuda()
     images = (images - mean) / std
