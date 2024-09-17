@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 import tqdm
 import torch.nn as nn
 import torch.nn.functional as F
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, classification_report
 seed = 113
 random.seed(seed)
 imgaug.seed(seed)
