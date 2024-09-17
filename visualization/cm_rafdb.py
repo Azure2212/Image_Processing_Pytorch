@@ -33,6 +33,7 @@ from sgu24project.models.resnet_cbam_pytorchcv.cbamresnet import cbam_resnet50
 
 from sgu24project.models.resnet_cbam_pytorchcv.cbamresnet_duck import cbam_resnet50_duck
 
+from utils.metrics.metrics import accuracy, make_batch
 
 import argparse
 parser = argparse.ArgumentParser()
