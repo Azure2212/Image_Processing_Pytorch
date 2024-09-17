@@ -40,6 +40,7 @@ configs = json.load(open(config_path))
 CLASSES = ['eyes_mask', 'eyebrows_mask', 'nose_mask', 'mouth_mask', 'face_mask']
 
 test_loader_ttau =  RafDataSet_Mask(data_type = 'test', configs = configs , classes=CLASSES)
+OUT_CLASSES = len(CLASSES) + 1 
 model = Resnet50UnetMultitask_v2(in_channels=3, num_seg_classes=OUT_CLASSES, num_cls_classes=7)
 
 def plot_confusion_matrix(model, testloader,title = "My model"):
