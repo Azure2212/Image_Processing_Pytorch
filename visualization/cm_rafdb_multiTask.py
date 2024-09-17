@@ -2,7 +2,7 @@ import os
 import json
 import random
 import warnings
-
+import segmentation_models_pytorch as smp
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
 import random
@@ -50,6 +50,17 @@ def make_batch(images):
         print(images)
     return torch.stack(images, 0)
 
+params = smp.encoders.get_preprocessing_params("resnet50")
+std = torch.tensor(params["std"]).view(1, 3, 1, 1)
+mean = torch.tensor(params["mean"]).view(1, 3, 1, 1)
+
+transform = transforms.Compose([
+    transforms.Resize((224, 224)),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=mean, std=std)
+])
+
+
 def plot_confusion_matrix(model, testloader,title = "My model"):
     model.cuda()
     model.eval()
@@ -65,6 +76,7 @@ def plot_confusion_matrix(model, testloader,title = "My model"):
     with torch.no_grad():
         for idx in tqdm.tqdm(range(len(testloader)), total=len(testloader), leave=False):
             images, masks, labels = testloader[idx]
+            images = transform(image)
             images = make_batch(images)
             
             images = images.cuda(non_blocking=True)
