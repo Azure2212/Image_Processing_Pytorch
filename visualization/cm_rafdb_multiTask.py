@@ -84,22 +84,22 @@ def plot_confusion_matrix(model, testloader,title = "My model"):
            
             images = make_batch(images)
             images = (images - mean) / std
-            
+
             images = images.cuda(non_blocking=True)
 
-            preds = model(images).cpu()
-            preds = F.softmax(preds, 1)
+            seg_preds, cls_preds = model(images).cpu()
+            cls_preds = F.softmax(cls_preds, 1)
 
-            # preds.shape [tta_size, 7]
-            preds = torch.sum(preds, 0)
-            preds = torch.argmax(preds, 0)
-            preds = preds.item()
+            # cls_preds.shape [tta_size, 7]
+            cls_preds = torch.sum(cls_preds, 0)
+            cls_preds = torch.argmax(cls_preds, 0)
+            cls_preds = cls_preds.item()
             labels = labels.item()
             total += 1
-            correct += preds == labels
+            correct += cls_preds == labels
 
             all_target.append(labels)
-            all_output.append(preds)
+            all_output.append(cls_preds)
 
     
     cf_matrix = confusion_matrix(all_target, all_output)
