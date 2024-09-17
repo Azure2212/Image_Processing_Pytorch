@@ -65,7 +65,6 @@ Std = [0.485, 0.456, 0.406]
 def plot_confusion_matrix(model, testloader,title = "My model"):
     model.cuda()
     model.eval()
-
     correct = 0
     total = 0
     all_target = []
@@ -87,7 +86,7 @@ def plot_confusion_matrix(model, testloader,title = "My model"):
 
             images = images.cuda(non_blocking=True)
 
-            seg_preds, cls_preds = model(images).cpu()
+            seg_preds, cls_preds = model(images)
             cls_preds = F.softmax(cls_preds, 1)
 
             # cls_preds.shape [tta_size, 7]
