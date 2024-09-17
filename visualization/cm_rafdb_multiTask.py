@@ -59,7 +59,8 @@ def plot_confusion_matrix(model, testloader,title = "My model"):
     with torch.no_grad():
         for idx in tqdm.tqdm(range(len(testloader)), total=len(testloader), leave=False):
             images, masks, labels = testloader[idx]
-
+            print(f'images shape: {images.shape}')
+            print(f'masks shape: {masks.shape}')
             images = make_batch(images)
             images = images.cuda(non_blocking=True)
 
