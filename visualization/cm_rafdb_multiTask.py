@@ -22,13 +22,8 @@ np.random.seed(seed)
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
-
-from models.resnet import resnet50, resnet50_vggface2, resnet34
-
 from sgu24project.models.segmentation_models_pytorch.model import Resnet50UnetMultitask_v2 
 from sgu24project.utils.datasets.rafdb_ds_with_mask_v2 import RafDataSet_Mask
-
-
 
 import argparse
 parser = argparse.ArgumentParser()
