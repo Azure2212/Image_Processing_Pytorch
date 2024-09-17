@@ -15,7 +15,7 @@ import numpy as np
 import tqdm
 import torch.nn as nn
 import torch.nn.functional as F
-
+from sklearn.metrics import confusion_matrix
 seed = 113
 random.seed(seed)
 imgaug.seed(seed)
