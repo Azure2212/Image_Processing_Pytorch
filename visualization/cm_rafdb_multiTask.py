@@ -52,9 +52,7 @@ def make_batch(images):
         print(images)
     return torch.stack(images, 0)
 
-params = smp.encoders.get_preprocessing_params("resnet50")
-std = torch.tensor(params["std"]).view(1, 3, 1, 1)
-mean = torch.tensor(params["mean"]).view(1, 3, 1, 1)
+
 
 transform = transforms.Compose([
     transforms.Resize((224, 224)),
@@ -72,14 +70,18 @@ def plot_confusion_matrix(model, testloader,title = "My model"):
     all_target = []
     all_output = []
 
+    params = smp.encoders.get_preprocessing_params("resnet50")
+    std = torch.tensor(params["std"]).view(1, 3, 1, 1)
+    mean = torch.tensor(params["mean"]).view(1, 3, 1, 1)
     # test_set = fer2013("test", configs, tta=True, tta_size=8)
     # test_set = fer2013('test', configs, tta=False, tta_size=0)
 
     with torch.no_grad():
         for idx in tqdm.tqdm(range(len(testloader)), total=len(testloader), leave=False):
             images, masks, labels = testloader[idx]
-            print(images.shape)
-            print(type(images))
+
+            images = torch.from_numpy(images)
+            images = (images - mean) / std
             images = transform(images)
             images = make_batch(images)
             
