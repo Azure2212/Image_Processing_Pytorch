@@ -81,10 +81,9 @@ def plot_confusion_matrix(model, testloader,title = "My model"):
             images, masks, labels = testloader[idx]
             print(images.shape)
             images = torch.from_numpy(images)
-            print(images.shape)
-            images = (images - mean) / std
-            print(images.shape)
+           
             images = make_batch(images)
+            images = (images - mean) / std
             
             images = images.cuda(non_blocking=True)
 
