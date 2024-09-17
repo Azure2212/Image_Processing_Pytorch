@@ -59,7 +59,8 @@ def make_batch(images):
 #     transforms.ToTensor(),
 #     transforms.Normalize(mean=mean, std=std)
 # ])
-
+Mean = [0.229, 0.224, 0.225]
+Std = [0.485, 0.456, 0.406]
 
 def plot_confusion_matrix(model, testloader,title = "My model"):
     model.cuda()
@@ -75,15 +76,13 @@ def plot_confusion_matrix(model, testloader,title = "My model"):
     mean = torch.tensor(params["mean"]).view(1, 3, 1, 1)
     # test_set = fer2013("test", configs, tta=True, tta_size=8)
     # test_set = fer2013('test', configs, tta=False, tta_size=0)
-    print(std)
-    print(mean)
     with torch.no_grad():
         for idx in tqdm.tqdm(range(len(testloader)), total=len(testloader), leave=False):
             images, masks, labels = testloader[idx]
 
             images = torch.from_numpy(images)
             images = (images - mean) / std
-            images = transform(images)
+            
             images = make_batch(images)
             
             images = images.cuda(non_blocking=True)
