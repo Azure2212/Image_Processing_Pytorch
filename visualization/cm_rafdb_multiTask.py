@@ -2,6 +2,8 @@ import os
 import json
 import random
 import warnings
+from PIL import Image
+from torchvision import transforms
 import segmentation_models_pytorch as smp
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
