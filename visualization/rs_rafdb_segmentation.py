@@ -149,47 +149,47 @@ for idx, (image, gt_mask, pr_mask) in enumerate(zip(images, masks, pr_masks)):
 
         plt.subplot(1, 13, 3)
         plt.imshow(pr_mask[0].cpu().numpy().squeeze())
-        plt.title(f"(pt)")
+        plt.title("(pt)")
         plt.axis("off")
 
         plt.subplot(1, 13, 4)
         plt.imshow(gt_mask[1].cpu().numpy().squeeze())
-        plt.title(plt.title(f"{CLASSES[1]}(gt)"))
+        plt.title(f"{CLASSES[1]}(gt)")
         plt.axis("off")
 
         plt.subplot(1, 13, 5)
         plt.imshow(pr_mask[1].cpu().numpy().squeeze())
-        plt.title(f"(pt)")
+        plt.title("(pt)")
         plt.axis("off")
         
         plt.subplot(1, 13, 6)
         plt.imshow(gt_mask[2].cpu().numpy().squeeze())
-        plt.title(plt.title(f"{CLASSES[2]}(gt)"))
+        plt.title(f"{CLASSES[2]}(gt)")
         plt.axis("off")
 
         plt.subplot(1, 13, 7)
         plt.imshow(pr_mask[2].cpu().numpy().squeeze())
-        plt.title(f"(pt)")
+        plt.title("(pt)")
         plt.axis("off")
         
         plt.subplot(1, 13, 8)
         plt.imshow(gt_mask[3].cpu().numpy().squeeze())
-        plt.title(plt.title(f"{CLASSES[3]}(gt)"))
+        plt.title(f"{CLASSES[3]}(gt)")
         plt.axis("off")
 
         plt.subplot(1, 13, 9)
         plt.imshow(pr_mask[3].cpu().numpy().squeeze())
-        plt.title(f"(pt)")
+        plt.title("(pt)")
         plt.axis("off")
         
         plt.subplot(1, 13, 10)
         plt.imshow(gt_mask[4].cpu().numpy().squeeze())
-        plt.title(plt.title(f"{CLASSES[4]}(gt)"))
+        plt.title(f"{CLASSES[4]}(gt)")
         plt.axis("off")
 
         plt.subplot(1, 13, 11)
         plt.imshow(pr_mask[4].cpu().numpy().squeeze())
-        plt.title(f"(pt)")
+        plt.title("(pt)")
         plt.axis("off")
         
         plt.subplot(1, 13, 12)
