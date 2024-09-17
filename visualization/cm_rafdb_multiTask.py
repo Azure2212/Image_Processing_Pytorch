@@ -54,11 +54,11 @@ def make_batch(images):
 
 
 
-transform = transforms.Compose([
-    transforms.Resize((224, 224)),
-    transforms.ToTensor(),
-    transforms.Normalize(mean=mean, std=std)
-])
+# transform = transforms.Compose([
+#     transforms.Resize((224, 224)),
+#     transforms.ToTensor(),
+#     transforms.Normalize(mean=mean, std=std)
+# ])
 
 
 def plot_confusion_matrix(model, testloader,title = "My model"):
@@ -75,7 +75,8 @@ def plot_confusion_matrix(model, testloader,title = "My model"):
     mean = torch.tensor(params["mean"]).view(1, 3, 1, 1)
     # test_set = fer2013("test", configs, tta=True, tta_size=8)
     # test_set = fer2013('test', configs, tta=False, tta_size=0)
-
+    print(std)
+    print(mean)
     with torch.no_grad():
         for idx in tqdm.tqdm(range(len(testloader)), total=len(testloader), leave=False):
             images, masks, labels = testloader[idx]
