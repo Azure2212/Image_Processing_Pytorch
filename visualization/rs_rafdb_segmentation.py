@@ -61,7 +61,7 @@ with torch.no_grad():
     images = images.to(dtype=torch.float).cuda()
     masks = masks.to(dtype=torch.float).cuda()
     model.eval()
-    seg_logits = model(images)
+    seg_logits, cls_logits = model(images)
 
 pr_masks = seg_logits.sigmoid()
 pr_masks = (pr_masks > 0.5).float()
