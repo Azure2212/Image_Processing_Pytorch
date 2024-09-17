@@ -14,6 +14,7 @@ import torch.multiprocessing as mp
 import numpy as np
 import tqdm
 import torch.nn as nn
+import torch.nn.functional as F
 
 seed = 113
 random.seed(seed)
@@ -25,6 +26,7 @@ torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
 from sgu24project.models.segmentation_models_pytorch.model import Resnet50UnetMultitask_v2 
+
 from sgu24project.utils.datasets.rafdb_ds_with_mask_v2 import RafDataSet_Mask
 #from sgu24project.utils.metrics.metrics import accuracy, make_batch
 
