@@ -50,7 +50,6 @@ model = Resnet50UnetMultitask_v2(in_channels=3, num_seg_classes=OUT_CLASSES, num
 
 def make_batch(images):
     if not isinstance(images, list):
-        print(images.shape)
         images = [images]
     return torch.stack(images, 0)
 
@@ -80,7 +79,6 @@ def plot_confusion_matrix(model, testloader,title = "My model"):
     with torch.no_grad():
         for idx in tqdm.tqdm(range(len(testloader)), total=len(testloader), leave=False):
             images, masks, labels = testloader[idx]
-            print(images.shape)
             images = torch.from_numpy(images)
            
             images = make_batch(images)
