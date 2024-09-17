@@ -24,7 +24,7 @@ torch.backends.cudnn.benchmark = False
 
 from sgu24project.models.segmentation_models_pytorch.model import Resnet50UnetMultitask_v2 
 from sgu24project.utils.datasets.rafdb_ds_with_mask_v2 import RafDataSet_Mask
-from sgu24project.utils.metrics.metrics import accuracy, make_batch
+#from sgu24project.utils.metrics.metrics import accuracy, make_batch
 
 import argparse
 parser = argparse.ArgumentParser()
@@ -44,6 +44,11 @@ test_loader_ttau =  RafDataSet_Mask(data_type = 'test', configs = configs , clas
 OUT_CLASSES = len(CLASSES) + 1 
 model = Resnet50UnetMultitask_v2(in_channels=3, num_seg_classes=OUT_CLASSES, num_cls_classes=7)
 
+def make_batch(images):
+    if not isinstance(images, list):
+        images = [images]
+    return torch.stack(images, 0)
+
 def plot_confusion_matrix(model, testloader,title = "My model"):
     model.cuda()
     model.eval()
@@ -60,6 +65,7 @@ def plot_confusion_matrix(model, testloader,title = "My model"):
         for idx in tqdm.tqdm(range(len(testloader)), total=len(testloader), leave=False):
             images, masks, labels = testloader[idx]
             images = make_batch(images)
+            
             images = images.cuda(non_blocking=True)
 
             preds = model(images).cpu()
