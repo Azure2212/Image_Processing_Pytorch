@@ -60,6 +60,7 @@ configs["num_classes"] = args.num_classes
 configs["num_seg_classes"]= args.num_seg_classes
 configs["current_epoch_num"] = args.current_epoch_num
 configs["name_run_wandb"] = args.name_run_wandb
+configs["csv_file"] = args.csv_file
 if args.load_state_dir != '':
     configs["load_state_dir"] = args.load_state_dir
 if args.epoch_num != 1:
