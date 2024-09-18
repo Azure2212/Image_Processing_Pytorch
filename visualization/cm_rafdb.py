@@ -39,8 +39,6 @@ from utils.metrics.metrics import accuracy, make_batch
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--rs-dir', default= "ResnetDuck_Cbam_cuaTuan", type=str, help='rs dir in kaggle')
-parser.add_argument('--model-name', default= "resnet50", type=str, help='model2load')
-parser.add_argument('--optimizer-chose', default= "RAdam", type=str, help='optimizer you chose')
 parser.add_argument('--lr-scheduler', default= "ReduceLROnPlateau", type=str, help='learning rate scheduler you chose')
 
 args, unknown = parser.parse_known_args()
@@ -51,8 +49,6 @@ config_path = root_path+"/configs/config_rafdb.json"  # Adjust the path as neede
 
 configs = json.load(open(config_path))
 
-configs["optimizer_chose"] = args.optimizer_chose
-configs["lr_scheduler"] = args.lr_scheduler
 
 
 test_loader_ttau = RafDataSet("test", configs, ttau = True, len_tta = 10) 
