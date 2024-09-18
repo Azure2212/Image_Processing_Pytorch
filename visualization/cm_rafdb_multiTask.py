@@ -90,8 +90,8 @@ def plot_confusion_matrix(model, testloader,title = "My model"):
             images = torch.from_numpy(images)
 
             images = (images - mean) / std
-            images.to(dtype=torch.float).cuda()
-            #images = images.cuda(non_blocking=True)
+            #images.to(dtype=torch.float).cuda()
+            images = images.cuda(non_blocking=True)
 
             seg_preds, cls_preds = model(images)
             cls_preds = F.softmax(cls_preds, 1)
