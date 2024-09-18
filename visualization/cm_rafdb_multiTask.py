@@ -51,10 +51,9 @@ test_loader_ttau =  RafDataSet_Mask(data_type = 'test', configs = configs , clas
 OUT_CLASSES = len(CLASSES) + 1 
 model = Resnet50UnetMultitask_v2(in_channels=3, num_seg_classes=OUT_CLASSES, num_cls_classes=7)
 
-def make_batch(images):
-    if not isinstance(images, list):
-        images = [images]
-    return torch.stack(images, 0)
+state = torch.load("/kaggle/working/ResnetDuck_Cbam_cuaTuan")
+model.load_state_dict(state["net"])
+
 
 
 Mean = [0.229, 0.224, 0.225]
