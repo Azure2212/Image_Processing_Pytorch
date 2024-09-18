@@ -30,8 +30,9 @@ from trainer.rafdb_trainer import RAFDB_Trainer
 
 from sgu24project.models.resnet_cbam_pytorchcv.cbamresnet import cbam_resnet50
 
-
 from sgu24project.models.resnet_cbam_pytorchcv.cbamresnet_duck import cbam_resnet50_duck
+
+from sgu24project.models.segmentation_models_pytorch.model import Resnet50_in_smp
 
 from utils.metrics.metrics import accuracy, make_batch
 
@@ -67,6 +68,8 @@ elif args.model_name == 'resnet50_vggface2':
 elif args.model_name == 'resnet50_imagenet':
     print('resnet50 with pre-train on imagenet was chose !')
     model = resnet50()
+elif args.model_name == 'Resnet50_in_smp':
+    model = Resnet50_in_smp(in_channels=3, num_seg_classes=6, num_cls_classes=7)
 else:
     print('because of missing model chosen, resnet in pytorch library activated !')
     model = resnet50(pretrained = True if args.use_pretrained == 1 else False)
