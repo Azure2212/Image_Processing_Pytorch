@@ -85,6 +85,7 @@ elif args.model_name == 'resnet_in_unet':
     model = Resnet50InUnet()
 elif args.model_name == 'Resnet50_in_smp':
     model = Resnet50_in_smp(in_channels=3, num_seg_classes=6, num_cls_classes=7)
+    print('Resnet50_in_smp activated')
 else:
     print('because of missing model chosen, resnet in pytorch library activated !')
     model = resnet50(pretrained = True if args.use_pretrained == 1 else False)
