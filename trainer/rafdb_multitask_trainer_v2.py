@@ -527,8 +527,8 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
           break
 
       #save csv
-      rows = [[i, self.train_loss_list[i][0], self.train_loss_list[i][1], self.train_pixel_acc_list[i][0], self.train_pixel_acc_list[i][1], self.train_dice_list[i], self.train_iou_list[i] 
-            ,self.val_loss_list[i][0], self.val_loss_list[i][1], self.val_pixel_acc_list[i][0], self.val_pixel_acc_list[i][1], self.val_dice_list[i], self.val_iou_list[i]]
+      rows = [[i, self.train_loss_list[0][i], self.train_loss_list[1][i], self.train_pixel_acc_list[0][i], self.train_pixel_acc_list[1][i], self.train_dice_list[i], self.train_iou_list[i] 
+            ,self.val_loss_list[0][i], self.val_loss_list[1][i], self.val_pixel_acc_list[0][i], self.val_pixel_acc_list[1][i], self.val_dice_list[i], self.val_iou_list[i]]
       for i in range(len(self.train_loss_list[0]))]
 
       # Write data to CSV
