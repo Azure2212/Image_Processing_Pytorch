@@ -87,7 +87,7 @@ def plot_confusion_matrix(model, testloader,title = "My model"):
             images = np.expand_dims(images, axis=0)  # Shape becomes (1, 3, 224, 224)
 
             # Convert to a PyTorch tensor
-            images_tensor = torch.from_numpy(images)
+            images = torch.from_numpy(images)
 
             images = (images - mean) / std
             images.to(dtype=torch.float).cuda()
