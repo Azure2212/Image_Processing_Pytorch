@@ -9,6 +9,7 @@ import random
 import imgaug
 import torch
 import torch.multiprocessing as mp
+import torch.nn.functional as F
 import numpy as np
 import tqdm
 import torch.nn as nn
