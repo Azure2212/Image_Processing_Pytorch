@@ -43,6 +43,7 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
 
     self.configs = configs
 
+    self.csv_file = configs["csv_file"]
     self.batch_size = configs["batch_size"]
     self.debug = configs["debug"]
     # self.epochs = configs["epochs"]
@@ -525,6 +526,22 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
         if self.isDebug == 1:
           break
 
+      #save csv
+      rows = [[i, self.train_loss_list[i][0], self.train_loss_list[i][1], self.train_pixel_acc_list[i][0], self.train_pixel_acc_list[i][1], self.train_dice_list[i], self.train_iou_list[i] 
+            ,self.val_loss_list[i][0], self.val_loss_list[i][1], self.val_pixel_acc_list[i][0], self.val_pixel_acc_list[i][1], self.val_dice_list[i], self.val_iou_list[i]]
+      for i in range(len(accuracy))]
+
+      # Write data to CSV
+      with open(self.csv_file, mode='w', newline='') as file:
+          writer = csv.writer(file)
+          
+          # Write header
+          writer.writerow(['serial', 'accuracy', 'loss'])
+          
+          # Write rows
+          writer.writerows(rows)
+
+      print(f'Data successfully written to {file_path}')
     except KeyboardInterrupt:
       traceback.print_exc()
       pass

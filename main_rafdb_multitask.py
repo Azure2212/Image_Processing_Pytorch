@@ -34,6 +34,7 @@ parser.add_argument('--model-name', default= "resnet50", type=str, help='model2T
 parser.add_argument('--optimizer-chose', default= "RAdam", type=str, help='optimizer you chose')
 parser.add_argument('--lr-scheduler', default= "ReduceLROnPlateau", type=str, help='learning rate scheduler you chose')
 parser.add_argument('--lr-value', default= 1e-3, type=float, help='learning rate initial')
+parser.add_argument('--csv-file', default= "/kaggle/working/result.csv", type=str, help='csv_file')
 parser.add_argument('--use-wandb', default= 1, type=int, help='use wandb = 1, not use = 0')
 parser.add_argument('--load-state-dir', default= '', type=str, help='weight2load')
 parser.add_argument('--isDebug', default= 0, type=int, help='debug = 1')
