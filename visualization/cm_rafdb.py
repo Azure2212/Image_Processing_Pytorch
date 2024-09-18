@@ -15,6 +15,7 @@ import numpy as np
 import tqdm
 import pandas as pd
 import torch.nn as nn
+import matplotlib.pyplot as plt
 
 seed = 113
 random.seed(seed)
