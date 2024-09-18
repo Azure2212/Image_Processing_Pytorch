@@ -59,10 +59,10 @@ def make_batch(images):
 
 Mean = [0.229, 0.224, 0.225]
 Std = [0.485, 0.456, 0.406]
-transform = transforms.Compose([
-    transforms.ToTensor(),
-    transforms.Normalize(mean=mean, std=std)
-])
+# transform = transforms.Compose([
+#     transforms.ToTensor(),
+#     transforms.Normalize(mean=mean, std=std)
+# ])
 
 def plot_confusion_matrix(model, testloader,title = "My model"):
     model.cuda()
