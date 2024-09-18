@@ -537,7 +537,7 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
           writer = csv.writer(file)
           
           # Write header
-          writer.writerow(['serial', 'train_seg_loss', 'train_cls_loss', 'train_seg_pixel_acc', 'train_cls_acc', 'train_dice', 'train_iou'
+          writer.writerow(['epoch', 'train_seg_loss', 'train_cls_loss', 'train_seg_pixel_acc', 'train_cls_acc', 'train_dice', 'train_iou'
                           , 'val_seg_loss', 'val_cls_loss', 'val_seg_pixel_acc', 'val_cls_acc', 'val_dice', 'val_iou'])
           
           # Write rows
