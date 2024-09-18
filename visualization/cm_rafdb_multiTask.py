@@ -77,15 +77,20 @@ def plot_confusion_matrix(model, testloader,title = "My model"):
     mean = torch.tensor(params["mean"]).view(1, 3, 1, 1)
     # test_set = fer2013("test", configs, tta=True, tta_size=8)
     # test_set = fer2013('test', configs, tta=False, tta_size=0)
+    print(len(testloader))
     with torch.no_grad():
         for idx in tqdm.tqdm(range(len(testloader)), total=len(testloader), leave=False):
             images, masks, labels = testloader[idx]
-            images = torch.from_numpy(images)
-           
-            images = make_batch(images)
+            
+            #images = make_batch(images)
+
+            images = np.expand_dims(images, axis=0)  # Shape becomes (1, 3, 224, 224)
+
+            # Convert to a PyTorch tensor
+            images_tensor = torch.from_numpy(images)
+
             images = (images - mean) / std
             images.to(dtype=torch.float).cuda()
-
             #images = images.cuda(non_blocking=True)
 
             seg_preds, cls_preds = model(images)
