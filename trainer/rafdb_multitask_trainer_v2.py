@@ -326,10 +326,10 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
 
       train_loss[0] += seg_loss.item()
       train_loss[1] += cls_loss.item()
-      train_dice += dice_score
-      train_iou += iou_score
-      train_pixel_acc[0] += pixel_acc * 100
-      train_pixel_acc[1] += cls_acc
+      train_dice += dice_score.item()
+      train_iou += iou_score.item()
+      train_pixel_acc[0] += pixel_acc.item() * 100
+      train_pixel_acc[1] += cls_acc.item()
 
       loss = (seg_loss + cls_loss) / 2
       # compute gradient and do SGD step
@@ -409,10 +409,10 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
 
         val_loss[0] += seg_loss.item()
         val_loss[1] += cls_loss.item()
-        val_dice += dice_score
-        val_iou += iou_score
-        val_pixel_acc[0] += pixel_acc * 100
-        val_pixel_acc[1] += cls_acc
+        val_dice += dice_score.item()
+        val_iou += iou_score.item()
+        val_pixel_acc[0] += pixel_acc.item() * 100
+        val_pixel_acc[1] += cls_acc.item()
 
         if self.isDebug == 1: 
           break
@@ -481,10 +481,10 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
  
         test_loss[0] += seg_loss.item()
         test_loss[1] += cls_loss.item()
-        test_dice += dice_score
-        test_iou += iou_score
-        test_pixel_acc[0] += pixel_acc * 100
-        test_pixel_acc[1] += cls_acc
+        test_dice += dice_score.item()
+        test_iou += iou_score.item()
+        test_pixel_acc[0] += pixel_acc.item() * 100
+        test_pixel_acc[1] += cls_acc.item()
 
         if self.isDebug == 1: 
           break
