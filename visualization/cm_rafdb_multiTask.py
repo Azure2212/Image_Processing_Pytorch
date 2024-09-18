@@ -57,14 +57,12 @@ def make_batch(images):
     return torch.stack(images, 0)
 
 
-
-# transform = transforms.Compose([
-#     transforms.Resize((224, 224)),
-#     transforms.ToTensor(),
-#     transforms.Normalize(mean=mean, std=std)
-# ])
 Mean = [0.229, 0.224, 0.225]
 Std = [0.485, 0.456, 0.406]
+transform = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize(mean=mean, std=std)
+])
 
 def plot_confusion_matrix(model, testloader,title = "My model"):
     model.cuda()
@@ -86,8 +84,9 @@ def plot_confusion_matrix(model, testloader,title = "My model"):
            
             images = make_batch(images)
             images = (images - mean) / std
+            images.to(dtype=torch.float).cuda()
 
-            images = images.cuda(non_blocking=True)
+            #images = images.cuda(non_blocking=True)
 
             seg_preds, cls_preds = model(images)
             cls_preds = F.softmax(cls_preds, 1)
