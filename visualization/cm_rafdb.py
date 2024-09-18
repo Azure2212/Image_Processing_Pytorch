@@ -34,7 +34,7 @@ from sgu24project.models.resnet_cbam_pytorchcv.cbamresnet_duck import cbam_resne
 
 from sgu24project.models.segmentation_models_pytorch.model import Resnet50_in_smp
 
-from utils.metrics.metrics import accuracy, make_batch
+from sgu24project.utils.metrics.metrics import accuracy, make_batch
 
 import argparse
 parser = argparse.ArgumentParser()
