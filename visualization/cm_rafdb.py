@@ -38,6 +38,7 @@ from sgu24project.utils.metrics.metrics import accuracy, make_batch
 
 import argparse
 parser = argparse.ArgumentParser()
+parser.add_argument('--model-name', default= "resnet50", type=str, help='model2Train')
 parser.add_argument('--rs-dir', default= "ResnetDuck_Cbam_cuaTuan", type=str, help='rs dir in kaggle')
 parser.add_argument('--lr-scheduler', default= "ReduceLROnPlateau", type=str, help='learning rate scheduler you chose')
 
