@@ -99,6 +99,7 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
     self.best_val_dice = 0.0
     self.best_val_iou = 0.0
 
+    self.lr_list = []
 
     self.test_acc = 0.0
     self.test_acc_ttau = 0.0
@@ -519,6 +520,7 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
         self.optimizer.load_state_dict(my_checkpoint_path['optimizer'])
         print("loaded old weight successful")
       while not self.stop_train():
+        self.lr_list.append(self.optimizer.param_groups[0]['lr'])
         self.update_epoch_num()
         self.step_per_train()
         self.step_per_val()
@@ -529,7 +531,7 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
 
       #save csv
       rows = [[i, round(self.train_loss_list[0][i],3), round(self.train_loss_list[1][i],3), round(self.train_pixel_acc_list[0][i],3), round(self.train_pixel_acc_list[1][i],3), round(self.train_dice_list[i],3), round(self.train_iou_list[i],3) 
-            , round(self.val_loss_list[0][i],3), round(self.val_loss_list[1][i],3), round(self.val_pixel_acc_list[0][i],3), round(self.val_pixel_acc_list[1][i],3), round(self.val_dice_list[i],3), round(self.val_iou_list[i],3)]
+            , round(self.val_loss_list[0][i],3), round(self.val_loss_list[1][i],3), round(self.val_pixel_acc_list[0][i],3), round(self.val_pixel_acc_list[1][i],3), round(self.val_dice_list[i],3), round(self.val_iou_list[i],3), round(self.lr_list[i],7)]
       for i in range(len(self.train_loss_list[0]))]
 
       # Write data to CSV
@@ -538,7 +540,7 @@ class RAFDB_Multitask_Trainer_v2(Trainer):
           
           # Write header
           writer.writerow(['epoch', 'train_seg_loss', 'train_cls_loss', 'train_seg_pixel_acc', 'train_cls_acc', 'train_dice', 'train_iou'
-                          , 'val_seg_loss', 'val_cls_loss', 'val_seg_pixel_acc', 'val_cls_acc', 'val_dice', 'val_iou'])
+                          , 'val_seg_loss', 'val_cls_loss', 'val_seg_pixel_acc', 'val_cls_acc', 'val_dice', 'val_iou', 'lr_value'])
           
           # Write rows
           writer.writerows(rows)
