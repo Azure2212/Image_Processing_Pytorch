@@ -45,3 +45,7 @@ class Resnet50_in_smp(smp.Unet):
         
         #seg_output = torch.randn(42, 6, 224, 224)
         return cls_output
+
+
+
+        

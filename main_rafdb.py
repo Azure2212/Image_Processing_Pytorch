@@ -23,7 +23,7 @@ torch.backends.cudnn.benchmark = False
 
 from utils.datasets.rafdb_ds import RafDataSet
 
-from models.resnet import resnet50, resnet50_vggface2, resnet34
+from models.resnet import resnet50, resnet50_vggface2, resnet50_vggface2_ft
 
 from trainer.rafdb_trainer import RAFDB_Trainer
 
@@ -74,8 +74,11 @@ if args.model_name == 'resnet50_cbam_duck_pytorchcv':
     model = cbam_resnet50_duck()
     model.output = nn.Linear(2048, 7)
 elif args.model_name == 'resnet50_vggface2':
-    print('resnet50 with pre-train on vggface2 was chose !')
+    print('resnet50 with pre-train on vggface2(trained from cratch) was chose !')
     model = resnet50_vggface2()
+elif args.model_name == 'resnet50_vggface2_ft':
+    print('resnet50 with pre-train on vggface2(trained on MS1M, and then fine-tuned on VGGFace2) was chose !')
+    model = resnet50_vggface2_ft()
 elif args.model_name == 'resnet50_imagenet':
     print('resnet50 with pre-train on imagenet was chose !')
     model = resnet50()

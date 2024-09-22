@@ -32,7 +32,8 @@ model_urls = {
     "wide_resnet50_2": "https://download.pytorch.org/models/wide_resnet50_2-95faca4d.pth",
     "wide_resnet101_2": "https://download.pytorch.org/models/wide_resnet101_2-32ee1156.pth",
     #"vggface2": "https://onedrive.live.com/download?cid=D07B627FBE5CFFFA&resid=D07B627FBE5CFFFA%21587&authkey=APXT_JMvytW7cgk",
-    "vggface2": "/kaggle/input/resnet50-vggface2-weight/resnet50_vggface2_weight.pkl",
+    "vggface2": "/kaggle/input/resnet50-vggface2-weight/resnet50_scratch_weight.pkl",
+    "vggface2_ft": "/kaggle/input/resnet50-vggface2-weight/resnet50_ft_weight.pkl",
 }
 
 def conv3x3(in_planes, out_planes, stride=1, groups=1, dilation=1):
@@ -366,6 +367,19 @@ def resnet50_vggface2(pretrained=True, progress=True,out_classes = 7, **kwargs):
     """
     model = _resnet(
         "vggface2", Bottleneck, [3, 4, 6, 3], pretrained, progress,num_classes=8631, **kwargs
+    )
+    model.fc = nn.Linear(2048, out_classes)
+    return model
+
+def resnet50_vggface2_ft(pretrained=True, progress=True,out_classes = 7, **kwargs):
+    r"""ResNet-50 model from
+    `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
+    Args:
+        pretrained (bool): If True, returns a model pre-trained on ImageNet
+        progress (bool): If True, displays a progress bar of the download to stderr
+    """
+    model = _resnet(
+        "vggface2_ft", Bottleneck, [3, 4, 6, 3], pretrained, progress,num_classes=8631, **kwargs
     )
     model.fc = nn.Linear(2048, out_classes)
     return model
