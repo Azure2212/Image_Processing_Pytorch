@@ -193,17 +193,10 @@ class ResNet(nn.Module):
 
 def _resnet(arch, block, layers, pretrained, progress, **kwargs):
     model = ResNet(block, layers, **kwargs)
-    # if pretrained:
-    #     if arch == 'vggface2':
-    #         print("pre-trained on vggface2 is activated!")
-    #         with open(model_urls[arch], 'rb') as f:
-    #             state_dict_np = pickle.load(f)
-    #         state_dict = {k: torch.from_numpy(v) for k, v in state_dict_np.items()}
-    #         model.load_state_dict(state_dict, strict=False)
-            
-    #     else:
-    #         print("pre-trained on imagenet is activated!")
-    state_dict = load_state_dict_from_url(model_urls[arch], progress=progress)
+    if 'vggface2' in arch:
+        state_dict = torch.load(arch)
+    else:
+        state_dict = load_state_dict_from_url(model_urls[arch], progress=progress)
     model.load_state_dict(state_dict)
     return model
 
