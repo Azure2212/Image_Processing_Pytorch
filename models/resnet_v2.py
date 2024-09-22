@@ -197,6 +197,7 @@ def _resnet(arch, block, layers, pretrained, progress, **kwargs):
         state_dict = torch.load(model_urls[arch])
     else:
         state_dict = load_state_dict_from_url(model_urls[arch], progress=progress)
+    print(f'load weight in {model_urls[arch]}')
     model.load_state_dict(state_dict)
     return model
 
