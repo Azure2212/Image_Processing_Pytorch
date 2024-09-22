@@ -504,7 +504,7 @@ class RAFDB_Trainer(Trainer):
       self.best_val_loss = self.val_loss_list[-1]
       self.best_train_acc = self.train_acc_list[-1]
       self.best_train_loss = self.train_loss_list[-1]
-      print(f'Weight was updated because val_iou_score get highest(={self.val_acc_list[-1]})')
+      print(f'Weight was updated because val_accuracy get highest(={self.val_acc_list[-1]})')
     else:
       self.plateau_count += 1
 # 100 - self.best_val_acc
