@@ -195,8 +195,10 @@ def _resnet(arch, block, layers, pretrained, progress, **kwargs):
     model = ResNet(block, layers, **kwargs)
     print(f'load weight in {model_urls[arch]}')
     if 'vggface2' in arch:
-        with open('/kaggle/input/resnet50-vggface2-weight/resnet50_ft_weight.pkl', 'rb') as f:
+        with open(model_urls[arch], 'rb') as f:
             state_dict = pickle.load(f)
+
+        state_dict[key] = torch.from_numpy(state_dict[key])
     else:
         state_dict = load_state_dict_from_url(model_urls[arch], progress=progress)
     model.load_state_dict(state_dict)
