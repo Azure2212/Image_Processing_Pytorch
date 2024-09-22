@@ -32,8 +32,6 @@ from sgu24project.models.resnet_cbam_pytorchcv.cbamresnet import cbam_resnet50
 
 from sgu24project.models.resnet_cbam_pytorchcv.cbamresnet_duck import cbam_resnet50_duck
 
-from sgu24project.models.segmentation_models_pytorch.model import Resnet50_in_smp
-
 #from sgu24project.models.resnet_cbam_v5 import resnet50_co_cbam
 import argparse 
 parser = argparse.ArgumentParser()
@@ -87,6 +85,7 @@ elif args.model_name == 'resnet_in_unet':
     print('resnet50 in unet')
     model = Resnet50InUnet()
 elif args.model_name == 'Resnet50_in_smp':
+    from sgu24project.models.segmentation_models_pytorch.model import Resnet50_in_smp
     model = Resnet50_in_smp(in_channels=3, num_seg_classes=6, num_cls_classes=7)
     print('Resnet50_in_smp activated')
 else:
