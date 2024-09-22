@@ -23,7 +23,7 @@ torch.backends.cudnn.benchmark = False
 
 from utils.datasets.rafdb_ds import RafDataSet
 
-from models.resnet import resnet50, resnet50_vggface2, resnet50_vggface2_ft
+from models.resnet_v2 import resnet50, resnet50_vggface2, resnet50_vggface2_ft
 
 from trainer.rafdb_trainer import RAFDB_Trainer
 
