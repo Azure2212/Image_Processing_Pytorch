@@ -804,8 +804,10 @@ def load_model(net,
         #now_state_dict = net.state_dict()
         #filtered_pretrained_state_dict = {k: v for k, v in pretrained_state_dict.items() if k in now_state_dict}
         # Load the filtered state dict into the model
-
-        pretrained_state_dict = pickle.load('/kaggle/input/resnet50-vggface2-weight/resnet50_ft_weight.pkl')
+        resnet50_vggface2_weight = '/kaggle/input/resnet50-vggface2-weight/resnet50_ft_weight.pkl'
+        with open(resnet50_vggface2_weight, 'rb') as f:
+            state_dict = pickle.load(f)
+            
         now_state_dict = net.state_dict()
         filtered_pretrained_state_dict = {k: v for k, v in pretrained_state_dict.items() if k in now_state_dict}
         net.load_state_dict(filtered_pretrained_state_dict, strict=False)
