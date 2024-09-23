@@ -72,7 +72,7 @@ if args.model_name == 'resnet50_cbam_duck_pytorchcv':
     model = cbam_resnet50_duck()
     model.output = nn.Linear(2048, 7)
 elif args.model_name == 'resnet50_pytorchcv':
-    model = cbam_resnet50(num_classes = 7)
+    model = cbam_resnet50()
     last_layer = model.fc  # Typically, the last layer is called `fc` in ResNet
     print(last_layer)
 elif args.model_name == 'resnet50_vggface2':
