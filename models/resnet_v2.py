@@ -294,60 +294,7 @@ class CbamBlock(nn.Module):
         x = self.ch_gate(x)
         x = self.sp_gate(x)
         return x
-
-
-    """
-    CBAM-ResNet unit.
-
-    Parameters
-    ----------
-    in_channels : int
-        Number of input channels.
-    out_channels : int
-        Number of output channels.
-    stride : int or tuple(int, int)
-        Strides of the convolution.
-    bottleneck : bool
-        Whether to use a bottleneck or simple block in units.
-    """
-    def __init__(self,
-                 in_channels: int,
-                 out_channels: int,
-                 stride: int | tuple[int, int],
-                 bottleneck: bool):
-        super(CbamResUnit, self).__init__()
-        self.resize_identity = (in_channels != out_channels) or (stride != 1)
-
-        if bottleneck:
-            self.body = ResBottleneck(
-                in_channels=in_channels,
-                out_channels=out_channels,
-                stride=stride,
-                conv1_stride=False)
-        else:
-            self.body = ResBlock(
-                in_channels=in_channels,
-                out_channels=out_channels,
-                stride=stride)
-        if self.resize_identity:
-            self.identity_conv = conv1x1_block(
-                in_channels=in_channels,
-                out_channels=out_channels,
-                stride=stride,
-                activation=None)
-        self.cbam = CbamBlock(channels=out_channels)
-        self.activ = nn.ReLU(inplace=True)
-
-    def forward(self, x):
-        if self.resize_identity:
-            identity = self.identity_conv(x)
-        else:
-            identity = x
-        x = self.body(x)
-        x = self.cbam(x)
-        x = x + identity
-        x = self.activ(x)
-        return x
+   
 
 class BasicBlock(nn.Module):
     expansion = 1
@@ -402,7 +349,7 @@ class Bottleneck(nn.Module):
         out_channels = planes * 4
         if self.use_cbam == True:
             print(out_channels)
-            self.CbamBlock = CbamBlock(out_channels)
+            self.CbamBlock = CbamBlock(channels = out_channels)
 
         if self.use_duck == True:
             self.sigmoid = nn.Sigmoid()
