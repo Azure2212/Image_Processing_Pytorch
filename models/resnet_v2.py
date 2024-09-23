@@ -55,6 +55,183 @@ def conv1x1(in_planes, out_planes, stride=1):
     """1x1 convolution"""
     return nn.Conv2d(in_planes, out_planes, kernel_size=1, stride=stride, bias=False)
 
+#### CBAM BLOCK
+import os
+import torch
+import torch.nn as nn
+from .resnet_cbam_pytorchcv.common import conv1x1_block, conv7x7_block, calc_net_weights
+from .resnet_cbam_pytorchcv.resnet import ResInitBlock, ResBlock, ResBottleneck
+
+
+class MLP(nn.Module):
+    """
+    Multilayer perceptron block.
+
+    Parameters
+    ----------
+    channels : int
+        Number of input/output channels.
+    reduction_ratio : int, default 16
+        Channel reduction ratio.
+    """
+    def __init__(self,
+                 channels: int,
+                 reduction_ratio: int = 16):
+        super(MLP, self).__init__()
+        mid_channels = channels // reduction_ratio
+
+        self.fc1 = nn.Linear(
+            in_features=channels,
+            out_features=mid_channels)
+        self.activ = nn.ReLU(inplace=True)
+        self.fc2 = nn.Linear(
+            in_features=mid_channels,
+            out_features=channels)
+
+    def forward(self, x):
+        x = x.view(x.size(0), -1)
+        x = self.fc1(x)
+        x = self.activ(x)
+        x = self.fc2(x)
+        return x
+
+
+class ChannelGate(nn.Module):
+    """
+    CBAM channel gate block.
+
+    Parameters
+    ----------
+    channels : int
+        Number of input/output channels.
+    reduction_ratio : int, default 16
+        Channel reduction ratio.
+    """
+    def __init__(self,
+                 channels: int,
+                 reduction_ratio: int = 16):
+        super(ChannelGate, self).__init__()
+
+        self.avg_pool = nn.AdaptiveAvgPool2d(output_size=(1, 1))
+        self.max_pool = nn.AdaptiveMaxPool2d(output_size=(1, 1))
+        self.mlp = MLP(
+            channels=channels,
+            reduction_ratio=reduction_ratio)
+        self.sigmoid = nn.Sigmoid()
+
+    def forward(self, x):
+        att1 = self.avg_pool(x)
+        att1 = self.mlp(att1)
+        att2 = self.max_pool(x)
+        att2 = self.mlp(att2)
+        att = att1 + att2
+        att = self.sigmoid(att)
+        att = att.unsqueeze(2).unsqueeze(3).expand_as(x)
+        x = x * att
+        return x
+
+
+class SpatialGate(nn.Module):
+    """
+    CBAM spatial gate block.
+    """
+    def __init__(self):
+        super(SpatialGate, self).__init__()
+        self.conv = conv7x7_block(
+            in_channels=2,
+            out_channels=1,
+            activation=None)
+        self.sigmoid = nn.Sigmoid()
+
+    def forward(self, x):
+        att1 = x.max(dim=1)[0].unsqueeze(1)
+        att2 = x.mean(dim=1).unsqueeze(1)
+        att = torch.cat((att1, att2), dim=1)
+        att = self.conv(att)
+        att = self.sigmoid(att)
+        x = x * att
+        return x
+
+
+class CbamBlock(nn.Module):
+    """
+    CBAM attention block for CBAM-ResNet.
+
+    Parameters
+    ----------
+    channels : int
+        Number of input/output channels.
+    reduction_ratio : int, default 16
+        Channel reduction ratio.
+    """
+    def __init__(self,
+                 channels: int,
+                 reduction_ratio: int = 16):
+        super(CbamBlock, self).__init__()
+        self.ch_gate = ChannelGate(
+            channels=channels,
+            reduction_ratio=reduction_ratio)
+        self.sp_gate = SpatialGate()
+
+    def forward(self, x):
+        x = self.ch_gate(x)
+        x = self.sp_gate(x)
+        return x
+
+
+class CbamResUnit(nn.Module):
+    """
+    CBAM-ResNet unit.
+
+    Parameters
+    ----------
+    in_channels : int
+        Number of input channels.
+    out_channels : int
+        Number of output channels.
+    stride : int or tuple(int, int)
+        Strides of the convolution.
+    bottleneck : bool
+        Whether to use a bottleneck or simple block in units.
+    """
+    def __init__(self,
+                 in_channels: int,
+                 out_channels: int,
+                 stride: int | tuple[int, int],
+                 bottleneck: bool):
+        super(CbamResUnit, self).__init__()
+        self.resize_identity = (in_channels != out_channels) or (stride != 1)
+
+        if bottleneck:
+            self.body = ResBottleneck(
+                in_channels=in_channels,
+                out_channels=out_channels,
+                stride=stride,
+                conv1_stride=False)
+        else:
+            self.body = ResBlock(
+                in_channels=in_channels,
+                out_channels=out_channels,
+                stride=stride)
+        if self.resize_identity:
+            self.identity_conv = conv1x1_block(
+                in_channels=in_channels,
+                out_channels=out_channels,
+                stride=stride,
+                activation=None)
+        self.cbam = CbamBlock(channels=out_channels)
+        self.activ = nn.ReLU(inplace=True)
+
+    def forward(self, x):
+        if self.resize_identity:
+            identity = self.identity_conv(x)
+        else:
+            identity = x
+        x = self.body(x)
+        x = self.cbam(x)
+        x = x + identity
+        x = self.activ(x)
+        return x
 
 class BasicBlock(nn.Module):
     expansion = 1
