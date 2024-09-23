@@ -416,6 +416,8 @@ class Bottleneck(nn.Module):
         if self.use_duck:
             #out = self.wides(out)
             #out = self.mids(out)
+            print(out.shape)
+            print(self.sep.shape)
             out = self.sep(out)
 
         out += residual
