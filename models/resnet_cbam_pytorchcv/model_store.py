@@ -8,6 +8,7 @@ import os
 import zipfile
 import logging
 import hashlib
+import pickle
 
 _model_sha1 = {name: (error, checksum, repo_release_tag, caption, paper, ds, img_size, scale, batch, rem) for
                name, error, checksum, repo_release_tag, caption, paper, ds, img_size, scale, batch, rem in [
@@ -804,7 +805,7 @@ def load_model(net,
         #filtered_pretrained_state_dict = {k: v for k, v in pretrained_state_dict.items() if k in now_state_dict}
         # Load the filtered state dict into the model
 
-        pretrained_state_dict = torch.load('/kaggle/input/resnet50-vggface2-weight/resnet50_ft_weight.pkl')
+        pretrained_state_dict = pickle.load('/kaggle/input/resnet50-vggface2-weight/resnet50_ft_weight.pkl')
         now_state_dict = net.state_dict()
         filtered_pretrained_state_dict = {k: v for k, v in pretrained_state_dict.items() if k in now_state_dict}
         net.load_state_dict(filtered_pretrained_state_dict, strict=False)
