@@ -416,7 +416,7 @@ class Bottleneck(nn.Module):
         if self.use_duck:
             tensor_copy = out.clone()
 
-            out = self.sep(tensor_copy)
+            #out = self.sep(tensor_copy)
 
         out += residual
         out = self.relu(out)
