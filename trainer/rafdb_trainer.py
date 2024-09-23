@@ -291,7 +291,7 @@ class RAFDB_Trainer(Trainer):
     self.model.train()
     train_loss = 0.0
     train_acc = 0.0
-    torch.autograd.set_detect_anomaly(True)
+
     for i, (images, labels) in tqdm.tqdm(
         enumerate(self.train_ds), total = len(self.train_ds), leave = True, colour = "blue", desc = f"Epoch {self.current_epoch_num}",
         bar_format="{desc}: {percentage:3.0f}%|{bar:50}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]"
@@ -340,7 +340,7 @@ class RAFDB_Trainer(Trainer):
     self.model.eval()
     val_loss = 0.0
     val_acc = 0.0
-    torch.autograd.set_detect_anomaly(True)
+
     with torch.no_grad():
       for i, (images, labels) in tqdm.tqdm(
           enumerate(self.val_ds), total = len(self.val_ds), leave = True, colour = "green", desc = "        ",

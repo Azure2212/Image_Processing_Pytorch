@@ -59,7 +59,6 @@ def conv1x1(in_planes, out_planes, stride=1):
 class SeparatedConv2DBlock(nn.Module):
     def __init__(self, in_channels, out_channels, size=3):
         super(SeparatedConv2DBlock, self).__init__()
-        print(f'vao {in_channels} -- ra {out_channels}')
         self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=(1, size), padding=(0, size//2))
         self.bn1 = nn.BatchNorm2d(out_channels)
         self.conv2 = nn.Conv2d(out_channels, out_channels, kernel_size=(size, 1), padding=(size//2, 0))
@@ -67,14 +66,12 @@ class SeparatedConv2DBlock(nn.Module):
         self.relu = nn.ReLU()
 
     def forward(self, x):
-        print(f'vao {x.shape}')
         x = self.conv1(x)
         x = self.bn1(x)
         x = self.relu(x)
         x = self.conv2(x)
         x = self.bn2(x)
         x = self.relu(x)
-        print(f'ra {x.shape}')
         return x
 
 class MidscopeConv2DBlock(nn.Module):
@@ -417,10 +414,9 @@ class Bottleneck(nn.Module):
             out = self.CbamBlock(out)
 
         if self.use_duck:
-            #out = self.wides(out)
-            #out = self.mids(out)
-            print(out.shape)
-            out = self.sep(out)
+            tensor_copy = out.clone()
+
+            out = self.sep(tensor_copy)
 
         out += residual
         out = self.relu(out)
