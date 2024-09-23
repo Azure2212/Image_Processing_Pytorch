@@ -11,8 +11,6 @@ import torch.multiprocessing as mp
 import numpy as np
 import tqdm
 import torch.nn as nn
-import torchvision
-from pytorchcv.model_provider import get_model as ptcv_get_model
 
 seed = 113
 random.seed(seed)
@@ -75,7 +73,7 @@ if args.model_name == 'resnet50_cbam_duck_pytorchcv':
     model = cbam_resnet50_duck()
     model.output = nn.Linear(2048, 7)
 elif args.model_name == 'resnet50_pytorchcv':
-    model = ptcv_get_model("cbam_resnet50", pretrained=True)
+    model = cbam_resnet50()
     model.output = nn.Linear(2048, 7)
 elif args.model_name == 'resnet50_vggface2':
     print('resnet50 with pre-train on vggface2(trained from cratch) was chose !')

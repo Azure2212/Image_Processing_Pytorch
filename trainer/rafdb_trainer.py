@@ -1,9 +1,3 @@
-"""
-Author: Harly - Minh Hai Tran
-gmail: tranminhhai1506@gmail.com
-created day: 30/10/2022
-"""
-
 import numpy as np
 import datetime
 import os
@@ -368,7 +362,7 @@ class RAFDB_Trainer(Trainer):
       self.val_loss_list.append(val_loss / i)
       self.val_acc_list.append(val_acc / i)
 
-      print(" Val_Loss: {:.4f}".format(self.val_loss_list[-1]),", Val_Accuracy: {:.2f}%".format(self.val_acc_list[-1]))
+      print(" Val_Loss: {:.4f}".format(self.val_loss_list[-1]),", Val_Accuracy: {:.2f}%".format(self.val_acc_list[-1]),", Learning_rate: {:.7}".format(self.optimizer.param_groups[0]['lr']))
 
       # write wandb
       if self.wb == True:
@@ -510,11 +504,12 @@ class RAFDB_Trainer(Trainer):
       self.best_val_loss = self.val_loss_list[-1]
       self.best_train_acc = self.train_acc_list[-1]
       self.best_train_loss = self.train_loss_list[-1]
+      print(f'Weight was updated because val_accuracy get highest(={self.val_acc_list[-1]})')
     else:
       self.plateau_count += 1
 # 100 - self.best_val_acc
     if self.lr_scheduler_chose == "ReduceLROnPlateau":
-      self.scheduler.step(100 - self.val_acc_list[-1])
+      self.scheduler.step(self.val_acc_list[-1])
     else:
       self.scheduler.step()
 
