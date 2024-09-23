@@ -55,6 +55,123 @@ def conv1x1(in_planes, out_planes, stride=1):
     """1x1 convolution"""
     return nn.Conv2d(in_planes, out_planes, kernel_size=1, stride=stride, bias=False)
 
+#=============== DUCKNET ==================
+class SeparatedConv2DBlock(nn.Module):
+    def __init__(self, in_channels, out_channels, size=3):
+        super(SeparatedConv2DBlock, self).__init__()
+        self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=(1, size), padding=(0, size//2))
+        self.bn1 = nn.BatchNorm2d(out_channels)
+        self.conv2 = nn.Conv2d(out_channels, out_channels, kernel_size=(size, 1), padding=(size//2, 0))
+        self.bn2 = nn.BatchNorm2d(out_channels)
+        self.relu = nn.ReLU()
+
+    def forward(self, x):
+        x = self.conv1(x)
+        x = self.bn1(x)
+        x = self.relu(x)
+        x = self.conv2(x)
+        x = self.bn2(x)
+        x = self.relu(x)
+        return x
+    
+class SeparatedConv2DBlock_upgrate(nn.Module):
+    def __init__(self, in_channels, out_channels, size=3):
+        super(SeparatedConv2DBlock_upgrate, self).__init__()
+        self.conv1_dw = nn.Conv2d(in_channels, in_channels, kernel_size=(1, size), padding=(0, size//2), groups=in_channels)
+        self.bn1_dw = nn.BatchNorm2d(in_channels)
+        self.conv1_pw = nn.Conv2d(in_channels, out_channels, kernel_size=1)
+        self.bn1_pw = nn.BatchNorm2d(out_channels)
+        self.conv2_dw = nn.Conv2d(out_channels, out_channels, kernel_size=(size, 1), padding=(size//2, 0), groups=out_channels)
+        self.bn2_dw = nn.BatchNorm2d(out_channels)
+        self.conv2_pw = nn.Conv2d(out_channels, out_channels, kernel_size=1)
+        self.bn2_pw = nn.BatchNorm2d(out_channels)
+        self.relu = nn.ReLU()
+
+    def forward(self, x):
+        x = self.conv1_dw(x)
+        x = self.bn1_dw(x)
+        x = self.relu(x)
+        x = self.conv1_pw(x)
+        x = self.bn1_pw(x)
+        x = self.relu(x)
+        x = self.conv2_dw(x)
+        x = self.bn2_dw(x)
+        x = self.relu(x)
+        x = self.conv2_pw(x)
+        x = self.bn2_pw(x)
+        x = self.relu(x)
+        return x
+
+class MidscopeConv2DBlock(nn.Module):
+    def __init__(self, in_channels, out_channels):
+        super(MidscopeConv2DBlock, self).__init__()
+        self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=(3, 3), padding=(1, 1), dilation=(1, 1))
+        self.bn1 = nn.BatchNorm2d(out_channels)
+        self.conv2 = nn.Conv2d(out_channels, out_channels, kernel_size=(3, 3), padding=(2, 2), dilation=(2, 2))
+        self.bn2 = nn.BatchNorm2d(out_channels)
+        self.relu = nn.ReLU()
+
+    def forward(self, x):
+        x = self.conv1(x)
+        x = self.bn1(x)
+        x = self.relu(x)
+        x = self.conv2(x)
+        x = self.bn2(x)
+        x = self.relu(x)
+        return x
+
+class MidscopeConv2DBlock_upgrate(nn.Module):
+    def __init__(self, in_channels, out_channels):
+        super(MidscopeConv2DBlock_upgrate, self).__init__()
+        self.conv1_dw = nn.Conv2d(in_channels, in_channels, kernel_size=3, padding=1, groups=in_channels)
+        self.bn1_dw = nn.BatchNorm2d(in_channels)
+        self.conv1_pw = nn.Conv2d(in_channels, out_channels, kernel_size=1)
+        self.bn1_pw = nn.BatchNorm2d(out_channels)
+        self.conv2_dw = nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=2, dilation=2, groups=out_channels)
+        self.bn2_dw = nn.BatchNorm2d(out_channels)
+        self.conv2_pw = nn.Conv2d(out_channels, out_channels, kernel_size=1)
+        self.bn2_pw = nn.BatchNorm2d(out_channels)
+        self.relu = nn.ReLU()
+
+    def forward(self, x):
+        x = self.conv1_dw(x)
+        x = self.bn1_dw(x)
+        x = self.relu(x)
+        x = self.conv1_pw(x)
+        x = self.bn1_pw(x)
+        x = self.relu(x)
+        x = self.conv2_dw(x)
+        x = self.bn2_dw(x)
+        x = self.relu(x)
+        x = self.conv2_pw(x)
+        x = self.bn2_pw(x)
+        x = self.relu(x)
+        return x
+
+
+class WidescopeConv2DBlock(nn.Module):
+    def __init__(self, in_channels, out_channels):
+        super(WidescopeConv2DBlock, self).__init__()
+        self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=(3, 3), padding=(1, 1), dilation=(1, 1))
+        self.bn1 = nn.BatchNorm2d(out_channels)
+        self.conv2 = nn.Conv2d(out_channels, out_channels, kernel_size=(3, 3), padding=(2, 2), dilation=(2, 2))
+        self.bn2 = nn.BatchNorm2d(out_channels)
+        self.conv3 = nn.Conv2d(out_channels, out_channels, kernel_size=(3, 3), padding=(3, 3), dilation=(3, 3))
+        self.bn3 = nn.BatchNorm2d(out_channels)
+        self.relu = nn.ReLU()
+
+    def forward(self, x):
+        x = self.conv1(x)
+        x = self.bn1(x)
+        x = self.relu(x)
+        x = self.conv2(x)
+        x = self.bn2(x)
+        x = self.relu(x)
+        x = self.conv3(x)
+        x = self.bn3(x)
+        x = self.relu(x)
+        return x
+
 #### CBAM BLOCK
 import os
 import torch
@@ -268,7 +385,7 @@ class BasicBlock(nn.Module):
 class Bottleneck(nn.Module):
     expansion = 4
 
-    def __init__(self, inplanes, planes, stride=1, downsample=None, use_cbam = False):
+    def __init__(self, inplanes, planes, stride=1, downsample=None, use_cbam = False , use_duck = False):
         super(Bottleneck, self).__init__()
         self.conv1 = nn.Conv2d(inplanes, planes, kernel_size=1, stride=stride, bias=False)
         self.bn1 = nn.BatchNorm2d(planes)
@@ -281,8 +398,17 @@ class Bottleneck(nn.Module):
         self.stride = stride
 
         self.use_cbam = use_cbam
+        self.use_duck = use_duck
+
+        out_channels = planes * 4
         if self.use_cbam == True:
-            self.CbamBlock = CbamBlock(channels = planes * 4)
+            self.CbamBlock = CbamBlock(channels = out_channels)
+
+        if self.use_duck:
+            self.sigmoid = nn.Sigmoid()
+            self.wides = MidscopeConv2DBlock(out_channels, out_channels)
+            self.mids = WidescopeConv2DBlock(out_channels, out_channels)
+            self.sep = SeparatedConv2DBlock(out_channels, out_channels)
 
     def forward(self, x):
         residual = x
@@ -303,6 +429,14 @@ class Bottleneck(nn.Module):
 
         if self.use_cbam == True:
             out = self.CbamBlock(out)
+
+        if self.use_duck:
+            x_wide = self.wides(x)
+            x_mids = self.mids(x)
+            x_sep = self.sep(x)
+            duck_block = x_mids + x_wide + x_sep + x
+            duck_block = self.sigmoid(duck_block)
+
         out += residual
         out = self.relu(out)
 
