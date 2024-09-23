@@ -326,13 +326,10 @@ class CbamBlock(nn.Module):
             channels=channels,
             reduction_ratio=reduction_ratio)
         self.sp_gate = SpatialGate()
-        self.sep = SeparatedConv2DBlock(channels, channels)
 
     def forward(self, x):
-        x = self.sep(x)
         x = self.ch_gate(x)
         x = self.sp_gate(x)
-        print(x.shape)
         return x
    
 
@@ -392,9 +389,9 @@ class Bottleneck(nn.Module):
 
         if self.use_duck == True:
             self.sigmoid = nn.Sigmoid()
-            #self.wides = WidescopeConv2DBlock_upgrate(out_channels, out_channels)
-            #self.mids = MidscopeConv2DBlock_upgrate(out_channels, out_channels)
-            #self.sep = SeparatedConv2DBlock(out_channels, out_channels)
+            self.wides = WidescopeConv2DBlock_upgrate(out_channels, out_channels)
+            self.mids = MidscopeConv2DBlock_upgrate(out_channels, out_channels)
+            self.sep = SeparatedConv2DBlock(out_channels, out_channels)
 
     def forward(self, x):
         residual = x
@@ -413,14 +410,18 @@ class Bottleneck(nn.Module):
         if self.downsample is not None:
             residual = self.downsample(x)
 
+        if self.use_duck == True:
+            #x_wide = self.wides(x)
+            x_mids = self.mids(out)
+            x_sep = self.sep(out)
+            out = x_mids + x_sep
+
+
         if self.use_cbam == True:
             out = self.CbamBlock(out)
 
-        if self.use_duck:
-            tensor_copy = out.clone()
 
-            #out = self.sep(tensor_copy)
-
+           
         out += residual
         out = self.relu(out)
 
