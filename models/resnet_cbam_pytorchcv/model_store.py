@@ -808,6 +808,9 @@ def load_model(net,
         with open(resnet50_vggface2_weight, 'rb') as f:
             pretrained_state_dict = pickle.load(f)
 
+        for key in pretrained_state_dict.keys():
+            pretrained_state_dict[key] = torch.from_numpy(pretrained_state_dict[key])
+
         now_state_dict = net.state_dict()
         filtered_pretrained_state_dict = {k: v for k, v in pretrained_state_dict.items() if k in now_state_dict}
         net.load_state_dict(filtered_pretrained_state_dict)
