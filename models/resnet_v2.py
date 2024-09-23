@@ -402,7 +402,7 @@ class Bottleneck(nn.Module):
         out_channels = planes * 4
         if self.use_cbam == True:
             print(out_channels)
-            self.CbamBlock = CbamBlock(channels = out_channels)
+            self.CbamBlock = CbamBlock(out_channels)
 
         if self.use_duck == True:
             self.sigmoid = nn.Sigmoid()
