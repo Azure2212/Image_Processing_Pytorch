@@ -379,16 +379,17 @@ class ResNet(nn.Module):
 
 def _resnet(arch, block, layers, pretrained, progress, use_cbam = False, **kwargs):
     model = ResNet(block, layers, use_cbam = use_cbam, **kwargs)
-    print(f'load weight in {model_urls[arch]}')
-    if 'vggface2' in arch:
-        with open(model_urls[arch], 'rb') as f:
-            state_dict = pickle.load(f)
-            
-        for key in state_dict.keys():
-            state_dict[key] = torch.from_numpy(state_dict[key])
-    else:
-        state_dict = load_state_dict_from_url(model_urls[arch], progress=progress)
-    model.load_state_dict(state_dict, strict=False)
+    if pretrained == True:
+        print(f'load weight in {model_urls[arch]}')
+        if 'vggface2' in arch:
+            with open(model_urls[arch], 'rb') as f:
+                state_dict = pickle.load(f)
+                
+            for key in state_dict.keys():
+                state_dict[key] = torch.from_numpy(state_dict[key])
+        else:
+            state_dict = load_state_dict_from_url(model_urls[arch], progress=progress)
+        model.load_state_dict(state_dict, strict=False)
     return model
 
 
