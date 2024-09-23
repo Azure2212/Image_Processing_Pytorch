@@ -282,7 +282,6 @@ class Bottleneck(nn.Module):
 
         self.use_cbam = use_cbam
         if self.use_cbam == True:
-            print('use CBAM')
             self.CbamBlock = CbamBlock(channels = planes * 4)
 
     def forward(self, x):
