@@ -377,12 +377,9 @@ class Bottleneck(nn.Module):
             out = self.CbamBlock(out)
 
         if self.use_duck:
-            print('duck activated')
-            x_wide = self.wides(out)
-            x_mids = self.mids(out)
-            x_sep = self.sep(out)
-            duck_block = x_mids + x_wide + x_sep + out
-            out = self.sigmoid(duck_block)
+            out = self.wides(out)
+            out = self.mids(out)
+            out = self.sep(out)
 
         out += residual
         out = self.relu(out)
