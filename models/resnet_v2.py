@@ -412,9 +412,9 @@ class Bottleneck(nn.Module):
 
         if self.use_duck == True:
             #x_wide = self.wides(x)
-            x_mids = self.mids(out)
-            x_sep = self.sep(out)
-            out = x_mids + x_sep
+            out = self.mids(out)
+            #x_sep = self.sep(out)
+            #out = x_mids + x_sep
 
 
         if self.use_cbam == True:
