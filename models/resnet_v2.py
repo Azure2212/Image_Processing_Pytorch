@@ -280,6 +280,7 @@ class Bottleneck(nn.Module):
         self.downsample = downsample
         self.stride = stride
 
+        self.use_cbam = use_cbam
         if self.use_cbam == True:
             print('use CBAM')
             self.CbamBlock = CbamResUnit(in_channels=planes

@@ -76,7 +76,7 @@ elif args.model_name == 'resnet50_vggface2':
     model = resnet50_vggface2()
 elif args.model_name == 'resnet50_vggface2_ft':
     print('resnet50 with pre-train on vggface2(trained on MS1M, and then fine-tuned on VGGFace2) was chose !')
-    model = resnet50_vggface2_ft()
+    model = resnet50_vggface2_ft(use_cbam = True)
 elif args.model_name == 'resnet50_imagenet':
     print('resnet50 with pre-train on imagenet was chose !')
     model = resnet50()
