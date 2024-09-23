@@ -326,10 +326,12 @@ class CbamBlock(nn.Module):
             channels=channels,
             reduction_ratio=reduction_ratio)
         self.sp_gate = SpatialGate()
+        self.sep = SeparatedConv2DBlock(out_channels, out_channels)
 
     def forward(self, x):
         x = self.ch_gate(x)
         x = self.sp_gate(x)
+        x = self.sep(x)
         return x
    
 
@@ -391,7 +393,7 @@ class Bottleneck(nn.Module):
             self.sigmoid = nn.Sigmoid()
             #self.wides = WidescopeConv2DBlock_upgrate(out_channels, out_channels)
             #self.mids = MidscopeConv2DBlock_upgrate(out_channels, out_channels)
-            self.sep = SeparatedConv2DBlock(out_channels, out_channels)
+            #self.sep = SeparatedConv2DBlock(out_channels, out_channels)
 
     def forward(self, x):
         residual = x
