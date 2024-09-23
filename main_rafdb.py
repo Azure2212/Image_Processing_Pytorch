@@ -11,6 +11,7 @@ import torch.multiprocessing as mp
 import numpy as np
 import tqdm
 import torch.nn as nn
+from pytorchcv.model_provider import get_model as ptcv_get_model
 
 seed = 113
 random.seed(seed)
@@ -67,12 +68,13 @@ test_loader_ttau = RafDataSet("test", configs, ttau = True, len_tta = 10)
 test_loader = RafDataSet("test", configs, ttau = False, len_tta = 48) 
 
 model = None
+
 if args.model_name == 'resnet50_cbam_duck_pytorchcv':
     print('resnet50_cbam_duck_pytorchcv_tuan_code !')
     model = cbam_resnet50_duck()
     model.output = nn.Linear(2048, 7)
 elif args.model_name == 'resnet50_pytorchcv':
-    model = cbam_resnet50()
+    model = ptcv_get_model("cbam_resnet50", pretrained=True)
     model.output = nn.Linear(2048, 7)
 elif args.model_name == 'resnet50_vggface2':
     print('resnet50 with pre-train on vggface2(trained from cratch) was chose !')
