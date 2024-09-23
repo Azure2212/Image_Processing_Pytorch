@@ -326,11 +326,12 @@ class CbamBlock(nn.Module):
             channels=channels,
             reduction_ratio=reduction_ratio)
         self.sp_gate = SpatialGate()
-        self.sep = WidescopeConv2DBlock(channels, channels)
+        self.sep = SeparatedConv2DBlock(out_channels, out_channels)
 
     def forward(self, x):
         x = self.ch_gate(x)
         x = self.sp_gate(x)
+        y = self.sep(x)
         return x
    
 
