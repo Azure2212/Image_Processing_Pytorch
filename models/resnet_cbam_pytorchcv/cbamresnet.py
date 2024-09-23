@@ -386,7 +386,6 @@ def cbam_resnet50(**kwargs) -> nn.Module:
     nn.Module
         Desired module.
     """
-    print(use_cbam = True)
     return get_resnet(
         blocks=50,
         model_name="cbam_resnet50",

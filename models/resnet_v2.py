@@ -379,8 +379,8 @@ class ResNet(nn.Module):
         return x
 
 
-def _resnet(arch, block, layers, pretrained, progress, **kwargs):
-    model = ResNet(block, layers, **kwargs)
+def _resnet(arch, block, layers, pretrained, progress, use_cbam = False, **kwargs):
+    model = ResNet(block, layers, use_cbam = use_cbam, **kwargs)
     print(f'load weight in {model_urls[arch]}')
     if 'vggface2' in arch:
         with open(model_urls[arch], 'rb') as f:
@@ -424,7 +424,7 @@ def resnet34(pretrained=True, progress=True, out_classes = 7, **kwargs):
     return model
 
 
-def resnet50(pretrained=True, progress=True, out_classes = 7, **kwargs):
+def resnet50(pretrained=True, progress=True, out_classes = 7, use_cbam = False, **kwargs):
     r"""ResNet-50 model from
     `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
     Args:
@@ -432,7 +432,7 @@ def resnet50(pretrained=True, progress=True, out_classes = 7, **kwargs):
         progress (bool): If True, displays a progress bar of the download to stderr
     """
     model = _resnet(
-        "resnet50", Bottleneck, [3, 4, 6, 3], pretrained, progress,num_classes = 1000, **kwargs
+        "resnet50", Bottleneck, [3, 4, 6, 3], pretrained, progress,num_classes = 1000, use_cbam = use_cbam, **kwargs
     )
     model.fc = nn.Linear(2048, out_classes)
     return model
