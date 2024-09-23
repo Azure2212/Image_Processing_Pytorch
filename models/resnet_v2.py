@@ -281,6 +281,7 @@ class Bottleneck(nn.Module):
         self.stride = stride
 
         if self.use_cbam == True:
+            print('use CBAM')
             self.CbamBlock = CbamResUnit(in_channels=planes,
                                         , out_channels=planes * 4
                                         , stride = stride) 
@@ -312,7 +313,7 @@ class Bottleneck(nn.Module):
 
 class ResNet(nn.Module):
 
-    def __init__(self, block, layers, num_classes=1000, include_top=True, use_cbam):
+    def __init__(self, block, layers, num_classes=1000, include_top=True, use_cbam = False):
         self.inplanes = 64
         super(ResNet, self).__init__()
         self.include_top = include_top
@@ -350,7 +351,7 @@ class ResNet(nn.Module):
             )
 
         layers = []
-        layers.append(block(self.inplanes, planes, stride, downsample))
+        layers.append(block(self.inplanes, planes, stride, downsample, use_cbam = self.use_cbam ))
         self.inplanes = planes * block.expansion
         for i in range(1, blocks):
             layers.append(block(self.inplanes, planes))
