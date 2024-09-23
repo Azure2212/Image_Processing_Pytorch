@@ -23,7 +23,7 @@ import torch.optim as optim
 from torch.autograd import Variable
 from torch.optim.lr_scheduler import MultiplicativeLR, StepLR, MultiStepLR, ConstantLR, LinearLR, PolynomialLR, CosineAnnealingLR, ChainedScheduler, ExponentialLR, SequentialLR, ReduceLROnPlateau, CyclicLR, CosineAnnealingWarmRestarts
 
-from sgu24project.utils.metrics.metrics import accuracy, make_batch
+from sgu24project.utils.metrics.classify_metrics import accuracy, make_batch
 
 def get_lr(optimizer):
     for param_group in optimizer.param_groups:
