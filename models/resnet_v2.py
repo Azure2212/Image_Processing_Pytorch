@@ -353,8 +353,8 @@ class Bottleneck(nn.Module):
         if self.use_duck == True:
             self.sigmoid = nn.Sigmoid()
             self.wides = MidscopeConv2DBlock(out_channels, out_channels)
-            self.mids = WidescopeConv2DBlock(out_channels, out_channels)
-            self.sep = SeparatedConv2DBlock(out_channels, out_channels)
+            #self.mids = WidescopeConv2DBlock(out_channels, out_channels)
+            #self.sep = SeparatedConv2DBlock(out_channels, out_channels)
 
     def forward(self, x):
         residual = x
@@ -378,8 +378,8 @@ class Bottleneck(nn.Module):
 
         if self.use_duck:
             out = self.wides(out)
-            out = self.mids(out)
-            out = self.sep(out)
+            #out = self.mids(out)
+            #out = self.sep(out)
 
         out += residual
         out = self.relu(out)
