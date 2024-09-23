@@ -329,9 +329,9 @@ class CbamBlock(nn.Module):
         self.sep = SeparatedConv2DBlock(channels, channels)
 
     def forward(self, x):
-        x1 = self.ch_gate(x)
-        x2 = self.sp_gate(x1)
-        x = self.sep(x2)
+        x = self.sep(x)
+        x = self.ch_gate(x)
+        x = self.sp_gate(x)
         print(x.shape)
         return x
    
