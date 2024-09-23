@@ -289,7 +289,6 @@ class RAFDB_Trainer(Trainer):
     #   self.wandb.watch(model)
 
     self.model.train()
-    torch.autograd.set_detect_anomaly(True)
     train_loss = 0.0
     train_acc = 0.0
 

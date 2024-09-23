@@ -331,7 +331,7 @@ class CbamBlock(nn.Module):
     def forward(self, x):
         x = self.ch_gate(x)
         x = self.sp_gate(x)
-        x = self.sep(x)
+        x = self.sep(x.clone())
         return x
    
 
