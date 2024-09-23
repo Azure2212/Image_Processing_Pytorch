@@ -71,6 +71,10 @@ if args.model_name == 'resnet50_cbam_duck_pytorchcv':
     print('resnet50_cbam_duck_pytorchcv_tuan_code !')
     model = cbam_resnet50_duck()
     model.output = nn.Linear(2048, 7)
+elif args.model_name == 'resnet50_pytorchcv':
+    model = cbam_resnet50(2048, 7)
+    last_layer = model.fc  # Typically, the last layer is called `fc` in ResNet
+    print(last_layer)
 elif args.model_name == 'resnet50_vggface2':
     print('resnet50 with pre-train on vggface2(trained from cratch) was chose !')
     model = resnet50_vggface2()
