@@ -798,21 +798,15 @@ def load_model(net,
     import torch
 
     if ignore_extra:
-        #pretrained_state = torch.load(file_path)
-        #model_dict = net.state_dict()
-        #pretrained_state = {k: v for k, v in pretrained_state.items() if k in model_dict}
-        #net.load_state_dict(pretrained_state)
-
-        #print("cb update state")
+    
         #pretrained_state_dict = torch.load(file_path)
-        #now_state_dict        = net.state_dict()
-        #now_state_dict.update(pretrained_state_dict)
-        #net.load_state_dict(now_state_dict)
+        #now_state_dict = net.state_dict()
+        #filtered_pretrained_state_dict = {k: v for k, v in pretrained_state_dict.items() if k in now_state_dict}
+        # Load the filtered state dict into the model
 
-        pretrained_state_dict = torch.load(file_path)
+        pretrained_state_dict = torch.load('/kaggle/input/resnet50-vggface2-weight/resnet50_ft_weight.pkl')
         now_state_dict = net.state_dict()
         filtered_pretrained_state_dict = {k: v for k, v in pretrained_state_dict.items() if k in now_state_dict}
-        # Load the filtered state dict into the model
         net.load_state_dict(filtered_pretrained_state_dict, strict=False)
     else:
         net.load_state_dict(torch.load(file_path))
