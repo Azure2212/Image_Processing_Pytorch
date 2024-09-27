@@ -59,8 +59,6 @@ class RAFDB_Landmark_Detection_Trainer(Trainer):
     self.isDebug = configs["isDebug"]
     self.name_run_wandb = configs["name_run_wandb"]
     self.wb = wb
-    self.num_classes = configs["num_classes"]
-    print(f'self.num_classes ={self.num_classes}')
     #self.model = model.to(self.device)'cpu'
     self.model = model.to(self.device)
 
