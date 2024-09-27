@@ -119,7 +119,8 @@ def make_augmentation_image_landmark_custom(image, face_landmarks):
     return image, face_landmarks
 
 class RafDataSet(Dataset):
-    def __init__(self, data_type, configs, ttau=False):
+    def __init__(self, data_type, configs, ttau=False, device='cpu'):
+        self.device = device
         self.configs = configs
         self.data_type = data_type
         self.shape = (configs["image_size"], configs["image_size"])
@@ -173,7 +174,7 @@ class RafDataSet(Dataset):
             inp = crop(image, center, scale)
             inp = torch.from_numpy(inp.transpose(
                 (2, 0, 1))).float()
-            inp = inp.to(device ='cpu', dtype=torch.float32)
+            inp = inp.to(device =self.device , dtype=torch.float32)
             inp.div_(255.0).unsqueeze_(0)
             out = self.fa_model.face_alignment_net(inp).detach()
             # out = out.to(device='cpu', dtype=torch.float32).numpy()
