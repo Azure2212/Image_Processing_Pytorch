@@ -23,7 +23,7 @@ torch.backends.cudnn.benchmark = False
 
 from sgu24project.utils.datasets.rafdb_ds_with_landmark_feature import RafDataSet
 #from sgu24project.utils.datasets.smp_dataloader import get_training_augmentation, get_validation_augmentation, Dataset
-from sgu24project.trainer.rafdb_landmarkDetection_trainer_onlyLoss import RAFDB_Landmark_Detection_Trainer
+from sgu24project.trainer.rafdb_LandmarkDetection_trainer_onlyLoss import RAFDB_Landmark_Detection_Trainer
 
 from sgu24project.models.landmark_detection_in_unet import Landmark_Detection_in_InUnet
 
