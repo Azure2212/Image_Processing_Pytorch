@@ -11,6 +11,7 @@ from sgu24project.utils.augs.augmenters import make_augmentation_image_landmark_
 import argparse 
 parser = argparse.ArgumentParser()
 parser.add_argument('--type-data', default= "train", type=str, help='type data')
+args, unknown = parser.parse_known_args()
 
 def get_landmarks(image, detected_faces):
     landmarks = []
