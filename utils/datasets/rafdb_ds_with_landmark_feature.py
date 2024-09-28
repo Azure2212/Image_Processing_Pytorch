@@ -162,6 +162,7 @@ class image_with_landmark_RafDataSet(Dataset):
                 
     def __len__(self):
         return len(self.file_paths)
+
     def get_landmarks(self, image):
         detected_faces = self.fa_model.face_detector.detect_from_image(image.copy())
         landmarks = []
@@ -192,9 +193,8 @@ class image_with_landmark_RafDataSet(Dataset):
     def __getitem__(self, idx):
         path = self.file_paths[idx]
         image = cv2.imread(path)[:,:,::-1]
-        landmarks  = self.landmarks_by_images[idx]
-        
         image = cv2.resize(image, self.shape)
+        landmarks  = self.get_landmarks(image)
 
         if self.data_type == 'train':
             image, feature_landmark = make_augmentation_image_landmark_custom(image, landmarks)
