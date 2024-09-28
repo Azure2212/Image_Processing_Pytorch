@@ -101,16 +101,16 @@ if data_type == 'train':
 
 
 ax, fig = plt.subplots(args.batch_size,2,figsize=(12,16))
-a[0].imshow(image)
-a[0].set_title('image')
-a[0].axis('off')
+ax[0].imshow(image)
+ax[0].set_title('image')
+ax[0].axis('off')
 
 for landmark in detected_faces[0]:
     a[1].scatter(landmark[0], landmark[1], color='red', s=10)
 
-a[1].imshow(image)
-a[1].set_title('image')
-a[1].axis('off')
+ax[1].imshow(image)
+ax[1].set_title('image')
+ax[1].axis('off')
 
 
 
