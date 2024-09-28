@@ -101,30 +101,31 @@ if data_type == 'train':
 
 
 fig, ax = plt.subplots(args.batch_size,2,figsize=(12,16))
-ax[0].imshow(image)
-ax[0].set_title('image')
-ax[0].axis('off')
+for i in range(args.batch_size)
+    ax[i, 0].imshow(image)
+    ax[i, 0].set_title('image')
+    ax[i, 0].axis('off')
 
-landmarks = []
-landmarks_scores = []
-for i, d in enumerate(detected_faces):
-    center = np.array([d[2] - (d[2] - d[0]) / 2.0, d[3] - (d[3] - d[1]) / 2.0])
-    center[1] = center[1] - (d[3] - d[1]) * 0.12
-    scale = (d[2] - d[0] + d[3] - d[1]) / fa_model.face_detector.reference_scale
-    feature_landmarks = feature_landmarks.to(device=device, dtype=torch.float32).numpy()
-    pts, pts_img, scores = get_preds_fromhm(feature_landmarks, center, scale)
-    pts, pts_img = torch.from_numpy(pts), torch.from_numpy(pts_img)
-    pts, pts_img = pts.view(68, 2) * 4, pts_img.view(68, 2)
-    scores = scores.squeeze(0)
-    landmarks.append(pts_img.numpy())
-    landmarks_scores.append(scores)
+    landmarks = []
+    landmarks_scores = []
+    for i, d in enumerate(detected_faces):
+        center = np.array([d[2] - (d[2] - d[0]) / 2.0, d[3] - (d[3] - d[1]) / 2.0])
+        center[1] = center[1] - (d[3] - d[1]) * 0.12
+        scale = (d[2] - d[0] + d[3] - d[1]) / fa_model.face_detector.reference_scale
+        feature_landmarks = feature_landmarks.to(device=device, dtype=torch.float32).numpy()
+        pts, pts_img, scores = get_preds_fromhm(feature_landmarks, center, scale)
+        pts, pts_img = torch.from_numpy(pts), torch.from_numpy(pts_img)
+        pts, pts_img = pts.view(68, 2) * 4, pts_img.view(68, 2)
+        scores = scores.squeeze(0)
+        landmarks.append(pts_img.numpy())
+        landmarks_scores.append(scores)
 
-for landmark in landmarks[0]:
-    ax[1].scatter(landmark[0], landmark[1], color='red', s=10)
+    for landmark in landmarks[0]:
+        ax[i, 1].scatter(landmark[0], landmark[1], color='red', s=10)
 
-ax[1].imshow(image)
-ax[1].set_title('image')
-ax[1].axis('off')
+    ax[i, 1].imshow(image)
+    ax[i, 1].set_title('Detected LMark')
+    ax[i, 1].axis('off')
 
 
 
