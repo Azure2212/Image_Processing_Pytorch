@@ -164,7 +164,9 @@ class image_with_landmark_RafDataSet(Dataset):
             f = f +"_aligned.jpg"
             path = os.path.join(self.configs["raf_path"], self.configs["image_path"], f)
             self.file_paths.append(path)
-                
+        
+        print(len(file_paths))
+        print(len(self.labels))
     def __len__(self):
         return len(self.file_paths)
 
