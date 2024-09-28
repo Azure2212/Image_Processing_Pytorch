@@ -152,13 +152,10 @@ class image_with_landmark_RafDataSet(Dataset):
             for line in f:
                 # Strip any whitespace characters (like newline) and add to the list
                 path_images_without_landmarks.append(line.strip().replace('_aligned', ''))
-        print(path_images_without_landmarks[0])
-        print(file_names[0])
-
+        
         check_in = ~np.isin(file_names, path_images_without_landmarks)
         file_names = file_names[check_in]
         self.labels = self.labels[check_in]
-
 
         self.file_paths = []
         for f in file_names:
@@ -167,16 +164,15 @@ class image_with_landmark_RafDataSet(Dataset):
             path = os.path.join(self.configs["raf_path"], self.configs["image_path"], f)
             self.file_paths.append(path)
         
-        print(len(self.file_paths))
-        print(len(self.labels))
     def __len__(self):
         return len(self.file_paths)
 
-    def get_landmarks(self, image):
+    def get_landmarks(self, image, path):
         detected_faces = self.fa_model.face_detector.detect_from_image(image.copy())
         landmarks = []
         landmarks_scores = []
         if(detected_faces == None):
+            print(f'path None: {path}')
             return None
         
         for i, d in enumerate(detected_faces):
@@ -203,7 +199,7 @@ class image_with_landmark_RafDataSet(Dataset):
         path = self.file_paths[idx]
         image = cv2.imread(path)[:,:,::-1]
         image = cv2.resize(image, self.shape)
-        landmarks  = self.get_landmarks(image)
+        landmarks  = self.get_landmarks(image, path)
 
         if self.data_type == 'train':
             image, feature_landmark = make_augmentation_image_landmark_custom(image, landmarks)
