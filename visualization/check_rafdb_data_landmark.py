@@ -97,7 +97,7 @@ landmarks  = get_landmarks(image.copy(), detected_faces)
 if(landmarks == None):
     print(path)
 if data_type == 'train':
-    image = make_augmentation_image_landmark_boundingbox_custom(image.copy())
+    image = make_augmentation_image_landmark_boundingbox_custom(image.copy(), task='image_change')
 
 
 fig, ax = plt.subplots(args.batch_size,2,figsize=(12,16))
