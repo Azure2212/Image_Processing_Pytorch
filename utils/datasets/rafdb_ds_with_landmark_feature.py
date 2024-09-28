@@ -151,7 +151,7 @@ class image_with_landmark_RafDataSet(Dataset):
             # Read each line in the file
             for line in f:
                 # Strip any whitespace characters (like newline) and add to the list
-                path_images_without_landmarks.append(line.strip())
+                path_images_without_landmarks.append(line.strip().replace('_aligned', ''))
         print(path_images_without_landmarks[0])
         print(file_names[0])
 
