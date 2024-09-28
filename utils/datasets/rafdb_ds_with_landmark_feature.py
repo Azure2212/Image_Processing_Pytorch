@@ -204,4 +204,5 @@ class image_with_landmark_RafDataSet(Dataset):
         if self.data_type == 'train':
             image, feature_landmark = make_augmentation_image_landmark_custom(image, landmarks)
             #landmarks = landmarks[0]
-        return image.transpose(2, 0, 1), feature_landmark
+        print(path)
+        return image.transpose(2, 0, 1), landmarks
