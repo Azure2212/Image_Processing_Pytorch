@@ -136,10 +136,12 @@ class RafDataSet(Dataset):
         self.labels = np.array(self.data.loc[:, 'label'].values - 1)  # 0:Surprise, 1:Fear, 2:Disgust, 3:Happiness, 4:Sadness, 5:Anger, 6:Neutral
 
         # Initialize an empty list to store the file names
+        path_current = os.path.abspath(globals().get("__file__","."))
+        path_current = os.path.abspath(f"{path_current}/..")
         path_images_without_landmarks = []
 
         # Open the input file in read mode
-        file2read = os.path.join(os.path.abspath(globals().get("__file__",".")),'rafdb_image_path_without_landmarks.txt')
+        file2read = os.path.join(path_current,'rafdb_image_path_without_landmarks.txt')
         with open(file2read, 'r') as f:
             # Read each line in the file
             for line in f:
