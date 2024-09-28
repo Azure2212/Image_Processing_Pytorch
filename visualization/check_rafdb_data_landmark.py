@@ -38,7 +38,7 @@ configs = {"batch_size":1,
     "n_channels": 3,
     "n_classes": 7,
           }
-device = device
+device = 'cpu'
 configs = configs
 data_type = args.data_type
 
