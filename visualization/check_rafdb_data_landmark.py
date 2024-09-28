@@ -106,6 +106,27 @@ ax[0].imshow(image)
 ax[0].set_title('image')
 ax[0].axis('off')
 
+landmarks = []
+landmarks_scores = []
+for i, d in enumerate(detected_faces):
+    center = np.array(
+        [d[2] - (d[2] - d[0]) / 2.0, d[3] - (d[3] - d[1]) / 2.0])
+    center[1] = center[1] - (d[3] - d[1]) * 0.12
+    scale = (d[2] - d[0] + d[3] - d[1]) / fa_model.face_detector.reference_scale
+    inp = crop(image, center, scale)
+    inp = torch.from_numpy(inp.transpose(
+        (2, 0, 1))).float()
+    inp = inp.to(device ='cpu', dtype=torch.float32)
+    inp.div_(255.0).unsqueeze_(0)
+    out = fa.face_alignment_net(inp).detach()
+    out = out.to(device='cpu', dtype=torch.float32).numpy()
+    pts, pts_img, scores = get_preds_fromhm(out, center, scale)
+    pts, pts_img = torch.from_numpy(pts), torch.from_numpy(pts_img)
+    pts, pts_img = pts.view(68, 2) * 4, pts_img.view(68, 2)
+    scores = scores.squeeze(0)
+    landmarks.append(pts_img.numpy())
+    landmarks_scores.append(scores)
+
 for landmark in detected_faces[0]:
     ax[1].scatter(landmark[0], landmark[1], color='red', s=10)
 
