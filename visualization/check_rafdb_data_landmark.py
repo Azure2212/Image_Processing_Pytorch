@@ -16,7 +16,11 @@ from sgu24project.utils.augs.augmenters import make_augmentation_image_landmark_
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--data-type', default= "train", type=str, help='type data')
+parser.add_argument('--device', default= "cpu", type=str, help='gpu or cpu')
 args, unknown = parser.parse_known_args()
+
+device = args_device
+fa_model = face_alignment.FaceAlignment(face_alignment.LandmarksType.TWO_D, device=device)
 
 def get_landmarks(image, detected_faces):
     landmarks = []
@@ -44,7 +48,7 @@ configs = {"batch_size":1,
     "n_channels": 3,
     "n_classes": 7,
           }
-device = 'cpu'
+
 configs = configs
 data_type = args.data_type
 
