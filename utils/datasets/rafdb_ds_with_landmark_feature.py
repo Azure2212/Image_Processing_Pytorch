@@ -201,9 +201,9 @@ class image_with_landmark_RafDataSet(Dataset):
         image = cv2.imread(path)[:,:,::-1]
         image = cv2.resize(image, self.shape)
         landmarks  = self.get_landmarks(image.copy(), path)
-
+        if(landmarks == None):
+            print(path)
         #if self.data_type == 'train':
             #image, feature_landmark = make_augmentation_image_landmark_custom(image, landmarks)
             #landmarks = landmarks[0]
-        print(landmarks.shape)
         return image.transpose(2, 0, 1), landmarks
