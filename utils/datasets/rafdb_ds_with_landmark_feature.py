@@ -1,6 +1,7 @@
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 import albumentations as A
+import face_alignment
 import pandas as pd
 import os
 import numpy as np
@@ -124,6 +125,7 @@ class image_with_landmark_RafDataSet(Dataset):
         self.configs = configs
         self.data_type = data_type
         self.shape = (configs["image_size"], configs["image_size"])
+        self.fa_model = face_alignment.FaceAlignment(face_alignment.LandmarksType.TWO_D, device='cpu')
 
         df = pd.read_csv(os.path.join(self.configs["raf_path"], configs["label_path"]), sep=' ', header=None, names=['name', 'label'])
 
