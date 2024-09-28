@@ -139,7 +139,8 @@ class RafDataSet(Dataset):
         path_images_without_landmarks = []
 
         # Open the input file in read mode
-        with open('rafdb_image_path_without_landmarks.txt', 'r') as f:
+        file2read = os.path.join(path_current = os.path.abspath(globals().get("__file__",".")),'rafdb_image_path_without_landmarks.txt')
+        with open(file2read, 'r') as f:
             # Read each line in the file
             for line in f:
                 # Strip any whitespace characters (like newline) and add to the list
