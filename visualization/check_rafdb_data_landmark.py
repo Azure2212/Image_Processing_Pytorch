@@ -107,7 +107,7 @@ ax[0].set_title('image')
 ax[0].axis('off')
 
 for landmark in detected_faces[0]:
-    a[1].scatter(landmark[0], landmark[1], color='red', s=10)
+    ax[1].scatter(landmark[0], landmark[1], color='red', s=10)
 
 ax[1].imshow(image)
 ax[1].set_title('image')
