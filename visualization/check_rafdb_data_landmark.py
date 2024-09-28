@@ -35,7 +35,7 @@ def get_landmarks(image, detected_faces):
             (2, 0, 1))).float()
         inp = inp.to(device ='cpu', dtype=torch.float32)
         inp.div_(255.0).unsqueeze_(0)
-        out = fa.face_alignment_net(inp).detach()
+        out = fa_model.face_alignment_net(inp).detach()
         return out
 
 
