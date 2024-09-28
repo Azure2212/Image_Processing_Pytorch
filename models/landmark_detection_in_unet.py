@@ -3,9 +3,9 @@ import torch.nn as nn
 import torch
 
 class Landmark_Detection_in_InUnet(smp.Unet):
-    def __init__(self, encoder_name="resnet50", encoder_weights="imagenet", num_seg_classes=68, activation=None):
+    def __init__(self, encoder_name="resnet50", encoder_weights="imagenet", in_channels=3, num_seg_classes=68, activation=None):
         # Initialize the parent class (smp.Unet)
-        super().__init__(encoder_name=encoder_name, encoder_weights=encoder_weights, activation=None, classes=num_seg_classes)
+        super().__init__(encoder_name=encoder_name, encoder_weights=encoder_weights,in_channels=in_channels, activation=None, classes=num_seg_classes)
 
     def forward(self, x):
         #Phase 1: Encoder
