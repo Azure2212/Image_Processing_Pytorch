@@ -1,5 +1,6 @@
-import numpy as np
+import cv2
 import torch
+import numpy as np
 import face_alignment
 
 
