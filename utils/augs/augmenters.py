@@ -5,7 +5,6 @@ from albumentations.pytorch import ToTensorV2
 import numpy as np
 import cv2
 import random
-from sgu24project.utils.augs.augmenters import make_augmentation_image_landmark_boundingbox_custom
 #
 seg_fer = iaa.Sometimes(
         0.5,
