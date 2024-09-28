@@ -307,8 +307,8 @@ def make_augmentation_image_landmark_boundingbox_custom(image, task='resize', de
         #print(detected_faces)
         resized_image = cv2.resize(image.copy(), new_size)
         #print(detected_faces[0].shape)
-        if random.random() < 0.5:
-            resized_image, detected_faces = A_Vertical_Flip_image_boundingbox(resized_image.copy(), detected_faces.copy())
+        # if random.random() < 0.5: not suitable for landmark
+        #     resized_image, detected_faces = A_Vertical_Flip_image_boundingbox(resized_image.copy(), detected_faces.copy())
         if random.random() < 0.5:
             resized_image, detected_faces = A_Horizontal_Flip_image_boundingbox(resized_image.copy(), detected_faces.copy())
         if random.random() < 0.5:
