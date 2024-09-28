@@ -171,7 +171,7 @@ def make_augmentation_image_landmark_custom(image, face_landmarks):
 
 
 #custome augmentation for landmark feature - (bounding box)
-def make_augmentation_image_landmark_boundingbox_custom(image, task='resize'): 
+def make_augmentation_image_landmark_boundingbox_custom(image, task='resize', device='cpu'): 
 
     def A_Vertical_Flip_image_boundingbox(image, detected_faces):
         flipped_image = cv2.flip(image, 0)
@@ -286,7 +286,8 @@ def make_augmentation_image_landmark_boundingbox_custom(image, task='resize'):
         # Cập nhật bounding box
         return transformed_image, detected_faces
 
-    def get_face_box_image_resized(image):
+    def get_face_box_image_resized(image, device='cpu'):
+        fa_model = face_alignment.FaceAlignment(face_alignment.LandmarksType.TWO_D, device=device)
         detected_faces = fa_model.face_detector.detect_from_image(image.copy())
         
         original_height, original_width = image.shape[:2]
@@ -319,7 +320,7 @@ def make_augmentation_image_landmark_boundingbox_custom(image, task='resize'):
     
     
     if task == 'resize':
-        resized_image, detected_faces = get_face_box_image_resized(image.copy())
+        resized_image, detected_faces = get_face_box_image_resized(image.copy(), device='cpu')
         return resized_image, detected_faces
     else:
         if random.random() < 0.9:
