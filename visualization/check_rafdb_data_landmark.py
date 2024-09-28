@@ -108,7 +108,7 @@ for i in range(args.batch_size):
 
     landmarks = []
     landmarks_scores = []
-    for i, d in enumerate(detected_faces):
+    for j, d in enumerate(detected_faces):
         center = np.array([d[2] - (d[2] - d[0]) / 2.0, d[3] - (d[3] - d[1]) / 2.0])
         center[1] = center[1] - (d[3] - d[1]) * 0.12
         scale = (d[2] - d[0] + d[3] - d[1]) / fa_model.face_detector.reference_scale
