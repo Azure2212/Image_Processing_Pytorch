@@ -71,11 +71,11 @@ file_names = file_names[check_in]
 labels = labels[check_in]
 
 file_paths = []
-        for f in file_names:
-            f = f.split(".")[0]
-            f = f +"_aligned.jpg"
-            path = os.path.join(configs["raf_path"], configs["image_path"], f)
-            file_paths.append(path)
+    for f in file_names:
+        f = f.split(".")[0]
+        f = f +"_aligned.jpg"
+        path = os.path.join(configs["raf_path"], configs["image_path"], f)
+        file_paths.append(path)
 
 
 image = cv2.imread(file_paths[0])[:,:,::-1]
