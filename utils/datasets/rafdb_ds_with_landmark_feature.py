@@ -149,8 +149,8 @@ class RafDataSet(Dataset):
                 path_images_without_landmarks.append(line.strip())
 
         check_in = ~np.isin(file_names, path_images_without_landmarks)
-        file_names = file_names[mask]
-        self.labels = self.labels[mask]
+        file_names = file_names[check_in]
+        self.labels = self.labels[check_in]
 
 
         self.file_paths = []
