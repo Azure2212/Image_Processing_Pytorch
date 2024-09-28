@@ -34,8 +34,8 @@ def get_landmarks(image, detected_faces):
 
 configs = {"batch_size":1, 
           "raf_path": "/kaggle/input/rafdb-basic/rafdb_basic",
-    "image_path": "rafdb_mask_basic/Image/aligned/",
-    "label_path": "rafdb_mask_basic/EmoLabel/list_patition_label.txt",
+    "image_path": "Image/aligned/",
+    "label_path": "EmoLabel/list_patition_label.txt",
     'removed_image_path':"/kaggle/working/sgu24project/utils/datasets/rafdb_image_path_without_landmarks.txt",
     "image_size": 256,
     "n_channels": 3,
