@@ -21,7 +21,7 @@ np.random.seed(seed)
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
-from sgu24project.utils.datasets.rafdb_ds_with_landmark_feature import RafDataSet
+from sgu24project.utils.datasets.rafdb_ds_with_landmark_feature import image_with_landmark_RafDataSet
 #from sgu24project.utils.datasets.smp_dataloader import get_training_augmentation, get_validation_augmentation, Dataset
 from sgu24project.trainer.rafdb_LandmarkDetection_trainer_onlyLoss import RAFDB_Landmark_Detection_Trainer
 
@@ -64,9 +64,9 @@ if args.epoch_num != 1:
     configs["max_epoch_num"] = args.epoch_num
 
 
-train_dataset = RafDataSet(data_type = 'train', configs = configs, device ='cuda')
-valid_dataset = RafDataSet(data_type = 'test', configs = configs,  device ='cuda')
-test_dataset = RafDataSet(data_type = 'test', configs = configs, device ='cuda')
+train_dataset = image_with_landmark_RafDataSet(data_type = 'train', configs = configs, device ='cuda')
+valid_dataset = image_with_landmark_RafDataSet(data_type = 'test', configs = configs,  device ='cuda')
+test_dataset = image_with_landmark_RafDataSet(data_type = 'test', configs = configs, device ='cuda')
 
 model = Landmark_Detection_in_InUnet(in_channels=3)
 
