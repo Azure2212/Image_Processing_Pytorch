@@ -101,7 +101,7 @@ if data_type == 'train':
 
 
 fig, ax = plt.subplots(args.batch_size,2,figsize=(12,16))
-for i in range(args.batch_size)
+for i in range(args.batch_size):
     ax[i, 0].imshow(image)
     ax[i, 0].set_title('image')
     ax[i, 0].axis('off')
