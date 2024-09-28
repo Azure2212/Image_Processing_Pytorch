@@ -89,19 +89,21 @@ for f in file_names:
     file_paths.append(path)
 
 
-image = cv2.imread(file_paths[0])[:,:,::-1]
-image, detected_faces = make_augmentation_image_landmark_boundingbox_custom(image.copy(), task='resize')
 
-image, detected_faces = make_augmentation_image_landmark_boundingbox_custom(image.copy(), task='resize')
-feature_landmarks  = get_landmarks(image.copy(), detected_faces)
-if(feature_landmarks == None):
-    print(path)
-if data_type == 'train':
-    image = make_augmentation_image_landmark_boundingbox_custom(image.copy(), task='image_change')
 
 
 fig, ax = plt.subplots(args.batch_size,2,figsize=(12,16))
 for i in range(args.batch_size):
+    image = cv2.imread(file_paths[i])[:,:,::-1]
+    image, detected_faces = make_augmentation_image_landmark_boundingbox_custom(image.copy(), task='resize')
+
+    image, detected_faces = make_augmentation_image_landmark_boundingbox_custom(image.copy(), task='resize')
+    feature_landmarks  = get_landmarks(image.copy(), detected_faces)
+    if(feature_landmarks == None):
+        print(path)
+    if data_type == 'train':
+        image = make_augmentation_image_landmark_boundingbox_custom(image.copy(), task='image_change')
+
     ax[i, 0].imshow(image)
     ax[i, 0].set_title('image')
     ax[i, 0].axis('off')
