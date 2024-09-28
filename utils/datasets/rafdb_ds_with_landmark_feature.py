@@ -9,118 +9,7 @@ import random
 import cv2
 import torch
 from sgu24project.utils.augs.face_alignment import transform, crop, get_preds_fromhm, _get_preds_fromhm, transform_np
-
-def make_augmentation_image_landmark_custom(image, face_landmarks): 
-    def A_Horizontal_flip(image, landmarks):
-        flipped_image = cv2.flip(image, 1)  # Lật ngang hình ảnh
-        h, w, _ = image.shape
-
-        # Điều chỉnh tọa độ landmarks
-        flipped_landmarks = landmarks.copy()
-        flipped_landmarks[:, 0] = w - landmarks[:, 0]  # Thay đổi tọa độ x
-
-        return flipped_image, flipped_landmarks
-
-    def A_Vertical_flip(image, landmarks):
-        flipped_image = cv2.flip(image, 0)  # Lật dọc hình ảnh
-        h, w, _ = image.shape
-
-        # Điều chỉnh tọa độ landmarks
-        flipped_landmarks = landmarks.copy()
-        flipped_landmarks[:, 1] = h - landmarks[:, 1]  # Thay đổi tọa độ y
-
-        return flipped_image, flipped_landmarks
-
-    def A_Perspective(image, landmarks):
-        h, w, _ = image.shape
-        value = 30
-        # Định nghĩa các điểm nguồn và điểm đích cho biến đổi phối cảnh
-        src_points = np.float32([[0, 0], [w, 0], [0, h], [w, h]])
-        dst_points = np.float32([[random.uniform(-value, value), random.uniform(-value, value)],
-                                  [w + random.uniform(-value, value), random.uniform(-value, value)],
-                                  [random.uniform(-value, value), h + random.uniform(-value, value)],
-                                  [w + random.uniform(-value, value), h + random.uniform(-value, value)]])
-
-        # Tính toán ma trận biến đổi phối cảnh
-        matrix = cv2.getPerspectiveTransform(src_points, dst_points)
-
-        # Áp dụng biến đổi cho hình ảnh
-        transformed_image = cv2.warpPerspective(image, matrix, (w, h))
-
-        # Áp dụng biến đổi cho các điểm landmark
-        landmarks_h = np.hstack([landmarks, np.ones((landmarks.shape[0], 1))])  # Chuyển đổi sang dạng đồng nhất
-        transformed_landmarks = matrix.dot(landmarks_h.T).T  # Áp dụng ma trận biến đổi
-
-        # Chia cho phần tử thứ 3 để đưa về hệ tọa độ 2D
-        transformed_landmarks = transformed_landmarks[:, :2] / transformed_landmarks[:, 2][:, np.newaxis]
-
-        return transformed_image, transformed_landmarks
-    
-    def A_Rotate(my_image, landmarks):
-        # Chọn góc quay ngẫu nhiên từ -45 đến 45 độ
-        angle = np.random.uniform(-45, 45)
-     
-        # Quay hình ảnh
-        (h, w) = my_image.shape[:2]
-        center = (w // 2, h // 2)
-        M = cv2.getRotationMatrix2D(center, angle, 1.0)
-        rotated_image = cv2.warpAffine(my_image, M, (w, h))
-
-        # Cập nhật landmarks
-        theta = np.radians(-angle)  # Lấy âm của góc
-        rotation_matrix = np.array([[np.cos(theta), -np.sin(theta)],
-                                     [np.sin(theta), np.cos(theta)]])
-
-        # Cập nhật tọa độ landmarks
-        rotated_landmarks = landmarks - center
-        rotated_landmarks = rotated_landmarks @ rotation_matrix.T
-        rotated_landmarks += center
-
-        return rotated_image, rotated_landmarks
-    
-#     if random.random() < 0.5:
-#         image, face_landmarks = A_Horizontal_flip(image, face_landmarks)
-#     if random.random() < 0.5:
-#         random_number = random.choice([0, 1])
-#         if random_number == 0:
-#             image, face_landmarks = A_Vertical_flip(image, face_landmarks)
-#         else:
-#             image, face_landmarks = A_Rotate(image, face_landmarks)
-#     if random.random() < 0.5:
-#         image, face_landmarks = A_Perspective(image, face_landmarks)
-    if random.random() < 0.9:
-        random_number = random.choice([0, 1, 2])
-        if random_number == 0:
-            transform = A.Compose([A.CLAHE(p=1.0, clip_limit=2.0, tile_grid_size=(8, 8))])
-        elif random_number == 1:
-            transform = A.Compose([A.RandomBrightnessContrast(p=1)])
-        elif random_number == 2:
-            transform = A.Compose([A.RandomGamma(p=1)])
-        augmented = transform(image=image)
-        image = augmented['image']
-        
-    if random.random() < 0.9:
-        random_number = random.choice([0, 1, 2])
-        if random_number == 0:
-            transform = A.Compose([A.Sharpen(p=1)])
-        elif random_number == 1:
-            transform = A.Compose([A.Blur(blur_limit=3, p=1)])
-        elif random_number == 2:
-            transform = A.Compose([A.MotionBlur(blur_limit=3, p=1)])
-        augmented = transform(image=image)
-        image = augmented['image']
-        
-    if random.random() < 0.9:
-        random_number = random.choice([0, 1])
-        if random_number == 0:
-            transform = A.Compose([A.RandomBrightnessContrast(p=1)])
-        else:
-            transform = A.Compose([A.HueSaturationValue(p=1)])
-        augmented = transform(image=image)
-        image = augmented['image']
-            
-            
-    return image, face_landmarks
+from sgu24project.utils.augs.augmenters import make_augmentation_image_landmark_boundingbox_custom
 
 class image_with_landmark_RafDataSet(Dataset):
     def __init__(self, data_type, configs, ttau=False, device='cpu'):
@@ -168,42 +57,53 @@ class image_with_landmark_RafDataSet(Dataset):
     def __len__(self):
         return len(self.file_paths)
 
-    def get_landmarks(self, image, path):
+    def get_face_box_image(self, image):
         detected_faces = self.fa_model.face_detector.detect_from_image(image.copy())
+        return detected_faces
+
+    def get_landmarks(self, image, detected_faces):
         landmarks = []
         landmarks_scores = []
         if(detected_faces == None):
             print(f'path None: {path}')
             return None
         
-        for i, d in enumerate(detected_faces):
-            center = np.array(
-                [d[2] - (d[2] - d[0]) / 2.0, d[3] - (d[3] - d[1]) / 2.0])
-            center[1] = center[1] - (d[3] - d[1]) * 0.12
-            scale = (d[2] - d[0] + d[3] - d[1]) / self.fa_model.face_detector.reference_scale
-            inp = crop(image, center, scale)
-            inp = torch.from_numpy(inp.transpose(
-                (2, 0, 1))).float()
-            inp = inp.to(device ='cpu' , dtype=torch.float32)
-            inp.div_(255.0).unsqueeze_(0)
-            out = self.fa_model.face_alignment_net(inp).detach()
-            # out = out.to(device='cpu', dtype=torch.float32).numpy()
-            # pts, pts_img, scores = get_preds_fromhm(out, center, scale)
-            # pts, pts_img = torch.from_numpy(pts), torch.from_numpy(pts_img)
-            # pts, pts_img = pts.view(68, 2) * 4, pts_img.view(68, 2)
-            # scores = scores.squeeze(0)
-            # landmarks.append(pts_img.numpy())
-            # landmarks_scores.append(scores)
-            return out #landmarks
+        def get_landmarks(image, detected_faces):
+            landmarks = []
+            landmarks_scores = []
+            for i, d in enumerate(detected_faces):
+                center = np.array(
+                    [d[2] - (d[2] - d[0]) / 2.0, d[3] - (d[3] - d[1]) / 2.0])
+                center[1] = center[1] - (d[3] - d[1]) * 0.12
+                scale = (d[2] - d[0] + d[3] - d[1]) / fa_model.face_detector.reference_scale
+                inp = crop(image, center, scale)
+                inp = torch.from_numpy(inp.transpose(
+                    (2, 0, 1))).float()
+                inp = inp.to(device ='cpu', dtype=torch.float32)
+                inp.div_(255.0).unsqueeze_(0)
+                out = fa.face_alignment_net(inp).detach()
+                # print(out.shape)
+                # out = out.to(device='cpu', dtype=torch.float32).numpy()
+                # print(out.shape)
+                # pts, pts_img, scores = get_preds_fromhm(out, center, scale)
+                # print(pts.shape)
+                # pts, pts_img = torch.from_numpy(pts), torch.from_numpy(pts_img)
+                # print(pts.shape)
+                # pts, pts_img = pts.view(68, 2) * 4, pts_img.view(68, 2)
+                # scores = scores.squeeze(0)
+                # print(pts.shape)
+                # landmarks.append(pts_img.numpy())
+                # landmarks_scores.append(scores)
+                return out
         
     def __getitem__(self, idx):
         path = self.file_paths[idx]
         image = cv2.imread(path)[:,:,::-1]
-        image = cv2.resize(image, self.shape)
-        landmarks  = self.get_landmarks(image.copy(), path)
+        image, detected_faces = make_augmentation_image_landmark_boundingbox_custom(image.copy(), task='resize')
+        landmarks  = self.get_landmarks(image.copy(), detected_faces)
         if(landmarks == None):
             print(path)
-        #if self.data_type == 'train':
-            #image, feature_landmark = make_augmentation_image_landmark_custom(image, landmarks)
+        if self.data_type == 'train':
+            image = make_augmentation_image_landmark_boundingbox_custom(image.copy())
             #landmarks = landmarks[0]
         return image.transpose(2, 0, 1), landmarks
