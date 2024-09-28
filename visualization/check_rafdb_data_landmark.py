@@ -94,6 +94,7 @@ for f in file_names:
 
 fig, ax = plt.subplots(args.batch_size,2,figsize=(12,16))
 for i in range(args.batch_size):
+    print(file_paths[i])
     image = cv2.imread(file_paths[i])[:,:,::-1]
     image, detected_faces = make_augmentation_image_landmark_boundingbox_custom(image.copy(), task='resize')
     feature_landmarks  = get_landmarks(image.copy(), detected_faces)
