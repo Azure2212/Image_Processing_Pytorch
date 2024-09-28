@@ -164,8 +164,6 @@ class image_with_landmark_RafDataSet(Dataset):
             path = os.path.join(self.configs["raf_path"], self.configs["image_path"], f)
             self.file_paths.append(path)
 
-        for i in self.file_paths:
-            print(i)
         
     def __len__(self):
         return len(self.file_paths)
@@ -202,10 +200,10 @@ class image_with_landmark_RafDataSet(Dataset):
         path = self.file_paths[idx]
         image = cv2.imread(path)[:,:,::-1]
         image = cv2.resize(image, self.shape)
-        landmarks  = self.get_landmarks(image, path)
+        landmarks  = self.get_landmarks(image.copy(), path)
 
-        if self.data_type == 'train':
-            image, feature_landmark = make_augmentation_image_landmark_custom(image, landmarks)
+        #if self.data_type == 'train':
+            #image, feature_landmark = make_augmentation_image_landmark_custom(image, landmarks)
             #landmarks = landmarks[0]
         #print(path)
         return image.transpose(2, 0, 1), landmarks
