@@ -16,6 +16,7 @@ from sgu24project.utils.augs.augmenters import make_augmentation_image_landmark_
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--data-type', default= "train", type=str, help='type data')
+parser.add_argument('--batch-size', default= 1, type=int, help='1')
 parser.add_argument('--device', default= "cpu", type=str, help='gpu or cpu')
 args, unknown = parser.parse_known_args()
 
