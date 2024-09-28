@@ -19,7 +19,7 @@ parser.add_argument('--data-type', default= "train", type=str, help='type data')
 parser.add_argument('--device', default= "cpu", type=str, help='gpu or cpu')
 args, unknown = parser.parse_known_args()
 
-device = args_device
+device = args.device
 fa_model = face_alignment.FaceAlignment(face_alignment.LandmarksType.TWO_D, device=device)
 
 def get_landmarks(image, detected_faces):
