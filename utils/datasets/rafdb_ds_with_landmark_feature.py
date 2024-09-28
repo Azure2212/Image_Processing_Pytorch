@@ -118,7 +118,7 @@ def make_augmentation_image_landmark_custom(image, face_landmarks):
             
     return image, face_landmarks
 
-class RafDataSet(Dataset):
+class image_with_landmark_RafDataSet(Dataset):
     def __init__(self, data_type, configs, ttau=False, device='cpu'):
         self.device = device
         self.configs = configs
