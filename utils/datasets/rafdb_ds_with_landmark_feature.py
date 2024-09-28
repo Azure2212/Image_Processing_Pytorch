@@ -139,7 +139,7 @@ class RafDataSet(Dataset):
         path_images_without_landmarks = []
 
         # Open the input file in read mode
-        file2read = os.path.join(path_current = os.path.abspath(globals().get("__file__",".")),'rafdb_image_path_without_landmarks.txt')
+        file2read = os.path.join(os.path.abspath(globals().get("__file__",".")),'rafdb_image_path_without_landmarks.txt')
         with open(file2read, 'r') as f:
             # Read each line in the file
             for line in f:
