@@ -94,7 +94,7 @@ image, detected_faces = make_augmentation_image_landmark_boundingbox_custom(imag
 
 image, detected_faces = make_augmentation_image_landmark_boundingbox_custom(image.copy(), task='resize')
 feature_landmarks  = get_landmarks(image.copy(), detected_faces)
-if(landmarks == None):
+if(feature_landmarks == None):
     print(path)
 if data_type == 'train':
     image = make_augmentation_image_landmark_boundingbox_custom(image.copy(), task='image_change')
