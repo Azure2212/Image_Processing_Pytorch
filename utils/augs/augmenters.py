@@ -232,7 +232,7 @@ def make_augmentation_image_landmark_boundingbox_custom(image, task='resize', de
         rotated_corners = M.dot(bbox_corners_homogeneous.T).T
 
         # Tìm tọa độ min và max mới cho bounding box
-        print(adjusted_bbox)
+        #print(adjusted_bbox)
         adjusted_bbox[0] = np.min(rotated_corners[:, 0])
         adjusted_bbox[1] = np.min(rotated_corners[:, 1])
         adjusted_bbox[2] = np.max(rotated_corners[:, 0])
@@ -306,7 +306,7 @@ def make_augmentation_image_landmark_boundingbox_custom(image, task='resize', de
             
         #print(detected_faces)
         resized_image = cv2.resize(image.copy(), new_size)
-        print(detected_faces[0].shape)
+        #print(detected_faces[0].shape)
         if random.random() < 0.5:
             resized_image, detected_faces = A_Vertical_Flip_image_boundingbox(resized_image.copy(), detected_faces.copy())
         if random.random() < 0.5:
