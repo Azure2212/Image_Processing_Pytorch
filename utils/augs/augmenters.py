@@ -259,7 +259,7 @@ def make_augmentation_image_landmark_boundingbox_custom(image, task='resize', de
 
         # Tạo các điểm nguồn và điểm đích cho biến đổi phối cảnh
         src_points = bbox_corners
-        value = 50
+        value = 20
         dst_points = np.array([
             [bbox_value[0] + np.random.uniform(-value, value), bbox_value[1] + np.random.uniform(-value, value)],  # Biến đổi ngẫu nhiên
             [bbox_value[2] + np.random.uniform(-value, value), bbox_value[1] + np.random.uniform(-value, value)],
