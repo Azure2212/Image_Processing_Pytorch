@@ -101,7 +101,7 @@ if data_type == 'train':
 
 
 fig, ax = plt.subplots(args.batch_size,2,figsize=(12,16))
-print(image.shape)
+print(landmarks.shape)
 ax[0].imshow(image)
 ax[0].set_title('image')
 ax[0].axis('off')
