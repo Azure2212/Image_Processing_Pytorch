@@ -152,7 +152,8 @@ class image_with_landmark_RafDataSet(Dataset):
             for line in f:
                 # Strip any whitespace characters (like newline) and add to the list
                 path_images_without_landmarks.append(line.strip())
-        print(len(path_images_without_landmarks))
+        print(path_images_without_landmarks[0])
+        print(file_names[0])
 
         check_in = ~np.isin(file_names, path_images_without_landmarks)
         file_names = file_names[check_in]
