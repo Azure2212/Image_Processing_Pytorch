@@ -100,11 +100,12 @@ transform = transforms.Compose(
             transforms.Normalize(mean=[0.485, 0.456, 0.406],
             std=[0.229, 0.224, 0.225]),
         ])
-
+args.batch_size = 1
 fig, ax = plt.subplots(args.batch_size,2,figsize=(12, args.batch_size *6))
 for i in range(args.batch_size):
-    print(file_paths[i])
-    image = cv2.imread(file_paths[i])[:,:,::-1]
+   
+    path = print('/kaggle/input/rafdb-basic/rafdb_basic/Image/aligned/train_10956_aligned.jpg') #file_paths[i]
+    image = cv2.imread(path)[:,:,::-1]
     image, detected_faces = make_augmentation_image_landmark_boundingbox_custom(image.copy(), task='resize')
     feature_landmarks  = get_landmarks(image.copy(), detected_faces)
     if(feature_landmarks == None):
