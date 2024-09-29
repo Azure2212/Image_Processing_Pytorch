@@ -56,7 +56,7 @@ def my_data_augmentation(image):
             image = A_Perspective(image.copy())
 
         if random.random() < 0.9:
-            random_number = random.choice([0, 1, 2, 4])
+            random_number = random.choice([0, 1, 2, 3])
             if random_number == 1:
                 transform = A.Compose([A.CLAHE(p=1.0, clip_limit=2.0, tile_grid_size=(8, 8))])
             elif random_number == 2:
