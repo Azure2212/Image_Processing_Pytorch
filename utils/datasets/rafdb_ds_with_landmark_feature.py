@@ -78,7 +78,7 @@ class image_with_landmark_RafDataSet(Dataset):
             print(f'path None: {path}')
             return None
         
-    def get_landmarks(image, detected_faces):
+    def get_landmarks(self, image, detected_faces):
         for i, d in enumerate(detected_faces):
             center = np.array(
                 [d[2] - (d[2] - d[0]) / 2.0, d[3] - (d[3] - d[1]) / 2.0])
