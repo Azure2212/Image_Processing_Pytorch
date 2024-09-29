@@ -257,6 +257,7 @@ class RAFDB_Landmark_Detection_Trainer(Trainer):
 
     self.model.train()
     train_acc = 0.0
+    train_loss = 0.0
 
     for i, (images, feature_landmarks) in tqdm.tqdm(
         enumerate(self.train_ds), total = len(self.train_ds), leave = True, colour = "blue", desc = f"Epoch {self.current_epoch_num}",
