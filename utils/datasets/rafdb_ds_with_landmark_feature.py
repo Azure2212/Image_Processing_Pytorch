@@ -85,8 +85,7 @@ class image_with_landmark_RafDataSet(Dataset):
             center[1] = center[1] - (d[3] - d[1]) * 0.12
             scale = (d[2] - d[0] + d[3] - d[1]) / self.fa_model.face_detector.reference_scale
             inp = crop(image, center, scale)
-            inp = torch.from_numpy(inp.transpose(
-                (2, 0, 1))).float()
+            inp = torch.from_numpy(inp.transpose((2, 0, 1))).float()
             inp = inp.to(device ='cpu', dtype=torch.float32)
             inp.div_(255.0).unsqueeze_(0)
             out = self.fa_model.face_alignment_net(inp).detach()
@@ -113,6 +112,7 @@ class image_with_landmark_RafDataSet(Dataset):
         if(landmarks == None):
             print(f'none: {path}')
             return None, None
+        print(landmarks.shape)
         if self.data_type == 'train':
             image = make_augmentation_image_landmark_boundingbox_custom(image.copy())
             #landmarks = landmarks[0]
