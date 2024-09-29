@@ -11,9 +11,6 @@ import torch
 import random
 from sgu24project.utils.augs.augmenters import seg_raf , seg_raftest1, seg_raftest2
 
-import torch
-from torchvision import transforms
-
 def my_data_augmentation(image): 
    
     def A_Perspective(image):
@@ -65,8 +62,9 @@ def my_data_augmentation(image):
                 transform = A.Compose([A.RandomBrightnessContrast(p=1)])
             elif random_number == 3:
                 transform = A.Compose([A.RandomGamma(p=1)])
-            augmented = transform(image=image)
-            image = augmented['image']
+            if random_number != 0
+                augmented = transform(image=image)
+                image = augmented['image']
             
         if random.random() < 0.5:
             random_number = random.choice([0, 1, 2, 3])
@@ -76,8 +74,9 @@ def my_data_augmentation(image):
                 transform = A.Compose([A.Blur(blur_limit=3, p=1)])
             elif random_number == 3:
                 transform = A.Compose([A.MotionBlur(blur_limit=3, p=1)])
-            augmented = transform(image=image)
-            image = augmented['image']
+            if random_number != 0
+                augmented = transform(image=image)
+                image = augmented['image']
             
         if random.random() < 0.5:
             random_number = random.choice([0, 1, 2])
@@ -85,8 +84,9 @@ def my_data_augmentation(image):
                 transform = A.Compose([A.RandomBrightnessContrast(p=1)])
             elif random_number == 2:
                 transform = A.Compose([A.HueSaturationValue(p=1)])
-            augmented = transform(image=image)
-            image = augmented['image']
+            if random_number != 0
+                augmented = transform(image=image)
+                image = augmented['image']
     return image
 
 class RafDataSet(Dataset):
