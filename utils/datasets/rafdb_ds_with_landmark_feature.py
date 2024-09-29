@@ -112,9 +112,9 @@ class image_with_landmark_RafDataSet(Dataset):
         if(landmarks == None):
             print(f'none: {path}')
             return None, None
-        print(landmarks.shape)
+        
         if self.data_type == 'train':
-            image = make_augmentation_image_landmark_boundingbox_custom(image.copy())
+            image = make_augmentation_image_landmark_boundingbox_custom(image.copy(), task='image_change')
             #landmarks = landmarks[0]
 
         image = self.transform(image)
