@@ -97,8 +97,8 @@ transform = transforms.Compose(
         [
             transforms.ToPILImage(),
             transforms.ToTensor(),
-            transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                             std=[0.229, 0.224, 0.225]),
+            # transforms.Normalize(mean=[0.485, 0.456, 0.406],
+            #                  std=[0.229, 0.224, 0.225]),
         ])
 
 fig, ax = plt.subplots(args.batch_size,2,figsize=(12, args.batch_size *6))
