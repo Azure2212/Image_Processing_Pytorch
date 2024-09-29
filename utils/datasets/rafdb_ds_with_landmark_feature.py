@@ -108,17 +108,16 @@ class image_with_landmark_RafDataSet(Dataset):
         path = self.file_paths[idx]
         image = cv2.imread(path)[:,:,::-1]
         
-        #image, detected_faces = make_augmentation_image_landmark_boundingbox_custom(image.copy(), task='resize')
-        #landmarks  = self.get_landmarks(image.copy(), detected_faces)
-        # if(landmarks == None):
-        #     print(f'none: {path}')
-        #     return None, None
+        image, detected_faces = make_augmentation_image_landmark_boundingbox_custom(image.copy(), task='resize')
+        landmarks  = self.get_landmarks(image.copy(), detected_faces)
+        if(landmarks == None):
+            print(f'none: {path}')
+            return None, None
         
-        # if self.data_type == 'train':
-        #     image = make_augmentation_image_landmark_boundingbox_custom(image.copy(), task='image_change')
-        #     #landmarks = landmarks[0]
+        if self.data_type == 'train':
+            image = make_augmentation_image_landmark_boundingbox_custom(image.copy(), task='image_change')
+            #landmarks = landmarks[0]
 
         image = self.transform(image)
-        landmarks = torch.randn(68, int(self.shape[0]/4), int(self.shape[0]/4))
-        detected_faces = torch.randn(68, int(self.shape[0]/4), int(self.shape[0]/4))
+    
         return image, landmarks, detected_faces
