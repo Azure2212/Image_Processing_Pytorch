@@ -11,7 +11,7 @@ import torch
 from sgu24project.utils.augs.augmenters import seg_raf , seg_raftest1, seg_raftest2
 
 
-def my_data_augmentatipn(image): 
+def my_data_augmentation(image): 
    
     def A_Perspective(image):
         h, w, _ = image.shape
@@ -140,7 +140,7 @@ class RafDataSet(Dataset):
         
         if self.data_type == "train":
             #image = seg_raf(image = image)
-            image = my_data_augmentatipn(image.copy())
+            image = my_data_augmentation(image.copy())
         if self.data_type == "test" and self.ttau == True:
             images1 = [seg_raftest1(image=image) for i in range(self.len_tta)]
             images2 = [seg_raftest2(image=image) for i in range(self.len_tta)]
