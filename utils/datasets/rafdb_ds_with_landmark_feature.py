@@ -5,6 +5,7 @@ import face_alignment
 import pandas as pd
 import os
 import numpy as np
+from torchvision.transforms import transforms
 import random
 import cv2
 import torch
