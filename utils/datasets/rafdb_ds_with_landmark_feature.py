@@ -119,5 +119,4 @@ class image_with_landmark_RafDataSet(Dataset):
             #landmarks = landmarks[0]
 
         image = self.transform(image)
-        landmarks = landmarks.cpu()
         return image, landmarks

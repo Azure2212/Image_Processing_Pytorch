@@ -63,10 +63,10 @@ if args.epoch_num != 1:
     print(f'total epoch = {args.epoch_num}')
     configs["max_epoch_num"] = args.epoch_num
 
-
-train_dataset = image_with_landmark_RafDataSet(data_type = 'train', configs = configs, device ='cuda')
-valid_dataset = image_with_landmark_RafDataSet(data_type = 'test', configs = configs,  device ='cuda')
-test_dataset = image_with_landmark_RafDataSet(data_type = 'test', configs = configs, device ='cuda')
+device ='cpu'
+train_dataset = image_with_landmark_RafDataSet(data_type = 'train', configs = configs, device = device)
+valid_dataset = image_with_landmark_RafDataSet(data_type = 'test', configs = configs,  device = device)
+test_dataset = image_with_landmark_RafDataSet(data_type = 'test', configs = configs, device = device)
 
 model = Landmark_Detection_in_InUnet(in_channels=3)
 

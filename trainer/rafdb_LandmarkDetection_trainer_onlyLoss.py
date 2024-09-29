@@ -263,7 +263,6 @@ class RAFDB_Landmark_Detection_Trainer(Trainer):
         bar_format="{desc}: {percentage:3.0f}%|{bar:50}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]"
     ):
 
-      # Move images to GPU before feeding them to the model, to fix error happen : Input type (torch.cuda.FloatTensor) and weight type (torch.FloatTensor) should be the same
       self.model = self.model.cuda()
       
       images = images.cuda(non_blocking = True)
