@@ -43,7 +43,7 @@ def my_data_augmentation(image):
         rotated_image = cv2.warpAffine(my_image, M, (w, h))
 
         return rotated_image
-    if random.randn() < 0.5:
+    if random.random() < 0.5:
         if random.random() < 0.5:
             image = cv2.flip(image.copy(), 1) #Horizontal_flip
         if random.random() < 0.5:
