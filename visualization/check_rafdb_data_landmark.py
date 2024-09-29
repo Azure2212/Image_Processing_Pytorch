@@ -13,6 +13,9 @@ import face_alignment
 import argparse 
 import torch
 from sgu24project.utils.augs.augmenters import make_augmentation_image_landmark_boundingbox_custom
+from torchvision.transforms import transforms
+from PIL import Image
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--data-type', default= "train", type=str, help='type data')
@@ -90,7 +93,13 @@ for f in file_names:
 
 
 
-
+transform = transforms.Compose(
+        [
+            transforms.ToPILImage(),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                             std=[0.229, 0.224, 0.225]),
+        ])
 
 fig, ax = plt.subplots(args.batch_size,2,figsize=(12, args.batch_size *6))
 for i in range(args.batch_size):
@@ -102,7 +111,9 @@ for i in range(args.batch_size):
         print(path)
     if data_type == 'train':
         image = make_augmentation_image_landmark_boundingbox_custom(image.copy(), task='image_change')
-
+    print(image.shape)
+    image = self.transform(image)
+    print(image.shape)
     ax[i, 0].imshow(image)
     ax[i, 0].set_title('image')
     ax[i, 0].axis('off')
