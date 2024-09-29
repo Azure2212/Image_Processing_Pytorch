@@ -96,9 +96,9 @@ for f in file_names:
 transform = transforms.Compose(
         [
             transforms.ToPILImage(),
-            transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406],
                              std=[0.229, 0.224, 0.225]),
+            transforms.ToTensor(),
         ])
 
 fig, ax = plt.subplots(args.batch_size,2,figsize=(12, args.batch_size *6))
