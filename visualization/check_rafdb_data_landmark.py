@@ -104,7 +104,7 @@ args.batch_size = 1
 fig, ax = plt.subplots(args.batch_size,2,figsize=(12, args.batch_size *6))
 for i in range(args.batch_size):
    
-    path = print('/kaggle/input/rafdb-basic/rafdb_basic/Image/aligned/train_10956_aligned.jpg') #file_paths[i]
+    path = '/kaggle/input/rafdb-basic/rafdb_basic/Image/aligned/train_10956_aligned.jpg' #file_paths[i]
     image = cv2.imread(path)[:,:,::-1]
     image, detected_faces = make_augmentation_image_landmark_boundingbox_custom(image.copy(), task='resize')
     feature_landmarks  = get_landmarks(image.copy(), detected_faces)
