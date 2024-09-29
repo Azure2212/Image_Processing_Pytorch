@@ -112,7 +112,7 @@ for i in range(args.batch_size):
     if data_type == 'train':
         image = make_augmentation_image_landmark_boundingbox_custom(image.copy(), task='image_change')
     print(image.shape)
-    image = self.transform(image)
+    image = transform(image)
     print(image.shape)
     ax[i, 0].imshow(image)
     ax[i, 0].set_title('image')
