@@ -274,7 +274,7 @@ class RAFDB_Landmark_Detection_Trainer(Trainer):
     
       #loss = self.criterion(y_pred_probs.log(), feature_landmarks)
       loss = 1
-      train_loss += loss.item()
+      train_loss += loss#.item()
 
       # compute gradient and do SGD step
       self.optimizer.zero_grad()
