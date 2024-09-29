@@ -57,7 +57,7 @@ class image_with_landmark_RafDataSet(Dataset):
         self.transform = transforms.Compose(
         [
             transforms.ToPILImage(),
-            transforms.Resize(self.shape),
+            #transforms.Resize(self.shape),
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406],
                              std=[0.229, 0.224, 0.225]),
@@ -109,6 +109,8 @@ class image_with_landmark_RafDataSet(Dataset):
         path = self.file_paths[idx]
         image = cv2.imread(path)[:,:,::-1]
         image, detected_faces = make_augmentation_image_landmark_boundingbox_custom(image.copy(), task='resize')
+        if(detected_faces == None):
+            print('ua ko co phat hien khuon mat v')
         landmarks  = self.get_landmarks(image.copy(), detected_faces)
         if(landmarks == None):
             print(f'none: {path}')
