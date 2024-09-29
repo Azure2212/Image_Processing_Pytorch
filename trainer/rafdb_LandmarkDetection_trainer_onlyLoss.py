@@ -266,7 +266,7 @@ class RAFDB_Landmark_Detection_Trainer(Trainer):
       self.model = self.model.cuda()
       
       images = images.cuda(non_blocking = True)
-      #feature_landmarks = feature_landmarks.cuda(non_blocking = True)
+      feature_landmarks = feature_landmarks.cuda(non_blocking = True)
       # compute output, accuracy and get loss
       y_pred = self.model(images)
       y_pred_probs = F.softmax(y_pred, dim=1)
@@ -305,7 +305,7 @@ class RAFDB_Landmark_Detection_Trainer(Trainer):
           bar_format="{desc} {percentage:3.0f}%|{bar:30}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]"
       ):
         images = images.cuda(non_blocking = True)
-        #feature_landmarks = feature_landmarks.cuda(non_blocking = True)
+        feature_landmarks = feature_landmarks.cuda(non_blocking = True)
 
         # compute output, accuracy and get loss
         y_pred_probs = F.softmax(y_pred, dim=1)
