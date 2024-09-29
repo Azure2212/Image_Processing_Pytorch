@@ -114,6 +114,9 @@ for i in range(args.batch_size):
 
     image = transform(image)
     
+    mean = torch.tensor([0.485, 0.456, 0.406]).view(3, 1, 1)  # Đưa về dạng [C, 1, 1]
+    std = torch.tensor([0.229, 0.224, 0.225]).view(3, 1, 1) 
+    image = (image - mean) / std
     image2show = np.transpose(image.numpy(), (1, 2, 0))
     ax[i, 0].imshow(image2show)
     ax[i, 0].set_title('image')
