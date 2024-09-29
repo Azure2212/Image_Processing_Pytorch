@@ -119,7 +119,5 @@ class image_with_landmark_RafDataSet(Dataset):
             #landmarks = landmarks[0]
 
         image = self.transform(image)
-        print('1')
-        print(f'feature_landmarks device: {landmarks.device}')
-        print('1')
+        landmarks = landmarks.cpu()
         return image, landmarks
