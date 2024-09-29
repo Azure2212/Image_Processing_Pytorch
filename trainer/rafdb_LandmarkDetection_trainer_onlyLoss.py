@@ -272,9 +272,9 @@ class RAFDB_Landmark_Detection_Trainer(Trainer):
       y_pred = self.model(images)
       y_pred_probs = F.softmax(y_pred, dim=1)
     
-      #loss = self.criterion(y_pred_probs.log(), feature_landmarks)
-      loss = 1
-      train_loss += loss#.item()
+      loss = self.criterion(y_pred_probs.log(), feature_landmarks)
+
+      train_loss += loss.item()
 
       # compute gradient and do SGD step
       self.optimizer.zero_grad()
