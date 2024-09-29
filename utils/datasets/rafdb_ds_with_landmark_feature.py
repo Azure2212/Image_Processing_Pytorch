@@ -119,5 +119,6 @@ class image_with_landmark_RafDataSet(Dataset):
         #     #landmarks = landmarks[0]
 
         image = self.transform(image)
-        random_tensor = torch.randn(68, int(self.shape[0]/4), int(self.shape[0]/4))
+        landmarks = torch.randn(68, int(self.shape[0]/4), int(self.shape[0]/4))
+        detected_faces = torch.randn(68, int(self.shape[0]/4), int(self.shape[0]/4))
         return image, landmarks, detected_faces
