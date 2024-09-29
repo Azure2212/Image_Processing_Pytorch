@@ -53,6 +53,16 @@ class image_with_landmark_RafDataSet(Dataset):
             path = os.path.join(self.configs["raf_path"], self.configs["image_path"], f)
             self.file_paths.append(path)
 
+        self.transform = transforms.Compose(
+        [
+            transforms.ToPILImage(),
+            transforms.Resize((224, 224)),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                             std=[0.229, 0.224, 0.225]),
+
+        ]
+        )
         
     def __len__(self):
         return len(self.file_paths)
@@ -106,4 +116,6 @@ class image_with_landmark_RafDataSet(Dataset):
         if self.data_type == 'train':
             image = make_augmentation_image_landmark_boundingbox_custom(image.copy())
             #landmarks = landmarks[0]
-        return image.transpose(2, 0, 1), landmarks
+
+        image = self.transform(image)
+        return image, landmarks
