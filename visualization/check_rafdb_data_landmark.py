@@ -113,8 +113,9 @@ for i in range(args.batch_size):
         image = make_augmentation_image_landmark_boundingbox_custom(image.copy(), task='image_change')
     print(image.shape)
     image = transform(image)
-    print(image.shape)
-    ax[i, 0].imshow(image)
+    
+    image2show = np.transpose(image.numpy(), (1, 2, 0))
+    ax[i, 0].imshow(image2show)
     ax[i, 0].set_title('image')
     ax[i, 0].axis('off')
 
@@ -135,7 +136,7 @@ for i in range(args.batch_size):
     for landmark in landmarks[0]:
         ax[i, 1].scatter(landmark[0], landmark[1], color='red', s=10)
 
-    ax[i, 1].imshow(image)
+    ax[i, 1].imshow(image2show)
     ax[i, 1].set_title('Detected LMark')
     ax[i, 1].axis('off')
 
