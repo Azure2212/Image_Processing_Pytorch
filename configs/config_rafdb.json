@@ -2,7 +2,7 @@
     "raf_path": "/kaggle/input/rafdb-basic",
     "image_path": "rafdb_basic/Image/aligned/",
     "label_path": "rafdb_basic/EmoLabel/list_patition_label.txt",
-    "image_size": 224,
+    "image_size": 256,
     "n_channels": 3,
     "n_classes": 7,
     "model": "ResNet50",
