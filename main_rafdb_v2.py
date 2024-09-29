@@ -77,8 +77,8 @@ elif args.model_name == 'resnet50_vggface2':
 elif args.model_name == 'resnet50_vggface2_ft':
     print('resnet50 with pre-train on vggface2(trained on MS1M, and then fine-tuned on VGGFace2) was chose !')
     model = resnet50_vggface2_ft(pretrained = False, use_cbam = False, use_duck = False)
-    for name, layer in model.named_children():
-        print(f"{name}: {layer}")
+    # for name, layer in model.named_children():
+    #     print(f"{name}: {layer}")
 elif args.model_name == 'resnet50_imagenet':
     print('resnet50 with pre-train on imagenet was chose !')
     model = resnet50()
