@@ -8,6 +8,7 @@ from torchvision.transforms import transforms
 from torch.utils.data import Dataset
 import torchvision
 import torch
+import random
 from sgu24project.utils.augs.augmenters import seg_raf , seg_raftest1, seg_raftest2
 
 
