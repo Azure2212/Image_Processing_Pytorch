@@ -108,12 +108,13 @@ class image_with_landmark_RafDataSet(Dataset):
     def __getitem__(self, idx):
         path = self.file_paths[idx]
         image = cv2.imread(path)[:,:,::-1]
+        print(image.shape)
         image, detected_faces = make_augmentation_image_landmark_boundingbox_custom(image.copy(), task='resize')
         if(detected_faces == None):
             print('ua ko co phat hien khuon mat v')
         landmarks  = self.get_landmarks(image.copy(), detected_faces)
         if(landmarks == None):
-            print(f'none: {path}')
+            #print(f'none: {path}')
             return None, None
         if self.data_type == 'train':
             image = make_augmentation_image_landmark_boundingbox_custom(image.copy())
