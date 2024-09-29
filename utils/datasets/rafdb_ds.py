@@ -32,7 +32,7 @@ def my_data_augmentation(image):
 
         return transformed_image
     
-    def A_Rotate(my_image, landmarks):
+    def A_Rotate(my_image):
         # Chọn góc quay ngẫu nhiên từ -45 đến 45 độ
         angle = np.random.uniform(-45, 45)
      
