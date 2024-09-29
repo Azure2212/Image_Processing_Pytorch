@@ -268,8 +268,6 @@ class RAFDB_Landmark_Detection_Trainer(Trainer):
       
       images = images.cuda(non_blocking = True)
       #feature_landmarks = feature_landmarks.cuda(non_blocking = True)
-      print(f'images device: {images.device}')
-      print(f'feature_landmarks device: {feature_landmarks.device}')
       # compute output, accuracy and get loss
       y_pred = self.model(images)
       y_pred_probs = F.softmax(y_pred, dim=1)
