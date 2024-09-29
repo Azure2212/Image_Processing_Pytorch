@@ -57,7 +57,7 @@ configs = configs
 data_type = args.data_type
 
 shape = (configs["image_size"], configs["image_size"])
-fa_model = face_alignment.FaceAlignment(face_alignment.LandmarksType.TWO_D, device='cpu')
+fa_model = face_alignment.FaceAlignment(face_alignment.LandmarksType.TWO_D, device=device)
 
 df = pd.read_csv(os.path.join(configs["raf_path"], configs["label_path"]), sep=' ', header=None, names=['name', 'label'])
 
