@@ -18,6 +18,7 @@ class image_with_landmark_RafDataSet(Dataset):
         self.configs = configs
         self.data_type = data_type
         self.shape = (configs["image_size"], configs["image_size"])
+        
         self.fa_model = face_alignment.FaceAlignment(face_alignment.LandmarksType.TWO_D, device='cpu')
 
         df = pd.read_csv(os.path.join(self.configs["raf_path"], configs["label_path"]), sep=' ', header=None, names=['name', 'label'])
@@ -86,7 +87,7 @@ class image_with_landmark_RafDataSet(Dataset):
             scale = (d[2] - d[0] + d[3] - d[1]) / self.fa_model.face_detector.reference_scale
             inp = crop(image, center, scale)
             inp = torch.from_numpy(inp.transpose((2, 0, 1))).float()
-            inp = inp.to(device ='cpu', dtype=torch.float32)
+            inp = inp.to(device = self.device, dtype=torch.float32)
             inp.div_(255.0).unsqueeze_(0)
             out = self.fa_model.face_alignment_net(inp).detach()
             # print(out.shape)
