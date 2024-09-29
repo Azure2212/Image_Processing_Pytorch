@@ -10,6 +10,81 @@ import torchvision
 import torch
 from sgu24project.utils.augs.augmenters import seg_raf , seg_raftest1, seg_raftest2
 
+
+# def my_data_augmentatipn(image): 
+   
+#     def A_Perspective(image):
+#         h, w, _ = image.shape
+#         value = 30
+#         # Định nghĩa các điểm nguồn và điểm đích cho biến đổi phối cảnh
+#         src_points = np.float32([[0, 0], [w, 0], [0, h], [w, h]])
+#         dst_points = np.float32([[random.uniform(-value, value), random.uniform(-value, value)],
+#                                   [w + random.uniform(-value, value), random.uniform(-value, value)],
+#                                   [random.uniform(-value, value), h + random.uniform(-value, value)],
+#                                   [w + random.uniform(-value, value), h + random.uniform(-value, value)]])
+
+#         # Tính toán ma trận biến đổi phối cảnh
+#         matrix = cv2.getPerspectiveTransform(src_points, dst_points)
+
+#         # Áp dụng biến đổi cho hình ảnh
+#         transformed_image = cv2.warpPerspective(image, matrix, (w, h))
+
+#         return transformed_image
+    
+#     def A_Rotate(my_image, landmarks):
+#         # Chọn góc quay ngẫu nhiên từ -45 đến 45 độ
+#         angle = np.random.uniform(-45, 45)
+     
+#         # Quay hình ảnh
+#         (h, w) = my_image.shape[:2]
+#         center = (w // 2, h // 2)
+#         M = cv2.getRotationMatrix2D(center, angle, 1.0)
+#         rotated_image = cv2.warpAffine(my_image, M, (w, h))
+
+#         return rotated_image
+#     if random.randn() < 0.5:
+#         if random.random() < 0.5:
+#             image = cv2.flip(image.copy(), 1) #Horizontal_flip
+#         if random.random() < 0.5:
+#             random_number = cv2.flip(image.copy(), 0) #Vertical_flip
+#         if random.random() < 0.5:    
+#             image, face_landmarks = A_Rotate(image.copy())
+
+#         if random.random() < 0.5:
+#             image, face_landmarks = A_Perspective(image.copy())
+
+#         if random.random() < 0.9:
+#             random_number = random.choice([0, 1, 2, 4])
+#             if random_number == 1:
+#                 transform = A.Compose([A.CLAHE(p=1.0, clip_limit=2.0, tile_grid_size=(8, 8))])
+#             elif random_number == 2:
+#                 transform = A.Compose([A.RandomBrightnessContrast(p=1)])
+#             elif random_number == 3:
+#                 transform = A.Compose([A.RandomGamma(p=1)])
+#             augmented = transform(image=image)
+#             image = augmented['image']
+            
+#         if random.random() < 0.9:
+#             random_number = random.choice([0, 1, 2, 3])
+#             if random_number == 1:
+#                 transform = A.Compose([A.Sharpen(p=1)])
+#             elif random_number == 2:
+#                 transform = A.Compose([A.Blur(blur_limit=3, p=1)])
+#             elif random_number == 3:
+#                 transform = A.Compose([A.MotionBlur(blur_limit=3, p=1)])
+#             augmented = transform(image=image)
+#             image = augmented['image']
+            
+#         if random.random() < 0.9:
+#             random_number = random.choice([0, 1, 2])
+#             if random_number == 1:
+#                 transform = A.Compose([A.RandomBrightnessContrast(p=1)])
+#             elif random_number == 2:
+#                 transform = A.Compose([A.HueSaturationValue(p=1)])
+#             augmented = transform(image=image)
+#             image = augmented['image']
+#     return image
+
 class RafDataSet(Dataset):
     def __init__(self, data_type, configs,  ttau = False, len_tta = 48, use_albumentation = True):
         self.use_albumentation = use_albumentation
@@ -44,8 +119,8 @@ class RafDataSet(Dataset):
             transforms.ToPILImage(),
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
-            # transforms.Normalize(mean=[0.485, 0.456, 0.406],
-            #                  std=[0.229, 0.224, 0.225]),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                             std=[0.229, 0.224, 0.225]),
 
         ]
         )
