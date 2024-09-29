@@ -101,7 +101,7 @@ transform = transforms.Compose(
             # std=[0.229, 0.224, 0.225]),
         ])
 
-fig, ax = plt.subplots(args.batch_size,2,figsize=(12, args.batch_size *6))
+fig, ax = plt.subplots(args.batch_size,2,figsize=(12, args.batch_size *3))
 for i in range(args.batch_size):
    
     path = file_paths[i]
