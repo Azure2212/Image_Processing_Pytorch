@@ -62,7 +62,7 @@ def my_data_augmentation(image):
                 transform = A.Compose([A.RandomBrightnessContrast(p=1)])
             elif random_number == 3:
                 transform = A.Compose([A.RandomGamma(p=1)])
-            if random_number != 0
+            if random_number != 0:
                 augmented = transform(image=image)
                 image = augmented['image']
             
@@ -74,7 +74,7 @@ def my_data_augmentation(image):
                 transform = A.Compose([A.Blur(blur_limit=3, p=1)])
             elif random_number == 3:
                 transform = A.Compose([A.MotionBlur(blur_limit=3, p=1)])
-            if random_number != 0
+            if random_number != 0:
                 augmented = transform(image=image)
                 image = augmented['image']
             
@@ -84,7 +84,7 @@ def my_data_augmentation(image):
                 transform = A.Compose([A.RandomBrightnessContrast(p=1)])
             elif random_number == 2:
                 transform = A.Compose([A.HueSaturationValue(p=1)])
-            if random_number != 0
+            if random_number != 0:
                 augmented = transform(image=image)
                 image = augmented['image']
     return image
