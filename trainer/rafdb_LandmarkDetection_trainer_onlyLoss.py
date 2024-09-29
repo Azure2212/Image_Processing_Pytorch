@@ -259,7 +259,7 @@ class RAFDB_Landmark_Detection_Trainer(Trainer):
     train_acc = 0.0
     train_loss = 0.0
 
-    for i, (images, feature_landmarks) in tqdm.tqdm(
+    for i, (images, feature_landmarks, detected_faces) in tqdm.tqdm(
         enumerate(self.train_ds), total = len(self.train_ds), leave = True, colour = "blue", desc = f"Epoch {self.current_epoch_num}",
         bar_format="{desc}: {percentage:3.0f}%|{bar:50}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]"
     ):
@@ -301,7 +301,7 @@ class RAFDB_Landmark_Detection_Trainer(Trainer):
     val_loss = 0.0
 
     with torch.no_grad():
-      for i, (images, feature_landmarks) in tqdm.tqdm(
+      for i, (images, feature_landmarks, detected_faces) in tqdm.tqdm(
           enumerate(self.val_ds), total = len(self.val_ds), leave = True, colour = "green", desc = "        ",
           bar_format="{desc} {percentage:3.0f}%|{bar:30}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]"
       ):
