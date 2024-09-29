@@ -43,16 +43,17 @@ def my_data_augmentation(image):
         rotated_image = cv2.warpAffine(my_image, M, (w, h))
 
         return rotated_image
+
     if random.random() < 0.5:
         if random.random() < 0.5:
             image = cv2.flip(image.copy(), 1) #Horizontal_flip
         if random.random() < 0.5:
             random_number = cv2.flip(image.copy(), 0) #Vertical_flip
         if random.random() < 0.5:    
-            image, face_landmarks = A_Rotate(image.copy())
+            image = A_Rotate(image.copy())
 
         if random.random() < 0.5:
-            image, face_landmarks = A_Perspective(image.copy())
+            image = A_Perspective(image.copy())
 
         if random.random() < 0.9:
             random_number = random.choice([0, 1, 2, 4])
