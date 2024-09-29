@@ -126,7 +126,7 @@ for i in range(args.batch_size):
         center = np.array([d[2] - (d[2] - d[0]) / 2.0, d[3] - (d[3] - d[1]) / 2.0])
         center[1] = center[1] - (d[3] - d[1]) * 0.12
         scale = (d[2] - d[0] + d[3] - d[1]) / fa_model.face_detector.reference_scale
-        feature_landmarks = feature_landmarks.to(device=device, dtype=torch.float32).numpy()
+        feature_landmarks = feature_landmarks.to(device=device, dtype=torch.float32).cpu().numpy()
         pts, pts_img, scores = get_preds_fromhm(feature_landmarks, center, scale)
         pts, pts_img = torch.from_numpy(pts), torch.from_numpy(pts_img)
         pts, pts_img = pts.view(68, 2) * 4, pts_img.view(68, 2)
