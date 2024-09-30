@@ -507,6 +507,7 @@ def _resnet(arch, block, layers, pretrained, progress, load_weight_path = '', **
         state_dict = {k: torch.from_numpy(v) for k, v in state_dict_np.items()}
         model.load_state_dict(state_dict, strict=False)
     elif pretrained:
+        print(arch)
         if arch == 'vggface2':
             print("pre-trained on vggface2 is activated!")
             with open(model_urls[arch], 'rb') as f:
