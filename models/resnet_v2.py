@@ -500,7 +500,7 @@ class ResNet(nn.Module):
 
 def _resnet(arch, block, layers, pretrained, progress, num_classes, load_weight_path = '', out_classes = 7, **kwargs):
     model = ResNet(block, layers, num_classes = num_classes, **kwargs)
-    print(f"output''s shape:{model.fc.shape}")
+    print(f"output''s shape:{model.fc}")
     if load_weight_path != '':
         print(f"Go on trainning on weight: {load_weight_path} is activated!")
         model.fc = nn.Linear(2048, out_classes)
