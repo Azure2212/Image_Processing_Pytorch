@@ -259,7 +259,7 @@ class RAFDB_Trainer(Trainer):
       print("The selected learning_rate scheduler strategy is CosineAnnealingWarmRestarts")
 
     else: #default ="ReduceLROnPlateau"
-      self.lr_scheduler_chose = None
+      self.lr_scheduler_chose = 'None'
       print("No choosing Learning rate scheduler")
 
 
@@ -510,10 +510,7 @@ class RAFDB_Trainer(Trainer):
     else:
       self.plateau_count += 1
 # 100 - self.best_val_acc
-    print(self.lr_scheduler_chose)
     if self.lr_scheduler_chose != "None":
-      check = "None"
-      print(f"vo day dc lun hả: {self.lr_scheduler_chose == check}")
       if self.lr_scheduler_chose == "ReduceLROnPlateau":
         self.scheduler.step(self.val_acc_list[-1])
       else:
