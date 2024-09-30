@@ -15,7 +15,7 @@ from torch.utils.data import DataLoader
 import tqdm
 import torch.optim as optim
 from torch.autograd import Variable
-from torch.optim.lr_scheduler import MultiplicativeLR, StepLR, MultiStepLR, ConstantLR, LinearLR, PolynomialLR, CosineAnnealingLR, ChainedScheduler, ExponentialLR, SequentialLR, ReduceLROnPlateau, CyclicLR, CosineAnnealingWarmRestarts
+from torch.optim.lr_scheduler import MultiplicativeLR, StepLR, MultiStepLR, ConstantLR, LinearLR, PolynomialLR, CosineAnnealingLR, LambdaLR, ChainedScheduler, ExponentialLR, SequentialLR, ReduceLROnPlateau, CyclicLR, CosineAnnealingWarmRestarts
 
 from sgu24project.utils.metrics.classify_metrics import accuracy, make_batch
 
@@ -261,7 +261,7 @@ class RAFDB_Trainer(Trainer):
     else: #default ="ReduceLROnPlateau"
       self.lr_scheduler_chose = 'None'
       lambda_lr = lambda epoch: 1.0  # Không thay đổi learning rate
-      self.scheduler = torch.optim.LambdaLR(self.optimizer, lr_lambda=lambda_lr)
+      self.scheduler = LambdaLR(self.optimizer, lr_lambda=lambda_lr)
       print("No choosing Learning rate scheduler")
 
 
