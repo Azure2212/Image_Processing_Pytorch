@@ -161,6 +161,8 @@ class RAFDB_Trainer(Trainer):
     
     self.criterion = nn.CrossEntropyLoss().to(self.device)
 
+    if self.lr_scheduler_chose == 'None':
+      self.learning_rate = 1e-6
     if self.optimizer_chose == "RAdam":
       print("The selected optimizer is RAdam")
       self.optimizer = torch.optim.RAdam(
@@ -258,6 +260,7 @@ class RAFDB_Trainer(Trainer):
 
     else: #default ="ReduceLROnPlateau"
       self.lr_scheduler_chose = None
+      self.lr_value
       print("No choosing Learning rate scheduler")
 
 
