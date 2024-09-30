@@ -298,7 +298,7 @@ class ResNet(nn.Module):
         return x
 
 
-def _resnet(arch, block, layers, pretrained, progress, load_weight_path = '', **kwargs):
+def _resnet(arch, block, layers, pretrained, progress, **kwargs):
     model = ResNet(block, layers, **kwargs)
     if pretrained:
         if arch == 'vggface2':
@@ -358,7 +358,7 @@ def resnet50(pretrained=True, progress=True, out_classes = 7, **kwargs):
     model.fc = nn.Linear(2048, out_classes)
     return model
 
-def resnet50_vggface2(pretrained=True, progress=True, out_classes = 7, **kwargs):
+def resnet50_vggface2(pretrained=True, progress=True,out_classes = 7, **kwargs):
     r"""ResNet-50 model from
     `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
     Args:
@@ -372,7 +372,7 @@ def resnet50_vggface2(pretrained=True, progress=True, out_classes = 7, **kwargs)
     print('model resnet50 with vggface2(trained from cratch) is done!')
     return model
 
-def resnet50_vggface2_ft(pretrained=True, progress=True, out_classes = 7,  **kwargs):
+def resnet50_vggface2_ft(pretrained=True, progress=True,out_classes = 7, **kwargs):
     r"""ResNet-50 model from
     `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
     Args:

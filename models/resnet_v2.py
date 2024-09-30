@@ -506,19 +506,17 @@ def _resnet(arch, block, layers, pretrained, progress, load_weight_path = '', **
             state_dict_np = pickle.load(f)
         state_dict = {k: torch.from_numpy(v) for k, v in state_dict_np.items()}
         model.load_state_dict(state_dict, strict=False)
-    elif pretrained:
-        print(arch)
-        if arch == 'vggface2':
-            print("pre-trained on vggface2 is activated!")
+    elif pretrained == True:
+        print(f'load weight in {model_urls[arch]}')
+        if 'vggface2' in arch:
             with open(model_urls[arch], 'rb') as f:
-                state_dict_np = pickle.load(f)
-            state_dict = {k: torch.from_numpy(v) for k, v in state_dict_np.items()}
-            model.load_state_dict(state_dict, strict=False)
-            
+                state_dict = pickle.load(f)
+                
+            for key in state_dict.keys():
+                state_dict[key] = torch.from_numpy(state_dict[key])
         else:
-            print("pre-trained on imagenet is activated!")
             state_dict = load_state_dict_from_url(model_urls[arch], progress=progress)
-            model.load_state_dict(state_dict)
+        model.load_state_dict(state_dict, strict=False)
     return model
 
 
