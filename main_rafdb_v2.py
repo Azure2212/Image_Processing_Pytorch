@@ -43,6 +43,7 @@ parser.add_argument('--use-wandb', default= 1, type=int, help='use wandb = 1, no
 parser.add_argument('--load-weight-path', default= '', type=str, help='weight2load')
 parser.add_argument('--isDebug', default= 0, type=int, help='debug = 1')
 parser.add_argument('--use-pretrained', default= 1, type=int, help='use pre-trained = 1')
+parser.add_argument('--max-epoch-num', default= 120, type=int, help='max epoch to train')
 parser.add_argument('--current-epoch-num', default= 0, type=int, help='epoch start')
 parser.add_argument('--name-run-wandb', default= 'Resnet50', type=str, help='name to save in wandb')
 args, unknown = parser.parse_known_args()
@@ -59,6 +60,7 @@ configs["lr"] = args.lr_value
 configs["isDebug"] = args.isDebug
 configs["current_epoch_num"] = args.current_epoch_num
 configs["name_run_wandb"] = args.name_run_wandb
+configs["max_epoch_num"] = args.max_epoch_num
 if args.load_weight_path != '':
     configs["load_weight_path"] = args.load_weight_path
 
