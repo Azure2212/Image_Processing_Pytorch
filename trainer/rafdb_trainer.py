@@ -512,11 +512,10 @@ class RAFDB_Trainer(Trainer):
     else:
       self.plateau_count += 1
 # 100 - self.best_val_acc
-    if self.lr_scheduler_chose != "None":
-      if self.lr_scheduler_chose == "ReduceLROnPlateau":
-        self.scheduler.step(self.val_acc_list[-1])
-      else:
-        self.scheduler.step()
+    if self.lr_scheduler_chose == "ReduceLROnPlateau":
+      self.scheduler.step(self.val_acc_list[-1])
+    else:
+      self.scheduler.step()
 
     if self.optimizer.param_groups[0]['lr'] < self.min_lr:
       self.optimizer.param_groups[0]['lr'] = self.min_lr
