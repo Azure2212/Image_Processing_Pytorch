@@ -498,14 +498,12 @@ class ResNet(nn.Module):
         return x
 
 
-def _resnet(arch, block, layers, pretrained, progress, load_weight_path = '', **kwargs):
-    model = ResNet(block, layers, **kwargs)
+def _resnet(arch, block, layers, pretrained, progress, num_classes, load_weight_path = '', out_classes = 7, **kwargs):
+    model = ResNet(block, layers, num_classes = num_classes, **kwargs)
+    print(f'output''s shape:{model.fc.shape}')
     if load_weight_path != '':
         print(f"Go on trainning on weight: {load_weight_path} is activated!")
-        # with open(load_weight_path, 'rb') as f:
-        #     state_dict_np = pickle.load(f)
-        # state_dict = {k: torch.from_numpy(v) for k, v in state_dict_np.items()}
-        # model.load_state_dict(state_dict, strict=False)
+        model.fc = nn.Linear(2048, out_classes)
         my_checkpoint_path = torch.load(load_weight_path)
         model.load_state_dict(my_checkpoint_path['net'])
     elif pretrained == True:
@@ -519,6 +517,7 @@ def _resnet(arch, block, layers, pretrained, progress, load_weight_path = '', **
         else:
             state_dict = load_state_dict_from_url(model_urls[arch], progress=progress)
         model.load_state_dict(state_dict, strict=False)
+        model.fc = nn.Linear(2048, out_classes)
     return model
 
 
