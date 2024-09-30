@@ -498,19 +498,26 @@ class ResNet(nn.Module):
         return x
 
 
-def _resnet(arch, block, layers, pretrained, progress, use_cbam = False, use_duck = False, **kwargs):
-    model = ResNet(block, layers, use_cbam = use_cbam, use_duck = use_duck, **kwargs)
-    if pretrained == True:
-        print(f'load weight in {model_urls[arch]}')
-        if 'vggface2' in arch:
+def _resnet(arch, block, layers, pretrained, progress, load_weight_path = '', **kwargs):
+    model = ResNet(block, layers, **kwargs)
+    if load_weight_path != '':
+        print(f"Go on trainning on weight: {load_weight_path} is activated!")
+            with open(load_weight_path, 'rb') as f:
+                state_dict_np = pickle.load(f)
+            state_dict = {k: torch.from_numpy(v) for k, v in state_dict_np.items()}
+            model.load_state_dict(state_dict, strict=False)
+    else if pretrained:
+        if arch == 'vggface2':
+            print("pre-trained on vggface2 is activated!")
             with open(model_urls[arch], 'rb') as f:
-                state_dict = pickle.load(f)
-                
-            for key in state_dict.keys():
-                state_dict[key] = torch.from_numpy(state_dict[key])
+                state_dict_np = pickle.load(f)
+            state_dict = {k: torch.from_numpy(v) for k, v in state_dict_np.items()}
+            model.load_state_dict(state_dict, strict=False)
+            
         else:
+            print("pre-trained on imagenet is activated!")
             state_dict = load_state_dict_from_url(model_urls[arch], progress=progress)
-        model.load_state_dict(state_dict, strict=False)
+            model.load_state_dict(state_dict)
     return model
 
 
@@ -571,7 +578,7 @@ def resnet50_vggface2(pretrained=True, progress=True,out_classes = 7,  use_cbam 
     print('model resnet50 with vggface2(trained from cratch) is done!')
     return model
 
-def resnet50_vggface2_ft(pretrained=True, progress=True,out_classes = 7,  use_cbam = False, use_duck = False, **kwargs):
+def resnet50_vggface2_ft(pretrained=True, progress=True,out_classes = 7,  use_cbam = False, use_duck = False, load_weight_path = '', **kwargs):
     r"""ResNet-50 model from
     `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
     Args:
@@ -579,7 +586,7 @@ def resnet50_vggface2_ft(pretrained=True, progress=True,out_classes = 7,  use_cb
         progress (bool): If True, displays a progress bar of the download to stderr
     """
     model = _resnet(
-        "vggface2_ft", Bottleneck, [3, 4, 6, 3], pretrained, progress,num_classes=8631, use_cbam = use_cbam, use_duck = use_duck, **kwargs
+        "vggface2_ft", Bottleneck, [3, 4, 6, 3], pretrained, progress,num_classes=8631, use_cbam = use_cbam, use_duck = use_duck, load_weight_path, **kwargs
     )
     model.fc = nn.Linear(2048, out_classes)
     print('model resnet50 with pre-train on vggface2(trained on MS1M, and then fine-tuned on VGGFace2) is done!')
