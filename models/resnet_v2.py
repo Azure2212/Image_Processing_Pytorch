@@ -508,14 +508,15 @@ def _resnet(arch, block, layers, pretrained, progress, num_classes, load_weight_
         model.load_state_dict(my_checkpoint_path['net'])
     elif pretrained == True:
         print(f'load weight in {model_urls[arch]}')
-        if 'vggface2' in arch:
-            with open(model_urls[arch], 'rb') as f:
-                state_dict = pickle.load(f)
+        # if 'vggface2' in arch:
+        #     with open(model_urls[arch], 'rb') as f:
+        #         state_dict = pickle.load(f)
                 
-            for key in state_dict.keys():
-                state_dict[key] = torch.from_numpy(state_dict[key])
-        else:
-            state_dict = load_state_dict_from_url(model_urls[arch], progress=progress)
+        #     for key in state_dict.keys():
+        #         state_dict[key] = torch.from_numpy(state_dict[key])
+        # else:
+        #     state_dict = load_state_dict_from_url(model_urls[arch], progress=progress)
+        state_dict = load_state_dict_from_url(model_urls[arch], progress=progress)
         model.load_state_dict(state_dict, strict=False)
         model.fc = nn.Linear(2048, out_classes)
     return model
@@ -588,6 +589,7 @@ def resnet50_vggface2_ft(pretrained=True, progress=True,out_classes = 7,  use_cb
     model = _resnet(
         "vggface2_ft", Bottleneck, [3, 4, 6, 3], pretrained, progress,num_classes=8631, use_cbam = use_cbam, use_duck = use_duck, load_weight_path = load_weight_path, **kwargs
     )
+
     #model.fc = nn.Linear(2048, out_classes)
     print('model resnet50 with pre-train on vggface2(trained on MS1M, and then fine-tuned on VGGFace2) is done!')
     return model
