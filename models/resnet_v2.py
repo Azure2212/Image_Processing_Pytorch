@@ -502,10 +502,10 @@ def _resnet(arch, block, layers, pretrained, progress, load_weight_path = '', **
     model = ResNet(block, layers, **kwargs)
     if load_weight_path != '':
         print(f"Go on trainning on weight: {load_weight_path} is activated!")
-            with open(load_weight_path, 'rb') as f:
-                state_dict_np = pickle.load(f)
-            state_dict = {k: torch.from_numpy(v) for k, v in state_dict_np.items()}
-            model.load_state_dict(state_dict, strict=False)
+        with open(load_weight_path, 'rb') as f:
+            state_dict_np = pickle.load(f)
+        state_dict = {k: torch.from_numpy(v) for k, v in state_dict_np.items()}
+        model.load_state_dict(state_dict, strict=False)
     else if pretrained:
         if arch == 'vggface2':
             print("pre-trained on vggface2 is activated!")
