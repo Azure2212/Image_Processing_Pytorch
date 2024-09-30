@@ -260,6 +260,8 @@ class RAFDB_Trainer(Trainer):
 
     else: #default ="ReduceLROnPlateau"
       self.lr_scheduler_chose = 'None'
+      lambda_lr = lambda epoch: 1.0  # Không thay đổi learning rate
+      self.scheduler = torch.optim.LambdaLR(optimizer, lr_lambda=lambda_lr)
       print("No choosing Learning rate scheduler")
 
 
