@@ -512,7 +512,8 @@ class RAFDB_Trainer(Trainer):
 # 100 - self.best_val_acc
     print(self.lr_scheduler_chose)
     if self.lr_scheduler_chose != "None":
-      print(f"vo day dc lun hả: {self.lr_scheduler_chose == "None"}")
+      check = "None"
+      print(f"vo day dc lun hả: {self.lr_scheduler_chose == check}")
       if self.lr_scheduler_chose == "ReduceLROnPlateau":
         self.scheduler.step(self.val_acc_list[-1])
       else:
