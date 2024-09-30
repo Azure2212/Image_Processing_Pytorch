@@ -260,7 +260,6 @@ class RAFDB_Trainer(Trainer):
 
     else: #default ="ReduceLROnPlateau"
       self.lr_scheduler_chose = None
-      self.lr_value
       print("No choosing Learning rate scheduler")
 
 
