@@ -59,8 +59,8 @@ configs["lr"] = args.lr_value
 configs["isDebug"] = args.isDebug
 configs["current_epoch_num"] = args.current_epoch_num
 configs["name_run_wandb"] = args.name_run_wandb
-if args.load_state_dir != '':
-    configs["load_state_dir"] = args.load_state_dir
+if args.load_weight_path != '':
+    configs["load_weight_path"] = args.load_weight_path
 
 train_loader = RafDataSet( "train", configs)
 test_loader_ttau = RafDataSet("test", configs, ttau = True, len_tta = 10) 
