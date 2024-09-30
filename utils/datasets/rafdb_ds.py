@@ -124,8 +124,8 @@ class RafDataSet(Dataset):
             transforms.ToPILImage(),
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
-            # transforms.Normalize(mean=[0.485, 0.456, 0.406],
-            #                  std=[0.229, 0.224, 0.225]),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                              std=[0.229, 0.224, 0.225]),
 
         ]
         )
@@ -144,8 +144,8 @@ class RafDataSet(Dataset):
 #         image = cv2.resize(image, self.shape)
         
         if self.data_type == "train":
-            image = seg_raf(image = image)
-            #image = my_data_augmentation(image.copy())
+            #image = seg_raf(image = image)
+            image = my_data_augmentation(image.copy())
         if self.data_type == "test" and self.ttau == True:
             images1 = [seg_raftest1(image=image) for i in range(self.len_tta)]
             images2 = [seg_raftest2(image=image) for i in range(self.len_tta)]
