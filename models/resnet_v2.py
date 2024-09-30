@@ -533,7 +533,7 @@ def resnet18(pretrained=False, progress=True, **kwargs):
     )
 
     # model.fc = nn.Linear(512, kwargs['num_classes'])
-    model.fc = nn.Linear(512, 7)
+    #model.fc = nn.Linear(512, 7)
     return model
 
 
@@ -547,7 +547,7 @@ def resnet34(pretrained=True, progress=True, out_classes = 7, **kwargs):
     model = _resnet(
         "resnet34", BasicBlock, [3, 4, 6, 3], pretrained, progress,num_classes = 1000 ,**kwargs
     )
-    model.fc = nn.Linear(512, out_classes)
+    #model.fc = nn.Linear(512, out_classes)
     return model
 
 
@@ -561,7 +561,7 @@ def resnet50(pretrained=True, progress=True, out_classes = 7, use_cbam = False, 
     model = _resnet(
         "resnet50", Bottleneck, [3, 4, 6, 3], pretrained, progress,num_classes = 1000, use_cbam = use_cbam, use_duck = use_duck, **kwargs
     )
-    model.fc = nn.Linear(2048, out_classes)
+    #model.fc = nn.Linear(2048, out_classes)
     return model
 
 def resnet50_vggface2(pretrained=True, progress=True,out_classes = 7,  use_cbam = False, use_duck = False,  **kwargs):
@@ -574,7 +574,7 @@ def resnet50_vggface2(pretrained=True, progress=True,out_classes = 7,  use_cbam 
     model = _resnet(
         "vggface2", Bottleneck, [3, 4, 6, 3], pretrained, progress,num_classes=8631, use_cbam = use_cbam, use_duck = use_duck, **kwargs
     )
-    model.fc = nn.Linear(2048, out_classes)
+    #model.fc = nn.Linear(2048, out_classes)
     print('model resnet50 with vggface2(trained from cratch) is done!')
     return model
 
@@ -588,6 +588,6 @@ def resnet50_vggface2_ft(pretrained=True, progress=True,out_classes = 7,  use_cb
     model = _resnet(
         "vggface2_ft", Bottleneck, [3, 4, 6, 3], pretrained, progress,num_classes=8631, use_cbam = use_cbam, use_duck = use_duck, load_weight_path = load_weight_path, **kwargs
     )
-    model.fc = nn.Linear(2048, out_classes)
+    #model.fc = nn.Linear(2048, out_classes)
     print('model resnet50 with pre-train on vggface2(trained on MS1M, and then fine-tuned on VGGFace2) is done!')
     return model
