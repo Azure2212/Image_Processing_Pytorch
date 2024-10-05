@@ -326,7 +326,7 @@ class CbamBlock(nn.Module):
         self.use_duck = use_duck
         if self.use_duck == True:
             self.sigmoid = nn.Sigmoid()
-            self.wides = WidescopeConv2DBlock_upgrate(channels, channels)
+            self.wides = WidescopeConv2DBlock(channels, channels)
             #self.mids = MidscopeConv2DBlock_upgrate(channels, channels)
             #self.sep = SeparatedConv2DBlock_upgrate(channels, channels)
 
