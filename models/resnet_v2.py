@@ -323,11 +323,6 @@ class CbamBlock(nn.Module):
                  use_duck: bool = False,
                  reduction_ratio: int = 16):
         super(CbamBlock, self).__init__()
-        self.ch_gate = ChannelGate(
-            channels=channels,
-            reduction_ratio=reduction_ratio)
-        self.sp_gate = SpatialGate()
-
         self.use_duck = use_duck
         if self.use_duck == True:
             self.sigmoid = nn.Sigmoid()
@@ -335,6 +330,11 @@ class CbamBlock(nn.Module):
             self.mids = MidscopeConv2DBlock_upgrate(channels, channels)
             self.sep = SeparatedConv2DBlock_upgrate(channels, channels)
 
+        self.ch_gate = ChannelGate(
+            channels=channels,
+            reduction_ratio=reduction_ratio)
+        self.sp_gate = SpatialGate()
+        
     def forward(self, x):
 
         if self.use_duck == True:
