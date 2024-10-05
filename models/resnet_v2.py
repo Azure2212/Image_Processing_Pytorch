@@ -320,7 +320,7 @@ class CbamBlock(nn.Module):
     """
     def __init__(self,
                  channels: int,
-                 use_duck == False,
+                 use_duck: bool = False,
                  reduction_ratio: int = 16):
         super(CbamBlock, self).__init__()
         self.ch_gate = ChannelGate(
