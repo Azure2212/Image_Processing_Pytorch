@@ -40,9 +40,12 @@ parser.add_argument('--optimizer-chose', default= "RAdam", type=str, help='optim
 parser.add_argument('--lr-scheduler', default= "ReduceLROnPlateau", type=str, help='learning rate scheduler you chose')
 parser.add_argument('--lr-value', default= 1e-3, type=float, help='learning rate initial')
 parser.add_argument('--use-wandb', default= 1, type=int, help='use wandb = 1, not use = 0')
-parser.add_argument('--load-state-dir', default= '', type=str, help='weight2load')
+parser.add_argument('--load-weight-path', default= '', type=str, help='weight2load')
 parser.add_argument('--isDebug', default= 0, type=int, help='debug = 1')
 parser.add_argument('--use-pretrained', default= 1, type=int, help='use pre-trained = 1')
+parser.add_argument('--use-cbam', default= 0, type=int, help='use cbam= 1')
+parser.add_argument('--use-duck', default= 0, type=int, help='use duck = 1')
+parser.add_argument('--max-epoch-num', default= 120, type=int, help='max epoch to train')
 parser.add_argument('--current-epoch-num', default= 0, type=int, help='epoch start')
 parser.add_argument('--name-run-wandb', default= 'Resnet50', type=str, help='name to save in wandb')
 args, unknown = parser.parse_known_args()
@@ -59,8 +62,9 @@ configs["lr"] = args.lr_value
 configs["isDebug"] = args.isDebug
 configs["current_epoch_num"] = args.current_epoch_num
 configs["name_run_wandb"] = args.name_run_wandb
-if args.load_state_dir != '':
-    configs["load_state_dir"] = args.load_state_dir
+configs["max_epoch_num"] = args.max_epoch_num
+if args.load_weight_path != '':
+    configs["load_weight_path"] = args.load_weight_path
 
 train_loader = RafDataSet( "train", configs)
 test_loader_ttau = RafDataSet("test", configs, ttau = True, len_tta = 10) 
@@ -76,7 +80,7 @@ elif args.model_name == 'resnet50_vggface2':
     model = resnet50_vggface2()
 elif args.model_name == 'resnet50_vggface2_ft':
     print('resnet50 with pre-train on vggface2(trained on MS1M, and then fine-tuned on VGGFace2) was chose !')
-    model = resnet50_vggface2_ft(pretrained = False, use_cbam = False)
+    model = resnet50_vggface2_ft(pretrained = False, use_cbam = True if args.use_cbam == 1 else False, use_duck = True if args.use_duck == 1 else False, load_weight_path = args.load_weight_path)
     for name, layer in model.named_children():
         print(f"{name}: {layer}")
 elif args.model_name == 'resnet50_imagenet':
