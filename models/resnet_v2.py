@@ -377,7 +377,7 @@ class ResNet(nn.Module):
         return x
 
 
-def _resnet(arch, block, layers, pretrained, progress, use_cbam = False, **kwargs):
+def _resnet(arch, block, layers, pretrained, progress, use_cbam = False,  load_weight_path = '', **kwargs):
     model = ResNet(block, layers, use_cbam = use_cbam, **kwargs)
     if pretrained == True:
         print(f'load weight in {model_urls[arch]}')
