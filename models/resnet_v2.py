@@ -385,17 +385,18 @@ def _resnet(arch, block, layers, pretrained, progress, num_classes, load_weight_
         model.fc = nn.Linear(2048, out_classes)
         my_checkpoint_path = torch.load(load_weight_path)
         model.load_state_dict(my_checkpoint_path['net'])
-    elif pretrained == True:
-        print(f'load weight in {model_urls[arch]}')
-        if 'vggface2' in arch:
-            with open(model_urls[arch], 'rb') as f:
-                state_dict = pickle.load(f)
-                
-            for key in state_dict.keys():
-                state_dict[key] = torch.from_numpy(state_dict[key])
-        else:
-            state_dict = load_state_dict_from_url(model_urls[arch], progress=progress)
-        model.load_state_dict(state_dict, strict=False)
+    else:
+        if pretrained == True:
+            print(f'load weight in {model_urls[arch]}')
+            if 'vggface2' in arch:
+                with open(model_urls[arch], 'rb') as f:
+                    state_dict = pickle.load(f)
+                    
+                for key in state_dict.keys():
+                    state_dict[key] = torch.from_numpy(state_dict[key])
+            else:
+                state_dict = load_state_dict_from_url(model_urls[arch], progress=progress)
+            model.load_state_dict(state_dict, strict=False)
         model.fc = nn.Linear(2048, out_classes)
     return model
 
