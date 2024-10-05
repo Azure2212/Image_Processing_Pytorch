@@ -320,6 +320,7 @@ class CbamBlock(nn.Module):
     """
     def __init__(self,
                  channels: int,
+                 use_duck == False,
                  reduction_ratio: int = 16):
         super(CbamBlock, self).__init__()
         self.ch_gate = ChannelGate(
@@ -327,7 +328,21 @@ class CbamBlock(nn.Module):
             reduction_ratio=reduction_ratio)
         self.sp_gate = SpatialGate()
 
+        self.use_duck = use_duck
+        if self.use_duck == True:
+            self.sigmoid = nn.Sigmoid()
+            self.wides = WidescopeConv2DBlock_upgrate(channels, channels)
+            self.mids = MidscopeConv2DBlock_upgrate(channels, channels)
+            self.sep = SeparatedConv2DBlock_upgrate(channels, channels)
+
     def forward(self, x):
+
+        if self.use_duck == True:
+            x_wide = self.wides(x)
+            x_mids = self.mids(x)
+            x_sep = self.sep(x)
+            x = x_mids + x_wide + x_sep
+            x = self.sigmoid(x)
         x = self.ch_gate(x)
         x = self.sp_gate(x)
         return x
@@ -385,13 +400,7 @@ class Bottleneck(nn.Module):
 
         out_channels = planes * 4
         if self.use_cbam == True:
-            self.CbamBlock = CbamBlock(channels = out_channels)
-
-        if self.use_duck == True:
-            self.sigmoid = nn.Sigmoid()
-            self.wides = WidescopeConv2DBlock_upgrate(out_channels, out_channels)
-            self.mids = MidscopeConv2DBlock_upgrate(out_channels, out_channels)
-            self.sep = SeparatedConv2DBlock_upgrate(out_channels, out_channels)
+            self.CbamBlock = CbamBlock(channels = out_channels, use_duck = use_duck)
 
     def forward(self, x):
         residual = x
@@ -409,14 +418,6 @@ class Bottleneck(nn.Module):
 
         if self.downsample is not None:
             residual = self.downsample(x)
-
-        if self.use_duck == True:
-            x_wide = self.wides(out)
-            x_mids = self.mids(out)
-            x_sep = self.sep(out)
-            out = x_mids + x_wide + x_sep
-            out = self.sigmoid(out)
-
 
         if self.use_cbam == True:
             out = self.CbamBlock(out)
