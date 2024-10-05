@@ -334,15 +334,16 @@ class CbamBlock(nn.Module):
             channels=channels,
             reduction_ratio=reduction_ratio)
         self.sp_gate = SpatialGate()
-        
+
     def forward(self, x):
 
         if self.use_duck == True:
-            x_wide = self.wides(x)
-            x_mids = self.mids(x)
-            x_sep = self.sep(x)
-            x = x_mids + x_wide + x_sep
-            x = self.sigmoid(x)
+            # x_wide = self.wides(x)
+            # x_mids = self.mids(x)
+            # x_sep = self.sep(x)
+            # x = x_mids + x_wide + x_sep
+            # x = self.sigmoid(x)
+            x = self.wides(x)
         x = self.ch_gate(x)
         x = self.sp_gate(x)
         return x
