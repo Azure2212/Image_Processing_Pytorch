@@ -43,7 +43,8 @@ parser.add_argument('--use-wandb', default= 1, type=int, help='use wandb = 1, no
 parser.add_argument('--load-weight-path', default= '', type=str, help='weight2load')
 parser.add_argument('--isDebug', default= 0, type=int, help='debug = 1')
 parser.add_argument('--use-pretrained', default= 1, type=int, help='use pre-trained = 1')
-parser.add_argument('--use-cbam', default= 0, type=int, help='use pre-trained = 1')
+parser.add_argument('--use-cbam', default= 0, type=int, help='use cbam= 1')
+parser.add_argument('--use-duck', default= 0, type=int, help='use duck = 1')
 parser.add_argument('--max-epoch-num', default= 120, type=int, help='max epoch to train')
 parser.add_argument('--current-epoch-num', default= 0, type=int, help='epoch start')
 parser.add_argument('--name-run-wandb', default= 'Resnet50', type=str, help='name to save in wandb')
@@ -79,7 +80,7 @@ elif args.model_name == 'resnet50_vggface2':
     model = resnet50_vggface2()
 elif args.model_name == 'resnet50_vggface2_ft':
     print('resnet50 with pre-train on vggface2(trained on MS1M, and then fine-tuned on VGGFace2) was chose !')
-    model = resnet50_vggface2_ft(pretrained = False, use_cbam = True if args.use_cbam == 1 else False, use_duck = False, load_weight_path = args.load_weight_path)
+    model = resnet50_vggface2_ft(pretrained = False, use_cbam = True if args.use_cbam == 1 else False, use_duck = True if args.use_duck == 1 else False, load_weight_path = args.load_weight_path)
     for name, layer in model.named_children():
         print(f"{name}: {layer}")
 elif args.model_name == 'resnet50_imagenet':
