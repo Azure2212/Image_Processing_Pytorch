@@ -383,7 +383,7 @@ class Bottleneck(nn.Module):
     def forward(self, x):
         start_time = datetime.now()
         residual = x
-        tensor_copy = x.copy()
+        tensor_copy = x.clone()
         
         out = self.conv1(x)
         out = self.bn1(out)
