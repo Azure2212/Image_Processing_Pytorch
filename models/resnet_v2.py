@@ -125,7 +125,7 @@ class SeparatedConv2DBlock_upgrate(nn.Module):
         self.bn1 = nn.BatchNorm2d(planes)
         self.conv2 = nn.Conv2d(planes, out_channels, kernel_size=(size, 1), padding=(size//2, 0))
         self.bn2 = nn.BatchNorm2d(out_channels)
-        self.sigmoid = nn.Sigmoid()
+        self.relu = nn.ReLU()
 
     def forward(self, x):
         x = self.conv1(x)
@@ -133,7 +133,7 @@ class SeparatedConv2DBlock_upgrate(nn.Module):
         x = self.relu(x)
         x = self.conv2(x)
         x = self.bn2(x)
-        x = self.sigmoid(x)
+        x = self.relu(x)
         return x
     
     
@@ -147,7 +147,7 @@ class WidescopeConv2DBlock_upgrate(nn.Module):
         self.bn2 = nn.BatchNorm2d(planes)
         self.conv3 = nn.Conv2d(planes, out_channels, kernel_size=(3, 3), padding=(3, 3), dilation=(3, 3))
         self.bn3 = nn.BatchNorm2d(out_channels)
-        self.sigmoid = nn.Sigmoid()
+        self.relu = nn.ReLU()
 
     def forward(self, x):
         x = self.conv1(x)
@@ -158,7 +158,7 @@ class WidescopeConv2DBlock_upgrate(nn.Module):
         x = self.relu(x)
         x = self.conv3(x)
         x = self.bn3(x)
-        x = self.sigmoid(x)
+        x = self.relu(x)
         return x
     
 class MidscopeConv2DBlock_upgrate(nn.Module):
@@ -169,7 +169,7 @@ class MidscopeConv2DBlock_upgrate(nn.Module):
         self.bn1 = nn.BatchNorm2d(planes)
         self.conv2 = nn.Conv2d(planes, out_channels, kernel_size=(3, 3), padding=(2, 2), dilation=(2, 2))
         self.bn2 = nn.BatchNorm2d(out_channels)
-        self.sigmoid = nn.Sigmoid()
+        self.relu = nn.ReLU()
 
     def forward(self, x):
         x = self.conv1(x)
@@ -177,7 +177,7 @@ class MidscopeConv2DBlock_upgrate(nn.Module):
         x = self.relu(x)
         x = self.conv2(x)
         x = self.bn2(x)
-        x = self.sigmoid(x)
+        x = self.relu(x)
         return x
 
 #### CBAM BLOCK
@@ -296,9 +296,10 @@ class CbamBlock(nn.Module):
         super(CbamBlock, self).__init__()
         self.use_duck = use_duck
         if self.use_duck == True:
+            self.sigmoid = nn.Sigmoid()
             self.wides = WidescopeConv2DBlock_upgrate(channels, channels)
-            self.mids = MidscopeConv2DBlock_upgrate(channels, channels)
-            self.sep = SeparatedConv2DBlock_upgrate(channels, channels)
+            #self.mids = MidscopeConv2DBlock_upgrate(channels, channels)
+            #self.sep = SeparatedConv2DBlock_upgrate(channels, channels)
 
         self.ch_gate = ChannelGate(
             channels=channels,
@@ -308,10 +309,12 @@ class CbamBlock(nn.Module):
     def forward(self, x):
 
         if self.use_duck == True:
+            # x_wide = self.wides(x)
+            # x_mids = self.mids(x)
+            # x_sep = self.sep(x)
+            # x = x_mids + x_wide + x_sep
+            # x = self.sigmoid(x)
             x = self.wides(x)
-            x = self.mids(x)
-            x = self.sep(x)
-
         x = self.ch_gate(x)
         x = self.sp_gate(x)
         return x
