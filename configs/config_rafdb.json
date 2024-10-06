@@ -17,7 +17,7 @@
     "batch_size": 42,
     "num_workers": 2,
     "max_plateau_count": 50,
-    "max_epoch_num": 1000,
+    "max_epoch_num": 20,
     "plateau_patience": 5,
     "steplr": 50,
     "optimizer_chose":"RAdam",
