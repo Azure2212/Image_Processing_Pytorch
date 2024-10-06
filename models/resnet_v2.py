@@ -383,7 +383,7 @@ class Bottleneck(nn.Module):
     def forward(self, x):
         start_time = datetime.now()
         residual = x
-
+        print(f'x in:{x.shape}')
         out = self.conv1(x)
         out = self.bn1(out)
         out = self.relu(out)
@@ -394,7 +394,7 @@ class Bottleneck(nn.Module):
 
         out = self.conv3(out)
         out = self.bn3(out)
-
+        print(f'out in:{out.shape}')
         out = self.conv1_test(out)
         out = self.conv2_test(out)
         out = self.conv3_test(out)
