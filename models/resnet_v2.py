@@ -166,18 +166,18 @@ class SeparatedConv2DBlock_upgrate(nn.Module):
 class WidescopeConv2DBlock_upgrate(nn.Module):
     def __init__(self, in_channels, out_channels):
         super(WidescopeConv2DBlock_upgrate, self).__init__()
-        planes = int(in_channels/4)
+
         self.conv1_dw = nn.Conv2d(in_channels, in_channels, kernel_size=3, padding=1, groups=in_channels)
         #self.bn1_dw = nn.BatchNorm2d(in_channels)
-        self.conv1_pw = nn.Conv2d(planes, in_channels, kernel_size=1)
+        self.conv1_pw = nn.Conv2d(in_channels, in_channels, kernel_size=1)
         #self.bn1_pw = nn.BatchNorm2d(out_channels)
         self.conv2_dw = nn.Conv2d(in_channels, in_channels, kernel_size=3, padding=2, dilation=2, groups=in_channels)
         #self.bn2_dw = nn.BatchNorm2d(out_channels)
-        self.conv2_pw = nn.Conv2d(planes, in_channels, kernel_size=1)
+        self.conv2_pw = nn.Conv2d(in_channels, in_channels, kernel_size=1)
         #self.bn2_pw = nn.BatchNorm2d(out_channels)
         self.conv3_dw = nn.Conv2d(in_channels, in_channels, kernel_size=3, padding=3, dilation=3, groups=in_channels)
         #self.bn3_dw = nn.BatchNorm2d(out_channels)
-        self.conv3_pw = nn.Conv2d(planes, out_channels, kernel_size=1)
+        self.conv3_pw = nn.Conv2d(in_channels, out_channels, kernel_size=1)
         #self.bn3_pw = nn.BatchNorm2d(out_channels)
         self.relu = nn.ReLU()
 
