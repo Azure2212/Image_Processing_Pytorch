@@ -214,19 +214,28 @@ class WidescopeConv2DBlock_upgrate(nn.Module):
 class MidscopeConv2DBlock_upgrate(nn.Module):
     def __init__(self, in_channels, out_channels):
         super(MidscopeConv2DBlock_upgrate, self).__init__()
-        planes = int(in_channels/4)
-        self.conv1 = nn.Conv2d(in_channels, planes, kernel_size=(3, 3), padding=(1, 1), dilation=(1, 1))
-        self.bn1 = nn.BatchNorm2d(planes)
-        self.conv2 = nn.Conv2d(planes, out_channels, kernel_size=(3, 3), padding=(2, 2), dilation=(2, 2))
-        self.bn2 = nn.BatchNorm2d(out_channels)
+        self.conv1_dw = nn.Conv2d(in_channels, in_channels, kernel_size=3, padding=1, groups=in_channels)
+        #self.bn1_dw = nn.BatchNorm2d(in_channels)
+        self.conv1_pw = nn.Conv2d(in_channels, out_channels, kernel_size=1)
+        #self.bn1_pw = nn.BatchNorm2d(out_channels)
+        self.conv2_dw = nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=2, dilation=2, groups=out_channels)
+        #self.bn2_dw = nn.BatchNorm2d(out_channels)
+        self.conv2_pw = nn.Conv2d(out_channels, out_channels, kernel_size=1)
+        #self.bn2_pw = nn.BatchNorm2d(out_channels)
         self.relu = nn.ReLU()
 
     def forward(self, x):
-        x = self.conv1(x)
-        x = self.bn1(x)
+        x = self.conv1_dw(x)
+        #x = self.bn1_dw(x)
         x = self.relu(x)
-        x = self.conv2(x)
-        x = self.bn2(x)
+        x = self.conv1_pw(x)
+        #x = self.bn1_pw(x)
+        x = self.relu(x)
+        x = self.conv2_dw(x)
+        #x = self.bn2_dw(x)
+        x = self.relu(x)
+        x = self.conv2_pw(x)
+        #x = self.bn2_pw(x)
         x = self.relu(x)
         return x
 
@@ -346,10 +355,10 @@ class CbamBlock(nn.Module):
         super(CbamBlock, self).__init__()
         self.use_duck = use_duck
         if self.use_duck == True:
-            #self.wides = WidescopeConv2DBlock_upgrate(channels, channels)
+            self.wides = WidescopeConv2DBlock_upgrate(channels, channels)
             #self.mids = MidscopeConv2DBlock_upgrate(channels, channels)
             #self.sep = SeparatedConv2DBlock_upgrate(channels, channels)
-            self.wides = SeparatedConv2DBlock_upgrate(channels, channels)
+            
 
         self.ch_gate = ChannelGate(
             channels=channels,
