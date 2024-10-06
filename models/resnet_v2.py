@@ -376,10 +376,6 @@ class Bottleneck(nn.Module):
         if self.use_cbam == True:
             self.CbamBlock = CbamBlock(channels = out_channels, use_duck = use_duck)
 
-        self.conv1_test = nn.Conv2d(planes * 4, planes, kernel_size=(3, 3), padding=(1, 1), dilation=(1, 1))
-        self.conv2_test = nn.Conv2d(planes, planes, kernel_size=(3, 3), padding=(2, 2), dilation=(1, 1))
-        self.conv3_test = nn.Conv2d(planes, planes * 4, kernel_size=(3, 3), padding=(3, 3), dilation=(1, 1))
-
     def forward(self, x):
         #start_time = datetime.now()
         residual = x
@@ -396,9 +392,6 @@ class Bottleneck(nn.Module):
         out = self.conv3(out)
         out = self.bn3(out)
   
-        tensor_copy = self.conv1_test(out.clone())
-        tensor_copy = self.conv2_test(tensor_copy)
-        tensor_copy = self.conv3_test(tensor_copy)
 
         if self.downsample is not None:
             residual = self.downsample(x)
@@ -460,7 +453,7 @@ class ResNet(nn.Module):
         layers.append(block(self.inplanes, planes, stride, downsample, use_cbam = self.use_cbam, use_duck = self.use_duck))
         self.inplanes = planes * block.expansion
         for i in range(1, blocks):
-            layers.append(block(self.inplanes, planes, use_cbam = self.use_cbam, use_duck = self.use_duck))
+            layers.append(block(self.inplanes, planes, use_cbam = self.use_cbam, use_duck = False))
 
         return nn.Sequential(*layers)
 
