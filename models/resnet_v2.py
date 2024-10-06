@@ -57,6 +57,7 @@ def conv1x1(in_planes, out_planes, stride=1):
     return nn.Conv2d(in_planes, out_planes, kernel_size=1, stride=stride, bias=False)
 
 #=============== DUCKNET ==================
+'''
 class SeparatedConv2DBlock(nn.Module):
     def __init__(self, in_channels, out_channels, size=3):
         super(SeparatedConv2DBlock, self).__init__()
@@ -115,7 +116,7 @@ class WidescopeConv2DBlock(nn.Module):
         x = self.bn3(x)
         x = self.relu(x)
         return x
-
+'''
 
 # ============= UPGRATE ===================
 class SeparatedConv2DBlock_upgrate(nn.Module):
@@ -375,6 +376,10 @@ class Bottleneck(nn.Module):
         if self.use_cbam == True:
             self.CbamBlock = CbamBlock(channels = out_channels, use_duck = use_duck)
 
+        self.conv1_test = nn.Conv2d(inplanes, planes, kernel_size=(3, 3), padding=(1, 1), dilation=(1, 1))
+        self.conv2_test = nn.Conv2d(planes, planes, kernel_size=(3, 3), padding=(2, 2), dilation=(2, 2))
+        self.conv3_test = nn.Conv2d(planes, planes * 4, kernel_size=(3, 3), padding=(3, 3), dilation=(3, 3))
+
     def forward(self, x):
         start_time = datetime.now()
         residual = x
@@ -389,6 +394,10 @@ class Bottleneck(nn.Module):
 
         out = self.conv3(out)
         out = self.bn3(out)
+
+        out = self.conv1_test(out)
+        out = self.conv2_test(out)
+        out = self.conv3_test(out)
 
         if self.downsample is not None:
             residual = self.downsample(x)
