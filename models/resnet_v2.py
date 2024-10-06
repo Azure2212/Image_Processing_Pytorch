@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import math
 import pickle
+from datetime import datetime
 try:
     from torch.hub import load_state_dict_from_url
 except ImportError:
@@ -375,6 +376,7 @@ class Bottleneck(nn.Module):
             self.CbamBlock = CbamBlock(channels = out_channels, use_duck = use_duck)
 
     def forward(self, x):
+        start_time = datetime.now()
         residual = x
 
         out = self.conv1(x)
@@ -394,10 +396,12 @@ class Bottleneck(nn.Module):
         if self.use_cbam == True:
             out = self.CbamBlock(out)
 
-
-           
         out += residual
         out = self.relu(out)
+
+        end_time = datetime.now()
+        elapsed_time = end_time - start_time
+        print(f'this block spend:{elapsed_time}')
 
         return out
 
