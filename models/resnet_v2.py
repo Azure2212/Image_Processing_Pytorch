@@ -314,7 +314,7 @@ class CbamBlock(nn.Module):
             # x_sep = self.sep(x)
             # x = x_mids + x_wide + x_sep
             # x = self.sigmoid(x)
-            print(f'before duck: {x.shape}')
+            #print(f'before duck: {x.shape}')
             x = self.wides(x)
         x = self.ch_gate(x)
         x = self.sp_gate(x)
