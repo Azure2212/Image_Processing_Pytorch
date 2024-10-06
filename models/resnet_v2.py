@@ -296,7 +296,7 @@ class CbamBlock(nn.Module):
         super(CbamBlock, self).__init__()
         self.use_duck = use_duck
         if self.use_duck == True:
-            self.wides = MidscopeConv2DBlock_upgrate(channels, channels)
+            self.wides = WidescopeConv2DBlock_upgrate(channels, channels)
             #self.mids = MidscopeConv2DBlock_upgrate(channels, channels)
             #self.sep = SeparatedConv2DBlock_upgrate(channels, channels)
 
@@ -313,7 +313,7 @@ class CbamBlock(nn.Module):
             # x_sep = self.sep(x)
             # x = x_mids + x_wide + x_sep
             # x = self.sigmoid(x)
-            #a=10
+            print(f'before duck: {x.shape}')
             x = self.wides(x)
         x = self.ch_gate(x)
         x = self.sp_gate(x)
