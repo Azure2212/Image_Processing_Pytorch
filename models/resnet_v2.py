@@ -377,7 +377,7 @@ class Bottleneck(nn.Module):
             self.CbamBlock = CbamBlock(channels = out_channels, use_duck = use_duck)
 
         self.conv1_test = nn.Conv2d(inplanes, planes, kernel_size=(1, 1), padding=(1, 1), dilation=(1, 1))
-        self.conv2_test = nn.Conv2d(planes, planes, kernel_size=(3, 3), padding=(1, 1), dilation=(2, 2))
+        self.conv2_test = nn.Conv2d(planes, planes, kernel_size=(3, 3), padding=(1, 1), dilation=(1, 1))
         self.conv3_test = nn.Conv2d(planes, planes * 4, kernel_size=(1, 1), padding=(1, 1), dilation=(1, 1))
 
     def forward(self, x):
