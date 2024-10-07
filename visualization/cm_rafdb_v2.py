@@ -43,6 +43,8 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--model-name', default= "resnet50", type=str, help='model2Train')
 parser.add_argument('--rs-dir', default= "ResnetDuck_Cbam_cuaTuan", type=str, help='rs dir in kaggle')
+parser.add_argument('--use-cbam', default= 1, type=int, help='use cbam = 1, not use = 0')
+parser.add_argument('--use-duck', default= 1, type=int, help='use duck = 1, not use = 0')
 
 args, unknown = parser.parse_known_args()
 path_current = os.path.abspath(globals().get("__file__","."))
@@ -66,7 +68,9 @@ elif args.model_name == 'resnet50_vggface2':
     model = resnet50_vggface2()
 elif args.model_name == 'resnet50_vggface2_ft':
     print('resnet50 with pre-train on vggface2(trained on MS1M, and then fine-tuned on VGGFace2) was chose !')
-    model = resnet50_vggface2_ft(use_cbam = True)
+    use_cbam = bool(args.use_cbam)
+    use_duck = bool(args.use_duck)
+    model = resnet50_vggface2_ft(pretrained = False, use_cbam = use_cbam, use_duck = use_duck)
 elif args.model_name == 'resnet50_imagenet':
     print('resnet50 with pre-train on imagenet was chose !')
     model = resnet50()

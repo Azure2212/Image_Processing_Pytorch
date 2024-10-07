@@ -40,6 +40,8 @@ parser.add_argument('--optimizer-chose', default= "RAdam", type=str, help='optim
 parser.add_argument('--lr-scheduler', default= "ReduceLROnPlateau", type=str, help='learning rate scheduler you chose')
 parser.add_argument('--lr-value', default= 1e-3, type=float, help='learning rate initial')
 parser.add_argument('--use-wandb', default= 1, type=int, help='use wandb = 1, not use = 0')
+parser.add_argument('--use-cbam', default= 1, type=int, help='use cbam = 1, not use = 0')
+parser.add_argument('--use-duck', default= 1, type=int, help='use duck = 1, not use = 0')
 parser.add_argument('--load-state-dir', default= '', type=str, help='weight2load')
 parser.add_argument('--isDebug', default= 0, type=int, help='debug = 1')
 parser.add_argument('--use-pretrained', default= 1, type=int, help='use pre-trained = 1')
@@ -76,7 +78,9 @@ elif args.model_name == 'resnet50_vggface2':
     model = resnet50_vggface2()
 elif args.model_name == 'resnet50_vggface2_ft':
     print('resnet50 with pre-train on vggface2(trained on MS1M, and then fine-tuned on VGGFace2) was chose !')
-    model = resnet50_vggface2_ft(pretrained = False, use_cbam = True)
+    use_cbam = bool(args.use_cbam)
+    use_duck = bool(args.use_duck)
+    model = resnet50_vggface2_ft(pretrained = False, use_cbam = use_cbam, use_duck = use_duck)
     for name, layer in model.named_children():
         print(f"{name}: {layer}")
 elif args.model_name == 'resnet50_imagenet':
