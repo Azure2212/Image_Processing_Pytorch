@@ -8,7 +8,7 @@ from torchvision.transforms import transforms
 from torch.utils.data import Dataset
 import torchvision
 import torch
-from sgu24project.utils.augs.augmenters import seg_raf , seg_raftest1, seg_raftest2
+from sgu24project.utils.augs.augmenters_v5 import seg_raf , seg_raftest1, seg_raftest2
 
 class RafDataSet(Dataset):
     def __init__(self, data_type, configs,  ttau = False, len_tta = 48, use_albumentation = True):
