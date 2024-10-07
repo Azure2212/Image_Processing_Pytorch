@@ -43,8 +43,8 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--model-name', default= "resnet50", type=str, help='model2Train')
 parser.add_argument('--rs-dir', default= "ResnetDuck_Cbam_cuaTuan", type=str, help='rs dir in kaggle')
-parser.add_argument('--use-cbam', default= 1, type=int, help='use cbam = 1, not use = 0')
-parser.add_argument('--use-duck', default= 1, type=int, help='use duck = 1, not use = 0')
+parser.add_argument('--use-cbam', default= 0, type=int, help='use cbam = 1, not use = 0')
+parser.add_argument('--use-duck', default= 0, type=int, help='use duck = 1, not use = 0')
 
 args, unknown = parser.parse_known_args()
 path_current = os.path.abspath(globals().get("__file__","."))
