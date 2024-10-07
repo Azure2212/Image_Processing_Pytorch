@@ -373,6 +373,7 @@ class CbamBlock(nn.Module):
         #     x = self.sep(x)
         x = self.ch_gate(x)
         if self.use_duck == True:
+            print('vo dau')
             x = self.wides(x)
             #x = self.mids(x)
             x = self.sep(x)
