@@ -21,7 +21,7 @@ np.random.seed(seed)
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
-from utils.datasets.rafdb_ds import RafDataSet
+from utils.datasets.rafdb_ds_v5 import RafDataSet
 
 from models.resnet_v5 import resnet50, resnet50_vggface2, resnet50_vggface2_ft
 
