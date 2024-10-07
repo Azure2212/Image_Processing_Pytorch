@@ -367,11 +367,15 @@ class CbamBlock(nn.Module):
 
     def forward(self, x):
 
+        # if self.use_duck == True:
+        #     x = self.wides(x)
+        #     #x = self.mids(x)
+        #     x = self.sep(x)
+        x = self.ch_gate(x)
         if self.use_duck == True:
             x = self.wides(x)
             #x = self.mids(x)
             x = self.sep(x)
-        x = self.ch_gate(x)
         x = self.sp_gate(x)
         return x
    
