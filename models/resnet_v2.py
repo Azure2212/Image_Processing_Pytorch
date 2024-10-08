@@ -371,7 +371,7 @@ class CbamBlock(nn.Module):
         if self.use_duck == True:
             #x = self.wides(x)
             x = self.sep(x)
-            x = self.sigmoid(x)
+            #x = self.sigmoid(x)
         #x = self.sp_gate(x)
         return x
 
