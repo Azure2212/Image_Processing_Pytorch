@@ -357,7 +357,7 @@ class CbamBlock(nn.Module):
         self.ch_gate = ChannelGate(
             channels=channels,
             reduction_ratio=reduction_ratio)
-        self.sp_gate = SpatialGate()
+        #self.sp_gate = SpatialGate()
 
         self.use_duck = use_duck
         if use_duck == True:
