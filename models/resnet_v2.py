@@ -364,7 +364,7 @@ class CbamBlock(nn.Module):
             #self.wides = WidescopeConv2DBlock_upgrate(channels, channels)
             
             self.sep = SeparatedConv2DBlock_upgrate(channels, channels)
-            self.sigmoid = nn.Sigmoid()
+            #self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
         x = self.ch_gate(x)
