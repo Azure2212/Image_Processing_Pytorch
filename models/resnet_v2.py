@@ -130,7 +130,7 @@ class SeparatedConv2DBlock_upgrate(nn.Module):
         #self.bn2_dw = nn.BatchNorm2d(out_channels)
         self.conv2_pw = nn.Conv2d(out_channels, out_channels, kernel_size=1)
         #self.bn2_pw = nn.BatchNorm2d(out_channels)
-        self.relu = nn.ReLU()
+        Êself.relu = nn.ReLU()
 
     def forward(self, x):
         x = self.conv1_dw(x)
@@ -144,7 +144,7 @@ class SeparatedConv2DBlock_upgrate(nn.Module):
         x = self.relu(x)
         x = self.conv2_pw(x)
         #x = self.bn2_pw(x)
-        x = self.relu(x)
+        #x = self.relu(x)
         return x
     
     
