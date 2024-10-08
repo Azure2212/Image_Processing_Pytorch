@@ -361,13 +361,13 @@ class CbamBlock(nn.Module):
 
         self.use_duck = use_duck
         if use_duck == True:
-            self.wides = WidescopeConv2DBlock_upgrate(channels, channels)
-            #self.sep = SeparatedConv2DBlock_upgrate(channels, channels)
+            #self.wides = WidescopeConv2DBlock_upgrate(channels, channels)
+            self.sep = SeparatedConv2DBlock_upgrate(channels, channels)
 
     def forward(self, x):
         if self.use_duck == True:
-            x = self.wides(x)
-            #x = self.sep(x)
+            #x = self.wides(x)
+            x = self.sep(x)
         x = self.ch_gate(x)
         x = self.sp_gate(x)
         return x
