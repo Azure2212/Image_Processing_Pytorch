@@ -365,10 +365,10 @@ class CbamBlock(nn.Module):
             self.sep = SeparatedConv2DBlock_upgrate(channels, channels)
 
     def forward(self, x):
+        x = self.ch_gate(x)
         if self.use_duck == True:
             #x = self.wides(x)
             x = self.sep(x)
-        x = self.ch_gate(x)
         x = self.sp_gate(x)
         return x
 
