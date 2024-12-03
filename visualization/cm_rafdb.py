@@ -69,7 +69,6 @@ if args.model_name == 'resnet50_pytorchcv':
         print('Pre train activated')
     model = ptcv_get_model("resnet50", pretrained=True if args.use_pretrained == 1 else False)
     model.output = nn.Linear(2048, 7)
-    return model
 elif args.model_name == 'resnet50_Cbam_pytorchcv':
     print('resnet50_Cbam_pytorchcv go !')
     if args.use_pretrained == 1:
