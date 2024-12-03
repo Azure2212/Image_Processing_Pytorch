@@ -701,7 +701,7 @@ def resnetbc38b(**kwargs) -> nn.Module:
         **kwargs)
 
 
-def resnet50_torchcv(**kwargs) -> nn.Module:
+def resnet50_torchcv(pretrained=True, **kwargs) -> nn.Module:
     """
     ResNet-50 model from 'Deep Residual Learning for Image Recognition,' https://arxiv.org/abs/1512.03385.
 
