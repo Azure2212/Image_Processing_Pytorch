@@ -11,6 +11,7 @@ import torch.multiprocessing as mp
 import numpy as np
 import tqdm
 import torch.nn as nn
+from pytorchcv.model_provider import get_model as ptcv_get_model
 
 seed = 113
 random.seed(seed)
