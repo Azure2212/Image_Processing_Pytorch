@@ -37,6 +37,9 @@ from sgu24project.models.resnet_cbam_pytorchcv.cbamresnet import cbam_resnet50
 
 from sgu24project.models.resnet_cbam_pytorchcv.cbamresnet_duck import cbam_resnet50_duck
 
+
+from sgu24project.models.resnet_cbam_pytorchcv.resnet import resnet50_torchcv
+
 from sgu24project.utils.metrics.classify_metrics import accuracy, make_batch
 
 import argparse
