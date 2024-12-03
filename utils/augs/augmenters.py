@@ -1,6 +1,6 @@
 from imgaug import augmenters as iaa
 import albumentations as A
-import face_alignment
+
 from albumentations.pytorch import ToTensorV2
 import numpy as np
 import cv2
@@ -58,6 +58,7 @@ class CustomTransform:
 
 #custome augmentation for landmark end point - end point
 def make_augmentation_image_landmark_custom(image, face_landmarks): 
+    import face_alignment
     def A_Horizontal_flip(image, landmarks):
         flipped_image = cv2.flip(image, 1)  # Lật ngang hình ảnh
         h, w, _ = image.shape
