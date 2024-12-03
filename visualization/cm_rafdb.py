@@ -64,7 +64,7 @@ test_loader_ttau = RafDataSet("test", configs, ttau = True, len_tta = 10)
 model = None
 if args.model_name == 'resnet50_pytorchcv':
     print('resnet50_pytorchcv !')
-    model = resnet50_torchcv(pretrained = true if args.use_pretrained == 1 else False)
+    model = resnet50_torchcv(pretrained = True if args.use_pretrained == 1 else False)
     model.output = nn.Linear(2048, 7)
 elif args.model_name == 'resnet50_Cbam_pytorchcv':
     print('resnet50_Cbam_pytorchcv !')
