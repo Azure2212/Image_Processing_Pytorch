@@ -63,12 +63,17 @@ test_loader_ttau = RafDataSet("test", configs, ttau = True, len_tta = 10)
 
 model = None
 if args.model_name == 'resnet50_pytorchcv':
-    print('resnet50_pytorchcv !')
-    model = resnet50_torchcv(pretrained = True if args.use_pretrained == 1 else False)
+    print('resnet50_pytorchcv go !')
+    if args.use_pretrained == 1:
+        print('Pre train activated')
+    model = ptcv_get_model("resnet50", pretrained=True if args.use_pretrained == 1 else False)
     model.output = nn.Linear(2048, 7)
+    return model
 elif args.model_name == 'resnet50_Cbam_pytorchcv':
-    print('resnet50_Cbam_pytorchcv !')
-    model = cbam_resnet50()
+    print('resnet50_Cbam_pytorchcv go !')
+    if args.use_pretrained == 1:
+        print('Pre train activated')
+    model = ptcv_get_model("cbam_resnet50", pretrained=True if args.use_pretrained == 1 else False)
     model.output = nn.Linear(2048, 7)
 elif args.model_name == 'resnet50_cbam_duck_pytorchcv':
     print('resnet50_cbam_duck_pytorchcv_tuan_code !')
