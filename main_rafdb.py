@@ -101,7 +101,8 @@ else:
     print('because of missing model chosen, resnet in pytorch library activated !')
     model = resnet50(pretrained = True if args.use_pretrained == 1 else False)
 print(f"the number of parameter: {sum(p.numel() for p in model.parameters())}")
-
+for name, layer in model.named_children():
+    print(f"{name}: {layer}")
 
 use_wb = True if args.use_wandb == 1 else False
 trainer = RAFDB_Trainer(model, train_loader, test_loader, test_loader, test_loader_ttau, configs , wb = use_wb)
