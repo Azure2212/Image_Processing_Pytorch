@@ -46,6 +46,7 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--model-name', default= "resnet50", type=str, help='model2Train')
 parser.add_argument('--rs-dir', default= "ResnetDuck_Cbam_cuaTuan", type=str, help='rs dir in kaggle')
+parser.add_argument('--use-pretrained', default= 1, type=int, help='use pre-trained = 1')
 parser.add_argument('--lr-scheduler', default= "ReduceLROnPlateau", type=str, help='learning rate scheduler you chose')
 
 args, unknown = parser.parse_known_args()
@@ -61,7 +62,15 @@ configs = json.load(open(config_path))
 test_loader_ttau = RafDataSet("test", configs, ttau = True, len_tta = 10) 
 
 model = None
-if args.model_name == 'resnet50_cbam_duck_pytorchcv':
+if args.model_name == 'resnet50_pytorchcv':
+    print('resnet50_pytorchcv !')
+    model = resnet50_torchcv(pretrained = true if args.use_pretrained == 1 else False)
+    model.output = nn.Linear(2048, 7)
+elif args.model_name == 'resnet50_Cbam_pytorchcv':
+    print('resnet50_Cbam_pytorchcv !')
+    model = cbam_resnet50()
+    model.output = nn.Linear(2048, 7)
+elif args.model_name == 'resnet50_cbam_duck_pytorchcv':
     print('resnet50_cbam_duck_pytorchcv_tuan_code !')
     model = cbam_resnet50_duck()
     model.output = nn.Linear(2048, 7)
