@@ -382,6 +382,7 @@ def get_resnet(blocks: int,
         **kwargs)
 
     if pretrained:
+        print('PreTrain actived!')
         if (model_name is None) or (not model_name):
             raise ValueError("Parameter `model_name` should be properly initialized for loading pretrained model.")
         from .model_store import download_model
@@ -719,6 +720,7 @@ def resnet50_torchcv(**kwargs) -> nn.Module:
     return get_resnet(
         blocks=50,
         model_name="resnet50",
+        pretrained = pretrained,
         **kwargs)
 
 
