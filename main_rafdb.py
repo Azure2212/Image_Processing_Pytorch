@@ -29,6 +29,7 @@ from trainer.rafdb_trainer import RAFDB_Trainer
 
 from sgu24project.models.resnet_cbam_pytorchcv.cbamresnet import cbam_resnet50
 
+from sgu24project.models.resnet_cbam_pytorchcv.resnet import resnet50_torchcv
 
 from sgu24project.models.resnet_cbam_pytorchcv.cbamresnet_duck import cbam_resnet50_duck
 
@@ -68,11 +69,12 @@ test_loader = RafDataSet("test", configs, ttau = False, len_tta = 48)
 
 model = None
 
-if args.model_name == 'resnet50_cbam_duck_pytorchcv':
-    print('resnet50_cbam_duck_pytorchcv_tuan_code !')
-    model = cbam_resnet50_duck()
+if args.model_name == 'resnet50_pytorchcv':
+    print('resnet50_pytorchcv !')
+    model = resnet50_torchcv()
     model.output = nn.Linear(2048, 7)
-elif args.model_name == 'resnet50_pytorchcv':
+elif args.model_name == 'resnet50_Cbam_pytorchcv':
+    print('resnet50_Cbam_pytorchcv !')
     model = cbam_resnet50()
     model.output = nn.Linear(2048, 7)
 elif args.model_name == 'resnet50_vggface2':
