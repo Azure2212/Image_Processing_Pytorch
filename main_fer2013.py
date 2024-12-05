@@ -19,7 +19,7 @@ np.random.seed(seed)
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
-from utils.datasets.fer2013_ds import FERDataset
+from utils.datasets.fer2013_ds_v2 import FERDataset
 
 from trainer.fer2013_trainer import FER2013_Trainer
 
