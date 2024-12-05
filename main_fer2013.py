@@ -20,10 +20,7 @@ torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
 from utils.datasets.fer2013_ds import FERDataset
-from models.DDAnet import *
 
-
-from utils.visualize.show_img import show_image_dataset
 from trainer.fer2013_trainer import FER2013_Trainer
 
 print(torch.__version__)
