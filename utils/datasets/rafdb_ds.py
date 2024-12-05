@@ -141,7 +141,7 @@ class RafDataSet(Dataset):
         image = cv2.imread(path)
         image = image[:, :, ::-1]
 #         print(image.shape)
-#         image = cv2.resize(image, self.shape)
+        image = cv2.resize(image, self.shape)
         
         if self.data_type == "train":
             image = seg_raf(image = image)

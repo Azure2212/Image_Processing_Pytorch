@@ -30,7 +30,7 @@ config_path = "sgu24project/configs/config_fer2013.json"
 configs = json.load(open(config_path))
 
 train_loader = FERDataset( "train", configs)
-val_loader = FERDataset("val", configs)
+val_loader = FERDataset("test", configs, ttau = False, len_tta = 48) 
 test_loader_ttau = FERDataset("test", configs, ttau = True, len_tta = 10) 
 test_loader = FERDataset("test", configs, ttau = False, len_tta = 48)
 
