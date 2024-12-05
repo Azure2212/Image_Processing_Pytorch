@@ -50,7 +50,7 @@ class FERDataset(Dataset):
     print(f"labels:{len( self.label)}")
     
     from collections import Counter
-    print(Counter(my_list))
+    print(Counter(self.label))
 
     self.transform = transforms.Compose(
         [
