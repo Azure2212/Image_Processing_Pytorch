@@ -25,7 +25,7 @@ from trainer.fer2013_trainer import FER2013_Trainer
 
 print(torch.__version__)
 
-config_path = "configs/config_fer2013.json"
+config_path = "sgu24project/configs/config_fer2013.json"
 
 configs = json.load(open(config_path))
 
