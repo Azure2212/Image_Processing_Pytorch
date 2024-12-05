@@ -1,5 +1,7 @@
 {
     "data_path": "/input/fer2013/fer2013.csv",
+    "fer_path_train": "/kaggle/input/fer2013/train",
+    "fer_path_test": "/kaggle/input/fer2013/test",
     "image_size": 224,
     "n_channels": 3,
     "n_classes": 7,
