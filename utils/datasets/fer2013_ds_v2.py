@@ -38,7 +38,7 @@ class FERDataset(Dataset):
           
     label_mapping = {'surprise':0, 'fear':1, 'disgust':2, 'happy':3, 'sad':4, 'angry':5, 'neutral':6}
     
-    emotions = os.listdir(path)
+    emotions = os.listdir(data_path)
     self.file_paths = []
     self.label = []
     for e in emotions:
