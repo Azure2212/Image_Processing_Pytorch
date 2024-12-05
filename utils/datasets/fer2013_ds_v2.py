@@ -32,8 +32,6 @@ class FERDataset(Dataset):
 
     self.shape = (configs["image_size"], configs["image_size"])
 
-    self.data = pd.read_csv(os.path.join(configs["data_path"]))
-
     data_path = self.configs['fer_path_train']
     if data_type == 'test':
       data_path = self.configs['fer_path_test']
