@@ -80,8 +80,9 @@ elif args.model_name == 'resnet50_Cbam_pytorchcv':
     model.output = nn.Linear(2048, 7)
 
 
-trainer = FER2013_Trainer(model, train_loader, val_loader, test_loader, test_loader_ttau, configs , wb = False)
-
+#trainer = FER2013_Trainer(model, train_loader, val_loader, test_loader, test_loader_ttau, configs , wb = False)
+from trainer.rafdb_trainer import RAFDB_Trainer
+trainer = RAFDB_Trainer(model, train_loader, test_loader, test_loader, test_loader_ttau, configs , wb = False)
 # trainer.acc_on_test()
 # trainer.acc_on_test_ttau()
 
