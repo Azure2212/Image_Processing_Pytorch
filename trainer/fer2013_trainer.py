@@ -23,7 +23,7 @@ import torch.optim as optim
 from torch.autograd import Variable
 from torch.optim.lr_scheduler import StepLR
 from torch.optim.lr_scheduler import ReduceLROnPlateau
-from utils.metrics.metrics import accuracy, make_batch
+from sgu24project.utils.metrics.classify_metrics import accuracy, make_batch
 
 
 def get_lr(optimizer):
