@@ -9,6 +9,7 @@ import imgaug
 import torch
 import torch.multiprocessing as mp
 import numpy as np
+import torch.nn as nn
 
 seed = 113
 random.seed(seed)
