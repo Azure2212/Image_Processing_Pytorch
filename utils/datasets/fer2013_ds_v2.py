@@ -46,12 +46,6 @@ class FERDataset(Dataset):
       self.file_paths.extend(images)
       self.label.extend([label_mapping[e]] * len(images))
 
-    print(f"images:{len( self.file_paths)}")
-    print(f"labels:{len( self.label)}")
-    
-    from collections import Counter
-    print(Counter(self.label))
-
     self.transform = transforms.Compose(
         [
             transforms.ToPILImage(),

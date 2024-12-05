@@ -23,6 +23,8 @@ from utils.datasets.fer2013_ds_v2 import FERDataset
 
 from trainer.fer2013_trainer import FER2013_Trainer
 
+from pytorchcv.model_provider import get_model as ptcv_get_model
+
 print(torch.__version__)
 
 config_path = "sgu24project/configs/config_fer2013.json"
