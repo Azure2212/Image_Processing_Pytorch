@@ -62,7 +62,7 @@ class FERDataset(Dataset):
     return self.ttau == True
 
   def __len__(self):
-    return len(self.pixels)
+    return len(self.file_paths)
     
   def __getitem__(self, idx):
         path = self.file_paths[idx]
