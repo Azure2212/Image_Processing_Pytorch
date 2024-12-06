@@ -28,7 +28,7 @@ torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
 from sgu24project.utils.datasets.rafdb_ds import RafDataSet
-from sgu24project.utils.datasets.fer2013_ds import FERDataset
+from sgu24project.utils.datasets.fer2013_ds_v2 import FERDataset
 
 from sgu24project.models.resnet import resnet50, resnet50_vggface2, resnet50_vggface2_ft
 from pytorchcv.model_provider import get_model as ptcv_get_model
