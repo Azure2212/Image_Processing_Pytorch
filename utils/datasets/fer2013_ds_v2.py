@@ -42,8 +42,9 @@ class FERDataset(Dataset):
     self.file_paths = []
     self.label = []
     for e in emotions:
-      images = os.listdir(data_path+'/'+e)
-      self.file_paths.extend(images)
+      images = os.listdir(os.path.join(data_path, e))
+      images = [os.path.join(data_path, e, i) for i in images]
+      self.file_paths.extend(data_path+'/'+e+'/'+images)
       self.label.extend([label_mapping[e]] * len(images))
 
     self.transform = transforms.Compose(
