@@ -55,7 +55,7 @@ args, unknown = parser.parse_known_args()
 path_current = os.path.abspath(globals().get("__file__","."))
 script_dir  = os.path.dirname(path_current)
 root_path = os.path.abspath(f"{script_dir}/../")
-config_path = root_path+"/configs/config_rafdb.json"  # Adjust the path as needed
+config_path = "sgu24project/configs/config_fer2013.json"
 
 configs = json.load(open(config_path))
 
