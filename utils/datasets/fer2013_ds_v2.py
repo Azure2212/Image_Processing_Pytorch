@@ -45,7 +45,6 @@ class FERDataset(Dataset):
       images = os.listdir(os.path.join(data_path, e))
       images = [os.path.join(data_path, e, i) for i in images]
       self.file_paths.extend(images)
-      print(len(images))
       self.label.extend([label_mapping[e]] * len(images))
 
     self.transform = transforms.Compose(
@@ -74,11 +73,11 @@ class FERDataset(Dataset):
         image = cv2.resize(image, self.shape)
         
         if self.data_type == "train":
-            image = seg_raf(image = image)
+            image = seg_fer(image = image)
             #image = my_data_augmentation(image.copy())
         if self.data_type == "test" and self.ttau == True:
-            images1 = [seg_raftest1(image=image) for i in range(self.len_tta)]
-            images2 = [seg_raftest2(image=image) for i in range(self.len_tta)]
+            images1 = [seg_fertest1(image=image) for i in range(self.len_tta)]
+            images2 = [seg_fertest2(image=image) for i in range(self.len_tta)]
 
             images = images1 + images2
             # images = [image for i in range(self._tta_size)]
