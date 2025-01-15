@@ -43,6 +43,7 @@ parser.add_argument('--use-wandb', default= 1, type=int, help='use wandb = 1, no
 parser.add_argument('--load-state-dir', default= '', type=str, help='weight2load')
 parser.add_argument('--isDebug', default= 0, type=int, help='debug = 1')
 parser.add_argument('--use-pretrained', default= 1, type=int, help='use pre-trained = 1')
+parser.add_argument('--use-cbam', default= 0, type=int, help='use cbam= 1')
 parser.add_argument('--current-epoch-num', default= 0, type=int, help='epoch start')
 parser.add_argument('--name-run-wandb', default= 'Resnet50', type=str, help='name to save in wandb')
 args, unknown = parser.parse_known_args()
@@ -76,7 +77,7 @@ elif args.model_name == 'resnet50_vggface2':
     model = resnet50_vggface2()
 elif args.model_name == 'resnet50_vggface2_ft':
     print('resnet50 with pre-train on vggface2(trained on MS1M, and then fine-tuned on VGGFace2) was chose !')
-    model = resnet50_vggface2_ft(pretrained = False, use_cbam = True)
+    model = resnet50_vggface2_ft(pretrained = True if args.use_pretrained == 1 else False, use_cbam = True if args.use_cbam == 1 else False)
     for name, layer in model.named_children():
         print(f"{name}: {layer}")
 elif args.model_name == 'resnet50_imagenet':

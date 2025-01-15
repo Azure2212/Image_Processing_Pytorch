@@ -80,7 +80,7 @@ elif args.model_name == 'resnet50_vggface2':
     model = resnet50_vggface2()
 elif args.model_name == 'resnet50_vggface2_ft':
     print('resnet50 with pre-train on vggface2(trained on MS1M, and then fine-tuned on VGGFace2) was chose !')
-    model = resnet50_vggface2_ft(pretrained = False, use_cbam = True if args.use_cbam == 1 else False, use_duck = True if args.use_duck == 1 else False, load_weight_path = args.load_weight_path)
+    model = resnet50_vggface2_ft(pretrained = True if args.use_pretrained == 1 else False, use_cbam = True if args.use_cbam == 1 else False, use_duck = True if args.use_duck == 1 else False, load_weight_path = args.load_weight_path)
     for name, layer in model.named_children():
         print(f"{name}: {layer}")
 elif args.model_name == 'resnet50_imagenet':
