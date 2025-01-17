@@ -418,6 +418,9 @@ class Bottleneck(nn.Module):
 
     def __init__(self, inplanes, planes, stride=1, downsample=None, use_cbam = False , use_duck = False):
         super(Bottleneck, self).__init__()
+
+        self.wide = WidescopeConv2DBlock(in_channels=3, out_channels=64)
+
         self.conv1 = nn.Conv2d(inplanes, planes, kernel_size=1, stride=stride, bias=False)
         self.bn1 = nn.BatchNorm2d(planes)
         self.conv2 = nn.Conv2d(planes, planes, kernel_size=3, stride=1, padding=1, bias=False)
@@ -443,7 +446,9 @@ class Bottleneck(nn.Module):
         out = self.conv1(x)
         out = self.bn1(out)
         out = self.relu(out)
-        print(out.shape)
+        
+        out = self.wide(out)
+
         out = self.conv2(out)
         out = self.bn2(out)
         out = self.relu(out)
