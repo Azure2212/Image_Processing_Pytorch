@@ -472,8 +472,7 @@ class ResNet(nn.Module):
         self.layer3 = self._make_layer(block, 256, layers[2], stride=2)
         self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
         if self.use_duck == True:
-            print('Use Duck')
-            print(512*block.expansion)
+            print("use_duck")
             self.wide = WidescopeConv2DBlock(in_channels=512*block.expansion, out_channels=512*block.expansion)
         self.avgpool = nn.AvgPool2d(7, stride=1)
         self.fc = nn.Linear(512 * block.expansion, num_classes)
@@ -515,7 +514,7 @@ class ResNet(nn.Module):
         x = self.layer2(x)
         x = self.layer3(x)
         x = self.layer4(x)
-        print(x.shape)
+
         if self.use_duck == True:
             x = self.wide(x)
 
