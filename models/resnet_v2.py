@@ -123,27 +123,27 @@ class SeparatedConv2DBlock_upgrate(nn.Module):
     def __init__(self, in_channels, out_channels, size=3):
         super(SeparatedConv2DBlock_upgrate, self).__init__()
         self.conv1_dw = nn.Conv2d(in_channels, in_channels, kernel_size=(1, size), padding=(0, size//2), groups=in_channels)
-        #self.bn1_dw = nn.BatchNorm2d(in_channels)
+        self.bn1_dw = nn.BatchNorm2d(in_channels)
         self.conv1_pw = nn.Conv2d(in_channels, out_channels, kernel_size=1)
-        #self.bn1_pw = nn.BatchNorm2d(out_channels)
+        self.bn1_pw = nn.BatchNorm2d(out_channels)
         self.conv2_dw = nn.Conv2d(out_channels, out_channels, kernel_size=(size, 1), padding=(size//2, 0), groups=out_channels)
-        #self.bn2_dw = nn.BatchNorm2d(out_channels)
+        self.bn2_dw = nn.BatchNorm2d(out_channels)
         self.conv2_pw = nn.Conv2d(out_channels, out_channels, kernel_size=1)
-        #self.bn2_pw = nn.BatchNorm2d(out_channels)
+        self.bn2_pw = nn.BatchNorm2d(out_channels)
         self.relu = nn.ReLU()
 
     def forward(self, x):
         x = self.conv1_dw(x)
-        #x = self.bn1_dw(x)
+        x = self.bn1_dw(x)
         x = self.relu(x)
         x = self.conv1_pw(x)
-        #x = self.bn1_pw(x)
+        x = self.bn1_pw(x)
         x = self.relu(x)
         x = self.conv2_dw(x)
-        #x = self.bn2_dw(x)
+        x = self.bn2_dw(x)
         x = self.relu(x)
         x = self.conv2_pw(x)
-        #x = self.bn2_pw(x)
+        x = self.bn2_pw(x)
         x = self.relu(x)
         return x
     
@@ -473,7 +473,7 @@ class ResNet(nn.Module):
         self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
         if self.use_duck == True:
             print("use_duck")
-            self.wide = WidescopeConv2DBlock_upgrate(in_channels=512*block.expansion, out_channels=512*block.expansion)
+            self.wide = SeparatedConv2DBlock_upgrate(in_channels=512*block.expansion, out_channels=512*block.expansion)
         self.avgpool = nn.AvgPool2d(7, stride=1)
         self.fc = nn.Linear(512 * block.expansion, num_classes)
 
