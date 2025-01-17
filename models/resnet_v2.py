@@ -502,12 +502,8 @@ class ResNet(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, x):
-        if self.use_duck == True:
-            print('Use Duck')
-        else:
-            print('Use conv1')
-            x = self.conv1(x)
-        x = self.wide(x)
+        
+        x = self.conv1(x)
         x = self.bn1(x)
         x = self.relu(x)
         x = self.maxpool(x)
@@ -516,6 +512,9 @@ class ResNet(nn.Module):
         x = self.layer2(x)
         x = self.layer3(x)
         x = self.layer4(x)
+        if self.use_duck == True:
+            print('Use Duck')
+            x = self.wide(x)
 
         x = self.avgpool(x)
         
