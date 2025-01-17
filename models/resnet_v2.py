@@ -57,7 +57,7 @@ def conv1x1(in_planes, out_planes, stride=1):
     return nn.Conv2d(in_planes, out_planes, kernel_size=1, stride=stride, bias=False)
 
 #=============== DUCKNET ==================
-'''
+
 class SeparatedConv2DBlock(nn.Module):
     def __init__(self, in_channels, out_channels, size=3):
         super(SeparatedConv2DBlock, self).__init__()
@@ -80,17 +80,17 @@ class MidscopeConv2DBlock(nn.Module):
     def __init__(self, in_channels, out_channels):
         super(MidscopeConv2DBlock, self).__init__()
         self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=(3, 3), padding=(1, 1), dilation=(1, 1))
-        #self.bn1 = nn.BatchNorm2d(out_channels)
+        self.bn1 = nn.BatchNorm2d(out_channels)
         self.conv2 = nn.Conv2d(out_channels, out_channels, kernel_size=(3, 3), padding=(2, 2), dilation=(2, 2))
-        #self.bn2 = nn.BatchNorm2d(out_channels)
+        self.bn2 = nn.BatchNorm2d(out_channels)
         self.relu = nn.ReLU()
 
     def forward(self, x):
         x = self.conv1(x)
-        #x = self.bn1(x)
+        x = self.bn1(x)
         x = self.relu(x)
         x = self.conv2(x)
-        #x = self.bn2(x)
+        x = self.bn2(x)
         x = self.relu(x)
         return x
 
@@ -116,7 +116,7 @@ class WidescopeConv2DBlock(nn.Module):
         x = self.bn3(x)
         x = self.relu(x)
         return x
-'''
+
 
 # ============= UPGRATE ===================
 class SeparatedConv2DBlock_upgrate(nn.Module):
@@ -443,7 +443,7 @@ class Bottleneck(nn.Module):
         out = self.conv1(x)
         out = self.bn1(out)
         out = self.relu(out)
-
+        print(out.shape)
         out = self.conv2(out)
         out = self.bn2(out)
         out = self.relu(out)
@@ -517,6 +517,7 @@ class ResNet(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, x):
+        
         x = self.conv1(x)
         x = self.bn1(x)
         x = self.relu(x)
