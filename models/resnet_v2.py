@@ -514,7 +514,7 @@ class ResNet(nn.Module):
         x = self.layer4(x)
         if self.use_duck == True:
             print('Use Duck')
-            x = self.wide(x)
+            #x = self.wide(x)
 
         x = self.avgpool(x)
         
