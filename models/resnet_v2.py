@@ -496,7 +496,7 @@ class ResNet(nn.Module):
             )
 
         layers = []
-        layers.append(block(self.inplanes, planes, stride, downsample, use_cbam = self.use_cbam, use_duck = self.use_duck))
+        layers.append(block(self.inplanes, planes, stride, downsample, use_cbam = self.use_cbam))
         self.inplanes = planes * block.expansion
         for i in range(1, blocks):
             layers.append(block(self.inplanes, planes, use_cbam = self.use_cbam))
