@@ -353,12 +353,6 @@ class CbamBlock(nn.Module):
                  use_duck: bool = False,
                  reduction_ratio: int = 16):
         super(CbamBlock, self).__init__()
-        self.use_duck = use_duck
-        if self.use_duck == True:
-            self.wides = WidescopeConv2DBlock_upgrate(channels, channels)
-            #self.mids = MidscopeConv2DBlock_upgrate(channels, channels)
-            self.sep = SeparatedConv2DBlock_upgrate(channels, channels)
-            
 
         self.ch_gate = ChannelGate(
             channels=channels,
@@ -366,17 +360,7 @@ class CbamBlock(nn.Module):
         self.sp_gate = SpatialGate()
 
     def forward(self, x):
-
-        # if self.use_duck == True:
-        #     x = self.wides(x)
-        #     #x = self.mids(x)
-        #     x = self.sep(x)
         x = self.ch_gate(x)
-        if self.use_duck == True:
-            print('vo dau')
-            x = self.wides(x)
-            #x = self.mids(x)
-            x = self.sep(x)
         x = self.sp_gate(x)
         return x
    
@@ -416,10 +400,8 @@ class BasicBlock(nn.Module):
 class Bottleneck(nn.Module):
     expansion = 4
 
-    def __init__(self, inplanes, planes, stride=1, downsample=None, use_cbam = False , use_duck = False):
+    def __init__(self, inplanes, planes, stride=1, downsample=None, use_cbam = False):
         super(Bottleneck, self).__init__()
-
-        self.wide = WidescopeConv2DBlock(in_channels=3, out_channels=64)
 
         self.conv1 = nn.Conv2d(inplanes, planes, kernel_size=1, stride=stride, bias=False)
         self.bn1 = nn.BatchNorm2d(planes)
@@ -432,11 +414,10 @@ class Bottleneck(nn.Module):
         self.stride = stride
 
         self.use_cbam = use_cbam
-        self.use_duck = use_duck
 
         out_channels = planes * 4
         if self.use_cbam == True:
-            self.CbamBlock = CbamBlock(channels = out_channels, use_duck = use_duck)
+            self.CbamBlock = CbamBlock(channels = out_channels)
 
     def forward(self, x):
         #start_time = datetime.now()
@@ -480,6 +461,7 @@ class ResNet(nn.Module):
         super(ResNet, self).__init__()
         self.include_top = include_top
 
+        self.wide = WidescopeConv2DBlock(in_channels=3, out_channels=64)
         self.use_cbam = use_cbam
         self.use_duck = use_duck
         
@@ -517,13 +499,17 @@ class ResNet(nn.Module):
         layers.append(block(self.inplanes, planes, stride, downsample, use_cbam = self.use_cbam, use_duck = self.use_duck))
         self.inplanes = planes * block.expansion
         for i in range(1, blocks):
-            layers.append(block(self.inplanes, planes, use_cbam = self.use_cbam, use_duck = False))
+            layers.append(block(self.inplanes, planes, use_cbam = self.use_cbam))
 
         return nn.Sequential(*layers)
 
     def forward(self, x):
-        
-        x = self.conv1(x)
+        if self.use_duck == True:
+            print('Use Duck')
+        else:
+            print('Use conv1')
+            x = self.conv1(x)
+        x = self.wide(x)
         x = self.bn1(x)
         x = self.relu(x)
         x = self.maxpool(x)
