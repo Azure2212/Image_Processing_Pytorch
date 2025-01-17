@@ -427,8 +427,6 @@ class Bottleneck(nn.Module):
         out = self.conv1(x)
         out = self.bn1(out)
         out = self.relu(out)
-        
-        out = self.wide(out)
 
         out = self.conv2(out)
         out = self.bn2(out)
