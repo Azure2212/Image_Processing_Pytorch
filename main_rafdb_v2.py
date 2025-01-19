@@ -99,15 +99,15 @@ elif args.model_name == 'resnet50_vggface2_ft':
         for i, layer_name in enumerate(layer_names):
             if hasattr(model, layer_name):
                 layer = getattr(model, layer_name)
-                print(f'vo layer{i}')
+                #print(f'vo layer{i}')
                 for idx in range(layers[i]):
                     # Unfreeze parameters for the CBAM block in the current layer
                     for param in layer[idx].CbamBlock.parameters():
-                        param.requires_grad = True
+                        param.requires_grad = False
                     # Print the name of each layer in the CBAM block
-                    for name, submodule in layer[idx].CbamBlock.named_children():
-                        print(f"Layer Name: {name} in {layer_name}[{idx}] CbamBlock")
-                    print("_____________________")
+                    # for name, submodule in layer[idx].CbamBlock.named_children():
+                    #     print(f"Layer Name: {name} in {layer_name}[{idx}] CbamBlock")
+                    # print("_____________________")
             
 
 elif args.model_name == 'resnet50_imagenet':
