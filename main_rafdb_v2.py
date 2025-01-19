@@ -89,7 +89,7 @@ elif args.model_name == 'resnet50_vggface2_ft':
         for param in model.parameters():
             param.requires_grad = False
         for index in range(4):
-            for param in model.layer1[index].CbamBlock:
+            for param in model.layer1[index].CbamBlock.parameters():
                 print("on")
                 param.requires_grad = True
             print("_______")
