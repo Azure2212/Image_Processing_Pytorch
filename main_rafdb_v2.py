@@ -103,8 +103,10 @@ elif args.model_name == 'resnet50_vggface2_ft':
                 for idx in range(layers[i]):
                     # Unfreeze parameters for the CBAM block in the current layer
                     for param in layer[idx].CbamBlock.parameters():
-                        print(f'{param} (on)')
                         param.requires_grad = True
+                    # Print the name of each layer in the CBAM block
+                    for name, submodule in layer[idx].CbamBlock.named_children():
+                        print(f"Layer Name: {name} in {layer_name}[{idx}] CbamBlock")
                     print("_____________________")
             
 
