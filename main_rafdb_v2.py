@@ -85,10 +85,16 @@ elif args.model_name == 'resnet50_vggface2_ft':
     for name, layer in model.named_children():
         print(f"{name}: {layer}")
 
+    print('_____________________')
+    print('_____________________')
+    print('_____________________')
+    for name, layer in model.named_children():
+        if isinstance(layer, CbamBlock):
+            print(f"{name}: {layer}")
     if args.freeze_cbam == 1:
         for param in model.parameters():
             param.requires_grad = False
-        for index in range(4):
+        for index in range(3):
             for param in model.layer1[index].CbamBlock.parameters():
                 print("on")
                 param.requires_grad = True
