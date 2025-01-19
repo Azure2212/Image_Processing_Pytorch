@@ -103,9 +103,9 @@ elif args.model_name == 'resnet50_vggface2_ft':
                 for idx in range(layers[i]):
                     # Unfreeze parameters for the CBAM block in the current layer
                     for param in layer[idx].CbamBlock.parameters():
-                        print('on')
+                        print(f'{param} (on)')
                         param.requires_grad = True
-                    print("_____--------------")
+                    print("_____________________")
             
 
 elif args.model_name == 'resnet50_imagenet':
