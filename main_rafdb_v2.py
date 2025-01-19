@@ -82,23 +82,31 @@ elif args.model_name == 'resnet50_vggface2':
 elif args.model_name == 'resnet50_vggface2_ft':
     print('resnet50 with pre-train on vggface2(trained on MS1M, and then fine-tuned on VGGFace2) was chose !')
     model = resnet50_vggface2_ft(pretrained = True if args.use_pretrained == 1 else False, use_cbam = True if args.use_cbam == 1 else False, use_duck = True if args.use_duck == 1 else False, load_weight_path = args.load_weight_path)
-    for name, layer in model.named_children():
-        print(f"{name}: {layer}")
+    #for name, layer in model.named_children():
+     #   print(f"{name}: {layer}")
 
-    print('_____________________')
-    print('_____________________')
-    print('_____________________')
-    for name, layer in model.named_children():
-        if isinstance(layer, CbamBlock):
-            print(f"{name}: {layer}")
     if args.freeze_cbam == 1:
-        for param in model.parameters():
-            param.requires_grad = False
-        for index in range(3):
-            for param in model.layer1[index].CbamBlock.parameters():
-                print("on")
-                param.requires_grad = True
-            print("_______")
+    
+        layers = [3, 4, 6, 3]  
+        layer_names = ['layer1', 'layer2', 'layer3', 'layer4']
+        
+        for name, layer in model.named_children():
+            if isinstance(layer, torch.nn.Module):  # Only consider actual layers
+                for param in layer.parameters():
+                    param.requires_grad = False
+
+        # Unfreeze CBAM blocks as specified by the layers
+        for i, layer_name in enumerate(layer_names):
+            if hasattr(model, layer_name):
+                layer = getattr(model, layer_name)
+                print(f'vo layer{i}')
+                for idx in range(layers[i]):
+                    # Unfreeze parameters for the CBAM block in the current layer
+                    for param in layer[idx].CbamBlock.parameters():
+                        print('on')
+                        param.requires_grad = True
+                    print("_____--------------")
+            
 
 elif args.model_name == 'resnet50_imagenet':
     print('resnet50 with pre-train on imagenet was chose !')
