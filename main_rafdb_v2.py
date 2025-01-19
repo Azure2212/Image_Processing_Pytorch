@@ -86,12 +86,13 @@ elif args.model_name == 'resnet50_vggface2_ft':
         print(f"{name}: {layer}")
 
     if args.freeze_cbam == 1:
-        for name, module in model.named_modules():
-            if isinstance(module, CbamBlock):  # Check if the module is of type CbamBlock
-                # Freeze all parameters in CbamBlock
-                print("freeze layer CbamBlock!")
-                for param in module.parameters():
-                    param.requires_grad = False
+        for param in model.parameters():
+            param.requires_grad = False
+        for index in range(4):
+            for param in model.layer1[index].CbamBlock:
+                print("on")
+                param.requires_grad = True
+            print("_______")
 
 elif args.model_name == 'resnet50_imagenet':
     print('resnet50 with pre-train on imagenet was chose !')
