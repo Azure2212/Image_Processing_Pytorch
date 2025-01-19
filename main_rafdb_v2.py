@@ -48,6 +48,7 @@ parser.add_argument('--use-duck', default= 0, type=int, help='use duck = 1')
 parser.add_argument('--max-epoch-num', default= 120, type=int, help='max epoch to train')
 parser.add_argument('--current-epoch-num', default= 0, type=int, help='epoch start')
 parser.add_argument('--name-run-wandb', default= 'Resnet50', type=str, help='name to save in wandb')
+parser.add_argument('--freeze-cbam', default= 0, type=int, help='epoch start')
 args, unknown = parser.parse_known_args()
 
 print(torch.__version__)
@@ -83,6 +84,15 @@ elif args.model_name == 'resnet50_vggface2_ft':
     model = resnet50_vggface2_ft(pretrained = True if args.use_pretrained == 1 else False, use_cbam = True if args.use_cbam == 1 else False, use_duck = True if args.use_duck == 1 else False, load_weight_path = args.load_weight_path)
     for name, layer in model.named_children():
         print(f"{name}: {layer}")
+
+    if args.freeze_cbam == 1:
+        for name, module in model.named_modules():
+            if isinstance(module, CbamBlock):  # Check if the module is of type CbamBlock
+                # Freeze all parameters in CbamBlock
+                print("freeze layer CbamBlock!")
+                for param in module.parameters():
+                    param.requires_grad = False
+
 elif args.model_name == 'resnet50_imagenet':
     print('resnet50 with pre-train on imagenet was chose !')
     model = resnet50()
