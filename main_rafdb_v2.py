@@ -85,7 +85,9 @@ elif args.model_name == 'resnet50_vggface2_ft':
     model = resnet50_vggface2_ft(pretrained = True if args.use_pretrained == 1 else False, use_cbam = True if args.use_cbam == 1 else False, use_duck = True if args.use_duck == 1 else False, load_weight_path = args.load_weight_path)
     for name, layer in model.named_children():
        print(f"{name}: {layer}")
-
+       print('________________________________')
+    for name, param in model.named_parameters():
+        print(f"{name}: {param.requires_grad}")
     if args.freeze_cbam == 1:
         print("go freeze")
         layers = [3, 4, 6, 3]  
