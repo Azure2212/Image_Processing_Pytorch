@@ -454,9 +454,9 @@ class RAFDB_Trainer(Trainer):
     try:
       if self.load_state_dir != "":
         #shutil.copy(self.load_state_dir, self.checkpoint_path)
-        my_checkpoint_path = torch.load(self.checkpoint_path)
-        self.model.load_state_dict(my_checkpoint_path['net'])
-        self.optimizer.load_state_dict(my_checkpoint_path['optimizer'])
+        #my_checkpoint_path = torch.load(self.checkpoint_path)
+        #self.model.load_state_dict(my_checkpoint_path['net'])
+        #self.optimizer.load_state_dict(my_checkpoint_path['optimizer'])
         print("loaded old weight successful")
       while not self.stop_train():
         self.update_epoch_num()

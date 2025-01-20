@@ -537,7 +537,6 @@ class CPU_Unpickler(pickle.Unpickler):
 
 def _resnet(arch, block, layers, pretrained, progress, num_classes, load_weight_path = '', out_classes = 7, **kwargs):
     model = ResNet(block, layers, num_classes = num_classes, **kwargs)
-    print(f"output''s shape:{model.fc}")
     if load_weight_path != '':
         print(f"Go on trainning on weight: {load_weight_path} is activated!")
         model.fc = nn.Linear(2048, out_classes)
@@ -557,6 +556,7 @@ def _resnet(arch, block, layers, pretrained, progress, num_classes, load_weight_
                 state_dict = load_state_dict_from_url(model_urls[arch], progress=progress)
             model.load_state_dict(state_dict, strict=False)
         model.fc = nn.Linear(2048, out_classes)
+    print(f"output''s shape:{model.fc}")
     return model
 
 
