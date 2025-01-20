@@ -43,6 +43,7 @@ parser.add_argument('--use-wandb', default= 1, type=int, help='use wandb = 1, no
 parser.add_argument('--load-weight-path', default= '', type=str, help='weight2load')
 parser.add_argument('--isDebug', default= 0, type=int, help='debug = 1')
 parser.add_argument('--use-pretrained', default= 1, type=int, help='use pre-trained = 1')
+parser.add_argument('--link-pretrained', default= '', type=str, help='link pretrain')
 parser.add_argument('--use-cbam', default= 0, type=int, help='use cbam= 1')
 parser.add_argument('--use-duck', default= 0, type=int, help='use duck = 1')
 parser.add_argument('--max-epoch-num', default= 120, type=int, help='max epoch to train')

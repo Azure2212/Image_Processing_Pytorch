@@ -36,6 +36,7 @@ model_urls = {
     #"vggface2": "https://onedrive.live.com/download?cid=D07B627FBE5CFFFA&resid=D07B627FBE5CFFFA%21587&authkey=APXT_JMvytW7cgk",
     "vggface2": "/kaggle/input/resnet50-vggface2-weight/resnet50_scratch_weight.pkl",
     "vggface2_ft": "/kaggle/input/resnet50-vggface2-weight/resnet50_ft_weight.pkl",
+    "vggface2_cbam_finetuned": "/kaggle/input/resnet50-vggface2-weight/Resnet_Cbam_FineTuning_ok"
 }
 
 def conv3x3(in_planes, out_planes, stride=1, groups=1, dilation=1):
@@ -539,7 +540,7 @@ def _resnet(arch, block, layers, pretrained, progress, num_classes, load_weight_
     else:
         if pretrained == True:
             print(f'load weight in {model_urls[arch]}')
-            if 'vggface2' in arch:
+            if 'vggface2_cbam_finetuned' in arch:
                 with open(model_urls[arch], 'rb') as f:
                     state_dict = pickle.load(f)
                     
