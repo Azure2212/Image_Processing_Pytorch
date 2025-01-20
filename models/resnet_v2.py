@@ -528,6 +528,11 @@ class ResNet(nn.Module):
         x = self.fc(x)
         return x
 
+class CPU_Unpickler(pickle.Unpickler):
+    def find_class(self, module, name):
+        if module == 'torch.storage' and name == '_load_from_bytes':
+            return lambda b: torch.load(io.BytesIO(b), map_location='cpu')
+        else: return super().find_class(module, name)
 
 def _resnet(arch, block, layers, pretrained, progress, num_classes, load_weight_path = '', out_classes = 7, **kwargs):
     model = ResNet(block, layers, num_classes = num_classes, **kwargs)
@@ -542,7 +547,8 @@ def _resnet(arch, block, layers, pretrained, progress, num_classes, load_weight_
             print(f'load weight in {model_urls[arch]}')
             if 'vggface2_cbam_finetuned' in arch:
                 with open(model_urls[arch], 'rb') as f:
-                    state_dict = pickle.load(f)
+                    state_dict = CPU_Unpickler(f).load()
+                    #state_dict = pickle.load(f)
                     
                 for key in state_dict.keys():
                     state_dict[key] = torch.from_numpy(state_dict[key])
