@@ -86,8 +86,7 @@ elif args.model_name == 'resnet50_vggface2_ft':
     # for name, layer in model.named_children():
     #    print(f"{name}: {layer}")
     #    print('________________________________')
-    for name, param in model.named_parameters():
-        print(f"{name}: {param.requires_grad}")
+    
     if args.freeze_cbam == 1:
         print("go freeze")
         layers = [3, 4, 6, 3]  
@@ -112,6 +111,8 @@ elif args.model_name == 'resnet50_vggface2_ft':
                     #     print(f"Layer Name: {name} in {layer_name}[{idx}] CbamBlock")
                     # print("_____________________")
             
+    for name, param in model.named_parameters():
+        print(f"{name}: {param.requires_grad}")
 
 elif args.model_name == 'resnet50_imagenet':
     print('resnet50 with pre-train on imagenet was chose !')
