@@ -87,7 +87,7 @@ elif args.model_name == 'resnet50_vggface2_ft':
        print(f"{name}: {layer}")
 
     if args.freeze_cbam == 1:
-    
+        print("go freeze")
         layers = [3, 4, 6, 3]  
         layer_names = ['layer1', 'layer2', 'layer3', 'layer4']
         
