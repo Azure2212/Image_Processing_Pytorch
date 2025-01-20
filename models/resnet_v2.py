@@ -545,7 +545,7 @@ def _resnet(arch, block, layers, pretrained, progress, num_classes, load_weight_
     else:
         if pretrained == True:
             print(f'load weight in {model_urls[arch]}')
-            if 'vggface2_cbam_finetuned' in arch:
+            if 'vggface2_ft' in arch:
                 with open(model_urls[arch], 'rb') as f:
                     state_dict = CPU_Unpickler(f).load()
                     #state_dict = pickle.load(f)
@@ -624,7 +624,7 @@ def resnet50_vggface2_ft(pretrained=True, progress=True,out_classes = 7,  use_cb
         progress (bool): If True, displays a progress bar of the download to stderr
     """
     model = _resnet(
-        "vggface2_cbam_finetuned", Bottleneck, [3, 4, 6, 3], pretrained, progress,num_classes=8631, use_cbam = use_cbam, use_duck = use_duck, load_weight_path = load_weight_path, **kwargs
+        "vggface2_ft", Bottleneck, [3, 4, 6, 3], pretrained, progress,num_classes=8631, use_cbam = use_cbam, use_duck = use_duck, load_weight_path = load_weight_path, **kwargs
     ) 
     #vggface2_ft
     #model.fc = nn.Linear(2048, out_classes)
