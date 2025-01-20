@@ -35,9 +35,9 @@ model_urls = {
     "wide_resnet101_2": "https://download.pytorch.org/models/wide_resnet101_2-32ee1156.pth",
     #"vggface2": "https://onedrive.live.com/download?cid=D07B627FBE5CFFFA&resid=D07B627FBE5CFFFA%21587&authkey=APXT_JMvytW7cgk",
     "vggface2_1": "/kaggle/input/resnet50-vggface2-weight/resnet50_scratch_weight.pkl",
-    "vggface2_2": "/kaggle/input/resnet50-vggface2-weight/ResnetDuck_Cbam_cuaTuan",
-    "vggface2_ft": "/kaggle/input/resnet50-vggface2-weight/resnet50_ft_weight.pkl",
-    "vggface2": "/kaggle/input/resnet50-vggface2-weight/Resnet_Cbam_FineTuning_ok"
+    "vggface2_ft": "/kaggle/input/resnet50-vggface2-weight/ResnetDuck_Cbam_cuaTuan",
+    "vggface2_ft_2": "/kaggle/input/resnet50-vggface2-weight/resnet50_ft_weight.pkl",
+    "vggface2_ft_3": "/kaggle/input/resnet50-vggface2-weight/Resnet_Cbam_FineTuning_ok"
 }
 
 def conv3x3(in_planes, out_planes, stride=1, groups=1, dilation=1):
