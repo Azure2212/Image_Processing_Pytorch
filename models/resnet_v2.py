@@ -544,14 +544,22 @@ def _resnet(arch, block, layers, pretrained, progress, num_classes, load_weight_
         print(f"Go on trainning on weight: {load_weight_path} is activated!")
         model.fc = nn.Linear(2048, out_classes)
         my_checkpoint_path = torch.load(load_weight_path)
-        model.load_state_dict(my_checkpoint_path['net'])
+        #model.load_state_dict(my_checkpoint_path['net'])
+
+        checkpoint = my_checkpoint_path['net']  # Hoặc 'model' nếu checkpoint có cấu trúc khác
+        model_state_dict = model.state_dict()
+        filtered_checkpoint = {k: v for k, v in checkpoint.items() if k in model_state_dict}
+        model_state_dict.update(filtered_checkpoint)
+        model.load_state_dict(model_state_dict)
+
+        print(f"Successfully loaded weights from {load_weight_path}")
     else:
         if pretrained == True:
             print(f'load weight in {model_urls[arch]}')
             if 'vggface2_ft' in arch:
                 with open(model_urls[arch], 'rb') as f:
-                    state_dict = CPU_Unpickler(f).load()
-                    #state_dict = pickle.load(f)
+                    #state_dict = CPU_Unpickler(f).load()
+                    state_dict = pickle.load(f)
                     
                 for key in state_dict.keys():
                     state_dict[key] = torch.from_numpy(state_dict[key])
