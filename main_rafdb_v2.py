@@ -41,7 +41,7 @@ parser.add_argument('--lr-scheduler', default= "ReduceLROnPlateau", type=str, he
 parser.add_argument('--lr-value', default= 1e-3, type=float, help='learning rate initial')
 parser.add_argument('--use-wandb', default= 1, type=int, help='use wandb = 1, not use = 0')
 parser.add_argument('--load-weight-path', default= '', type=str, help='weight2load')
-parser.add_argument('--apply-dropout', default= 0, type=0, help='apply or not')
+parser.add_argument('--apply-dropout', default= 0, type=int, help='apply or not')
 parser.add_argument('--isDebug', default= 0, type=int, help='debug = 1')
 parser.add_argument('--use-pretrained', default= 1, type=int, help='use pre-trained = 1')
 parser.add_argument('--link-pretrained', default= '', type=str, help='link pretrain')
