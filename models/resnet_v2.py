@@ -456,14 +456,13 @@ class Bottleneck(nn.Module):
 
 class ResNet(nn.Module):
 
-    def __init__(self, block, layers, num_classes=1000, include_top=True, use_cbam = False, use_duck = False):
+    def __init__(self, block, layers, num_classes=1000, include_top=True, use_cbam = False, use_duck = False, apply_dropout = 0):
         self.inplanes = 64
         super(ResNet, self).__init__()
         self.include_top = include_top
 
         self.use_cbam = use_cbam
         self.use_duck = use_duck
-        
         self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3, bias=False)
         self.bn1 = nn.BatchNorm2d(64)
         self.relu = nn.ReLU(inplace=True)
@@ -477,6 +476,9 @@ class ResNet(nn.Module):
             print("use_duck")
             self.wide = WidescopeConv2DBlock_upgrate(in_channels=512*block.expansion, out_channels=512*block.expansion)
         self.avgpool = nn.AvgPool2d(7, stride=1)
+        if apply_dropout == 1:
+            print('apply dropout')
+            self.dropout = nn.Dropout(0.4)
         self.fc = nn.Linear(512 * block.expansion, num_classes)
 
 
@@ -526,6 +528,7 @@ class ResNet(nn.Module):
             return x
         
         x = x.view(x.size(0), -1)
+        x = self.dropout(x)
         x = self.fc(x)
         return x
 
@@ -535,8 +538,8 @@ class CPU_Unpickler(pickle.Unpickler):
             return lambda b: torch.load(io.BytesIO(b), map_location='cpu')
         else: return super().find_class(module, name)
 
-def _resnet(arch, block, layers, pretrained, progress, num_classes, load_weight_path = '', out_classes = 7, **kwargs):
-    model = ResNet(block, layers, num_classes = num_classes, **kwargs)
+def _resnet(arch, block, layers, pretrained, progress, num_classes, load_weight_path = '', out_classes = 7, apply_dropout=0, **kwargs):
+    model = ResNet(block, layers, num_classes = num_classes, apply_dropout = apply_dropout, **kwargs)
     if load_weight_path != '':
         print(f"Go on trainning on weight: {load_weight_path} is activated!")
         model.fc = nn.Linear(2048, out_classes)
@@ -603,7 +606,7 @@ def resnet50(pretrained=True, progress=True, out_classes = 7, use_cbam = False, 
     #model.fc = nn.Linear(2048, out_classes)
     return model
 
-def resnet50_vggface2(pretrained=True, progress=True,out_classes = 7,  use_cbam = False, use_duck = False,  **kwargs):
+def resnet50_vggface2(pretrained=True, progress=True,out_classes = 7,  use_cbam = False, use_duck = False, apply_dropout = 0,  **kwargs):
     r"""ResNet-50 model from
     `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
     Args:
@@ -611,7 +614,7 @@ def resnet50_vggface2(pretrained=True, progress=True,out_classes = 7,  use_cbam 
         progress (bool): If True, displays a progress bar of the download to stderr
     """
     model = _resnet(
-        "vggface2", Bottleneck, [3, 4, 6, 3], pretrained, progress,num_classes=8631, use_cbam = use_cbam, use_duck = use_duck, **kwargs
+        "vggface2", Bottleneck, [3, 4, 6, 3], pretrained, progress,num_classes=8631, use_cbam = use_cbam, use_duck = use_duck, apply_dropout= apply_dropout, **kwargs
     )
     #model.fc = nn.Linear(2048, out_classes)
     print('model resnet50 with vggface2(trained from cratch) is done!')
