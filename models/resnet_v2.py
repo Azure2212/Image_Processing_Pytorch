@@ -463,6 +463,7 @@ class ResNet(nn.Module):
 
         self.use_cbam = use_cbam
         self.use_duck = use_duck
+        self.apply_dropout = apply_dropout
         self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3, bias=False)
         self.bn1 = nn.BatchNorm2d(64)
         self.relu = nn.ReLU(inplace=True)
@@ -476,7 +477,7 @@ class ResNet(nn.Module):
             print("use_duck")
             self.wide = WidescopeConv2DBlock_upgrate(in_channels=512*block.expansion, out_channels=512*block.expansion)
         self.avgpool = nn.AvgPool2d(7, stride=1)
-        if apply_dropout == 1:
+        if self.apply_dropout == 1:
             print('apply dropout')
             self.dropout = nn.Dropout(0.4)
         self.fc = nn.Linear(512 * block.expansion, num_classes)
@@ -528,7 +529,8 @@ class ResNet(nn.Module):
             return x
         
         x = x.view(x.size(0), -1)
-        x = self.dropout(x)
+        if self.apply_dropout == 1:
+            x = self.dropout(x)
         x = self.fc(x)
         return x
 
