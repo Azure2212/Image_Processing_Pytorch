@@ -245,7 +245,6 @@ class RAFDB_Trainer(Trainer):
         verbose=True,
         factor = 0.1,
       )
-      print(f'min_lr = {self.min_lr}')
       print("The selected learning_rate scheduler strategy is ReduceLROnPlateau")
     elif self.lr_scheduler_chose == "MultiStepLR":
       milestones = [x for x in range(5, 120, 5)]
