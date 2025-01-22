@@ -23,6 +23,15 @@ def get_lr(optimizer):
     for param_group in optimizer.param_groups:
         return param_group['lr']
 
+def create_CSV(output_csv_path):
+  df = pd.DataFrame(columns=['epoch', 'learning_rate','accuracy', 'loss', 'val_accuracy', 'val_loss'])
+  df.to_csv(output_csv_path, index=False)
+
+def update_output_csv(output_csv_path, epoch, lr, accuracy, loss, val_accuracy, val_loss):
+  df = pd.read_csv(output_csv_path)
+  new_line = {'epoch':epoch, 'learning_rate':lr,'accuracy':accuracy, 'loss':loss, 'val_accuracy':val_accuracy, 'val_loss':val_loss}
+  df.append(new_line, ignore_index=True)
+  df.to_csv(output_csv_path, index=False)
 
 class Trainer(object):
     """base class for trainers"""
@@ -32,14 +41,14 @@ class Trainer(object):
 
 
 class RAFDB_Trainer(Trainer):
-  def __init__(self, model, train_loader, val_loader, test_loader,test_loader_ttau, configs, wb = True):
+  def __init__(self, model, train_loader, val_loader, test_loader,test_loader_ttau, configs, wb = True, output_csv_path = '/kaggle/working/out.csv', initial_best_val_acc = 0.0):
 
     self.train_loader = train_loader
     self.val_loader = val_loader
     self.test_loader = test_loader
     self.test_loader_ttau = test_loader_ttau
-
-
+    self.output_csv_path = output_csv_path
+    create_CSV(output_csv_path = self.output_csv_path)
     self.configs = configs
 
     self.batch_size = configs["batch_size"]
@@ -79,7 +88,7 @@ class RAFDB_Trainer(Trainer):
     self.val_loss_list = []
     self.val_acc_list = []
     self.best_train_acc = 0.0
-    self.best_val_acc = 0.0
+    self.best_val_acc = initial_best_val_acc
     self.best_train_loss = 0.0
     self.best_val_loss = 0.0
     self.test_acc = 0.0
@@ -509,6 +518,16 @@ class RAFDB_Trainer(Trainer):
       print(f'Weight was updated because val_accuracy get highest(={self.val_acc_list[-1]})')
     else:
       self.plateau_count += 1
+    
+    #update CSV
+    update_output_csv(output_csv_path = self.output_csv_path, 
+                      epoch=len(self.val_acc_list),
+                      learning_rate = self.optimizer.param_groups[0]['lr'], 
+                      accuracy = train_acc_list[-1],
+                      loss = self.train_loss_list[-1],
+                      val_accuracy = self.val_acc_list[-1],
+                      val_loss = self.val_loss_list[-1])
+
 # 100 - self.best_val_acc
     if self.lr_scheduler_chose == "ReduceLROnPlateau":
       self.scheduler.step(self.val_acc_list[-1])
