@@ -146,4 +146,12 @@ print("----------------------------")
 print("Phase2 train")
 configs["lr_scheduler"] = args.lr_scheduler
 configs["lr"] = args.lr_value/10
+for name, layer in model_afd_5tun.named_children():
+    if isinstance(layer, torch.nn.Module):  # Only consider actual layers
+        for param in layer.parameters():
+            param.requires_grad = True
+
+for name, layer in model_afd_5tun.named_children():
+    print(f"{name}: {layer}")
+print("Training!")
 trainer2 = RAFDB_Trainer(model_afd_5tun, train_loader, test_loader, test_loader, test_loader_ttau, configs , wb = use_wb, output_csv_path = '/kaggle/working/out2.csv', initial_best_val_acc = best_val_acc_previous)
