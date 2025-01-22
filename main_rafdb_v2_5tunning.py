@@ -141,6 +141,7 @@ print(f"the number of parameter: {sum(p.numel() for p in model.parameters())}")
 use_wb = True if args.use_wandb == 1 else False
 trainer = RAFDB_Trainer(model, train_loader, test_loader, test_loader, test_loader_ttau, configs , wb = use_wb, output_csv_path = '/kaggle/working/out.csv')
 model_afd_5tun, best_val_acc_previous = trainer.Train_model()
+
 print(best_val_acc_previous)
 print("----------------------------------------------")
 print("Phase2 train")
@@ -150,7 +151,9 @@ for name, layer in model_afd_5tun.named_children():
     if isinstance(layer, torch.nn.Module):  # Only consider actual layers
         for param in layer.parameters():
             param.requires_grad = True
-print(f'lr ={configs["lr"]}')
+            
+print(f'lr_scheduler ={configs["lr_scheduler"]}')
+
 for name, param in model_afd_5tun.named_parameters():
     print(f"{name}: {param.requires_grad}")
 # for name, layer in model_afd_5tun.named_children():
