@@ -273,7 +273,7 @@ class RAFDB_Trainer(Trainer):
       self.scheduler = LambdaLR(self.optimizer, lr_lambda=lambda_lr)
       print(f"No choosing Learning rate scheduler(lr={self.learning_rate})")
 
-
+    print('no vo day ne')
        
   def init_wandb(self):
     #set up wandb for training
