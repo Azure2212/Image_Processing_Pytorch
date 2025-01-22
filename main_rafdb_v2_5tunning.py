@@ -68,6 +68,8 @@ configs["isDebug"] = args.isDebug
 configs["current_epoch_num"] = args.current_epoch_num
 configs["name_run_wandb"] = args.name_run_wandb
 configs["max_epoch_num"] = args.max_epoch_num
+early_stopping = configs["max_plateau_count"]
+configs["max_plateau_count"] = 25
 if args.load_weight_path != '':
     configs["load_weight_path"] = args.load_weight_path
 
@@ -143,16 +145,15 @@ trainer = RAFDB_Trainer(model, train_loader, test_loader, test_loader, test_load
 model_afd_5tun, best_val_acc_previous = trainer.Train_model()
 
 print(best_val_acc_previous)
-print("----------------------------------------------")
+print("\n----------------------------------------------------------------------\n")
 print("Phase2 train")
 configs["lr_scheduler"] = args.lr_scheduler
+configs["max_plateau_count"] = early_stopping
 configs["lr"] = args.lr_value/10
 for name, layer in model_afd_5tun.named_children():
     if isinstance(layer, torch.nn.Module):  # Only consider actual layers
         for param in layer.parameters():
             param.requires_grad = True
-            
-print(f'lr_scheduler ={configs["lr_scheduler"]}')
 
 for name, param in model_afd_5tun.named_parameters():
     print(f"{name}: {param.requires_grad}")
