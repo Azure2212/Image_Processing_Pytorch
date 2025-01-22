@@ -12,6 +12,8 @@ import numpy as np
 import tqdm
 import torch.nn as nn
 
+import pandas as pd
+
 seed = 113
 random.seed(seed)
 imgaug.seed(seed)
