@@ -31,7 +31,7 @@ def create_CSV(output_csv_path):
 def update_output_csv(output_csv_path, epoch, lr, accuracy, loss, val_accuracy, val_loss):
   df = pd.read_csv(output_csv_path)
   new_line = {'epoch':epoch, 'learning_rate':lr,'accuracy':accuracy, 'loss':loss, 'val_accuracy':val_accuracy, 'val_loss':val_loss}
-  dr = df.append(new_line, ignore_index=True)
+  df = pd.concat([df, new_line], ignore_index=True)
   df.to_csv(output_csv_path, index=False)
 
 class Trainer(object):
