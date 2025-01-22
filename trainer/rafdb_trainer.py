@@ -91,6 +91,7 @@ class RAFDB_Trainer(Trainer):
     self.val_acc_list = []
     self.best_train_acc = 0.0
     self.best_val_acc = initial_best_val_acc
+    print(f'best_val_acc = {self.best_val_acc}')
     self.best_train_loss = 0.0
     self.best_val_loss = 0.0
     self.test_acc = 0.0
@@ -273,7 +274,6 @@ class RAFDB_Trainer(Trainer):
       self.scheduler = LambdaLR(self.optimizer, lr_lambda=lambda_lr)
       print(f"No choosing Learning rate scheduler(lr={self.learning_rate})")
 
-    print('no vo day ne')
        
   def init_wandb(self):
     #set up wandb for training
@@ -498,7 +498,7 @@ class RAFDB_Trainer(Trainer):
     print(" Best Accuracy on Val: {:.3f} ".format(self.best_val_acc))
     print(" Best Accuracy on Test: {:.3f} ".format(self.test_acc))
     print(" Best Accuracy on Test with tta: {:.3f} ".format(self.test_acc_ttau))
-
+    print('no vo day ne')
     return self.model, self.best_val_acc
 
   #set up for training (update epoch, stopping training, write logging)
