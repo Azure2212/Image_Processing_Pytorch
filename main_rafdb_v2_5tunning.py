@@ -140,9 +140,10 @@ print(f"the number of parameter: {sum(p.numel() for p in model.parameters())}")
 
 use_wb = True if args.use_wandb == 1 else False
 trainer = RAFDB_Trainer(model, train_loader, test_loader, test_loader, test_loader_ttau, configs , wb = use_wb, output_csv_path = '/kaggle/working/out.csv')
+model_afd_5tun, best_val_acc_previous = trainer.Train_model()
 
-
+print("----------------------------")
+print("Phase2 train")
 configs["lr_scheduler"] = args.lr_scheduler
 configs["lr"] = args.lr_value/10
-model_afd_5tun, best_val_acc_previous = trainer.Train_model()
-trainer2 = RAFDB_Trainer(model, train_loader, test_loader, test_loader, test_loader_ttau, configs , wb = use_wb, output_csv_path = '/kaggle/working/out.csv2', initial_best_val_acc = best_val_acc_previous)
+trainer2 = RAFDB_Trainer(model_afd_5tun, train_loader, test_loader, test_loader, test_loader_ttau, configs , wb = use_wb, output_csv_path = '/kaggle/working/out2.csv', initial_best_val_acc = best_val_acc_previous)
