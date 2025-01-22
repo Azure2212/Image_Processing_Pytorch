@@ -142,7 +142,7 @@ use_wb = True if args.use_wandb == 1 else False
 trainer = RAFDB_Trainer(model, train_loader, test_loader, test_loader, test_loader_ttau, configs , wb = use_wb, output_csv_path = '/kaggle/working/out.csv')
 model_afd_5tun, best_val_acc_previous = trainer.Train_model()
 print(best_val_acc_previous)
-print("----------------------------")
+print("----------------------------------------------")
 print("Phase2 train")
 configs["lr_scheduler"] = args.lr_scheduler
 configs["lr"] = args.lr_value/10
@@ -155,3 +155,4 @@ for name, layer in model_afd_5tun.named_children():
 #     print(f"{name}: {layer}")
 print("Training!")
 trainer2 = RAFDB_Trainer(model_afd_5tun, train_loader, test_loader, test_loader, test_loader_ttau, configs , wb = use_wb, output_csv_path = '/kaggle/working/out2.csv', initial_best_val_acc = best_val_acc_previous)
+model_afd_2rdTrain, best_val_acc_2rdTrain = trainer.Train_model()

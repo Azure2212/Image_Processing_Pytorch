@@ -91,7 +91,6 @@ class RAFDB_Trainer(Trainer):
     self.val_acc_list = []
     self.best_train_acc = 0.0
     self.best_val_acc = initial_best_val_acc
-    print(f'best_val_acc = {self.best_val_acc}')
     self.best_train_loss = 0.0
     self.best_val_loss = 0.0
     self.test_acc = 0.0
