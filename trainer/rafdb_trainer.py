@@ -524,7 +524,7 @@ class RAFDB_Trainer(Trainer):
     update_output_csv(output_csv_path = self.output_csv_path, 
                       epoch=len(self.val_acc_list),
                       learning_rate = self.optimizer.param_groups[0]['lr'], 
-                      accuracy = train_acc_list[-1],
+                      accuracy = self.train_acc_list[-1],
                       loss = self.train_loss_list[-1],
                       val_accuracy = self.val_acc_list[-1],
                       val_loss = self.val_loss_list[-1])
