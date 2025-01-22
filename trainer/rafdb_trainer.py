@@ -31,7 +31,7 @@ def create_CSV(output_csv_path):
 def update_output_csv(output_csv_path, epoch, lr, accuracy, loss, val_accuracy, val_loss):
   df = pd.read_csv(output_csv_path)
   new_line = pd.DataFrame({'epoch':[epoch], 'learning_rate':[lr],'accuracy':[accuracy], 'loss':[loss], 'val_accuracy':[val_accuracy], 'val_loss':[val_loss]})
-  new_line = new_line[df.comlumns]
+  new_line = new_line[df.columns]
   df = pd.concat([df, new_line], ignore_index=True)
   df.to_csv(output_csv_path, index=False)
 
