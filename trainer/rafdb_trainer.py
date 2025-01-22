@@ -467,6 +467,7 @@ class RAFDB_Trainer(Trainer):
         #self.optimizer.load_state_dict(my_checkpoint_path['optimizer'])
         print("loaded old weight successful")
       while not self.stop_train():
+        print('no vo day ne')
         self.update_epoch_num()
         self.step_per_train()
         self.step_per_val()
@@ -497,7 +498,6 @@ class RAFDB_Trainer(Trainer):
     print(" Best Accuracy on Val: {:.3f} ".format(self.best_val_acc))
     print(" Best Accuracy on Test: {:.3f} ".format(self.test_acc))
     print(" Best Accuracy on Test with tta: {:.3f} ".format(self.test_acc_ttau))
-    print('no vo day ne')
     return self.model, self.best_val_acc
 
   #set up for training (update epoch, stopping training, write logging)
