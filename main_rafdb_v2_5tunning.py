@@ -150,7 +150,9 @@ for name, layer in model_afd_5tun.named_children():
     if isinstance(layer, torch.nn.Module):  # Only consider actual layers
         for param in layer.parameters():
             param.requires_grad = True
-
+print(f'lr ={configs["lr"]}')
+for name, param in model.named_parameters():
+    print(f"{name}: {param.requires_grad}")
 # for name, layer in model_afd_5tun.named_children():
 #     print(f"{name}: {layer}")
 print("Training!")
