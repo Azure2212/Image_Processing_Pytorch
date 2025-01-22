@@ -62,7 +62,7 @@ config_path = "sgu24project/configs/config_rafdb.json"
 configs = json.load(open(config_path))
 
 configs["optimizer_chose"] = args.optimizer_chose
-configs["lr_scheduler"] = args.lr_scheduler
+configs["lr_scheduler"] = 'None'
 configs["lr"] = args.lr_value
 configs["isDebug"] = args.isDebug
 configs["current_epoch_num"] = args.current_epoch_num
@@ -139,5 +139,10 @@ print(f"the number of parameter: {sum(p.numel() for p in model.parameters())}")
 
 
 use_wb = True if args.use_wandb == 1 else False
-trainer = RAFDB_Trainer(model, train_loader, test_loader, test_loader, test_loader_ttau, configs , wb = use_wb)
-trainer.Train_model()
+trainer = RAFDB_Trainer(model, train_loader, test_loader, test_loader, test_loader_ttau, configs , wb = use_wb, output_csv_path = '/kaggle/working/out.csv')
+
+
+configs["lr_scheduler"] = args.lr_scheduler
+configs["lr"] = args.lr_value/10
+model_afd_5tun, best_val_acc_previous = trainer.Train_model()
+trainer2 = RAFDB_Trainer(model, train_loader, test_loader, test_loader, test_loader_ttau, configs , wb = use_wb, output_csv_path = '/kaggle/working/out.csv2', initial_best_val_acc = best_val_acc_previous)
