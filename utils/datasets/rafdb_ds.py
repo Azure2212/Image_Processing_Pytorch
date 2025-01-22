@@ -105,7 +105,8 @@ class RafDataSet(Dataset):
             self.data = df[df['name'].str.startswith('train')]
         else:
             self.data = df[df['name'].str.startswith('test')]
-            self.data = self.data[:100]
+            
+        self.data = self.data[:100]
 
         file_names = self.data.loc[:, 'name'].values
         self.label = self.data.loc[:, 'label'].values - 1 # 0:Surprise, 1:Fear, 2:Disgust, 3:Happiness, 4:Sadness, 5:Anger, 6:Neutral
