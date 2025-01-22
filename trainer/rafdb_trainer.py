@@ -499,6 +499,8 @@ class RAFDB_Trainer(Trainer):
     print(" Best Accuracy on Test: {:.3f} ".format(self.test_acc))
     print(" Best Accuracy on Test with tta: {:.3f} ".format(self.test_acc_ttau))
 
+    return self.model, self.best_val_acc
+
   #set up for training (update epoch, stopping training, write logging)
   def update_epoch_num(self):
     self.current_epoch_num += 1
